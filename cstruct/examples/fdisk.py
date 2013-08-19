@@ -1,25 +1,32 @@
-Python-CStruct
-==============
-
-C-style structs for Python
-
-Convert C struct definitions into Python classes with methods for
-serializing/deserializing.
-The usage is very simple: create a class subclassing cstruct.CStruct
-and add a C struct definition as a string in the __struct__ field.
-The C struct definition is parsed at runtime and the struct format string
-is generated. The class offers the method "unpack" for deserializing
-a string of bytes into a Python object and the method "pack" for
-serializing the values into a string.
-
-Example
--------
-
-The following program reads the DOS partition information from a disk.
-
-```python
 #!/usr/bin/python
+#*****************************************************************************
+#
+# Copyright (c) 2013 Andrea Bonomi <andrea.bonomi@gmail.com>
+#
+# Published under the terms of the MIT license.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+#
+#*****************************************************************************
+
 import cstruct
+import sys
 
 class Position(cstruct.CStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
@@ -66,12 +73,17 @@ class MBR(cstruct.CStruct):
             print("partition: %s" % i)
             partition.print_info()
 
-disk = "mbr"
-f = open(disk, "rb")
-mbr = MBR()
-data = f.read(len(mbr))
-mbr.unpack(data)
-mbr.print_info()
-f.close()
-```
+def main():
+    if len(sys.argv) != 2:
+        print("usage: %s disk" % sys.argv[0])
+        sys.exit(2)
+    f = open(sys.argv[1], "rb")
+    mbr = MBR()
+    data = f.read(len(mbr))
+    mbr.unpack(data)
+    mbr.print_info()
+    f.close()
+
+if __name__ == "__main__":
+        main()
 
