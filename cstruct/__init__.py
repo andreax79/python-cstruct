@@ -121,12 +121,16 @@ C_TYPE_TO_FORMAT = {
     'signed char':          'b',
     'unsigned char':        'B',
     'short':                'h',
+    'short int':            'h',
     'ushort':               'H',
     'unsigned short':       'H',
+    'unsigned short int':   'H',
     'int':                  'i',
     'unsigned int':         'I',
     'long':                 'l',
+    'long int':             'l',
     'unsigned long':        'L',
+    'unsigned long int':    'L',
     'long long':            'q',
     'unsigned long long':   'Q',
     'float':                'f',
@@ -204,9 +208,9 @@ class CStructMeta(type):
                     vtype = vtype + " " + line[1].strip()
                     del line[0]
                 vname = line[1]
-                # long long
-                if vname == 'long':
-                    vtype = vtype +  ' long'
+                # short int, long int, or long long
+                if vname == 'int' or vname == 'long':
+                    vtype = vtype + " " + vname
                     del line[0]
                     vname = line[1]
                 # void *
