@@ -67,11 +67,10 @@ class MBR(cstruct.CStruct):
             partition.print_info()
 
 disk = "mbr"
-f = open(disk, "rb")
-mbr = MBR()
-data = f.read(len(mbr))
-mbr.unpack(data)
-mbr.print_info()
-f.close()
+with open(disk, "rb") as f:
+    mbr = MBR()
+    data = f.read(len(mbr))
+    mbr.unpack(data)
+    mbr.print_info()
 ```
 

@@ -1,0 +1,24 @@
+# python-cstruct changelog
+
+## 1.0
+
+2013-08-19
+
+### Added
+
+- initial version
+
+## 1.1
+
+2017-05-18
+
+### Improved
+
+- initialize all values to 0 by default
+- new data types
+
+### Added
+
+- who.py example
+- a changelog :)
+
