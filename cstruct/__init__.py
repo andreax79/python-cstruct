@@ -288,6 +288,8 @@ class CStruct(_CStructParent):
     def __init__(self, string=None, **kargs):
         if string is not None:
             self.unpack(string)
+        else:
+            self.unpack(b'0x00' * self.__size__)
         for key, value in kargs.items():
             setattr(self, key, value)
 
