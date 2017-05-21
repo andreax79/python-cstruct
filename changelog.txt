@@ -22,3 +22,11 @@
 - who.py example
 - a changelog :)
 
+## 1.3
+
+2017-05-21
+
+### Fix
+
+- default value fix
+
