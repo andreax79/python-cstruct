@@ -99,7 +99,7 @@ f.close()
 
 __author__  = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
 __license__ = 'MIT'
-__version__ = '1.0'
+__version__ = '1.2'
 __date__ = '15 August 2013'
 
 import re
