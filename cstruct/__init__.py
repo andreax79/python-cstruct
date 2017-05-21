@@ -73,7 +73,7 @@ f.close()
 
 #*****************************************************************************
 #
-# Copyright (c) 2013 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2017 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #
@@ -99,7 +99,7 @@ f.close()
 
 __author__  = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
 __license__ = 'MIT'
-__version__ = '1.2'
+__version__ = '1.3'
 __date__ = '15 August 2013'
 
 import re
@@ -270,8 +270,13 @@ _CStructParent = CStructMeta('_CStructParent', (object, ), {})
 
 if sys.version_info < (2, 6):
     EMPTY_BYTES_STRING = str()
+    CHAR_ZERO = '\0'
+if sys.version_info < (3, 0):
+    EMPTY_BYTES_STRING = bytes()
+    CHAR_ZERO = bytes('\0')
 else:
     EMPTY_BYTES_STRING = bytes()
+    CHAR_ZERO = bytes('\0', 'ascii')
 
 class CStruct(_CStructParent):
     """
@@ -293,7 +298,7 @@ class CStruct(_CStructParent):
         if string is not None:
             self.unpack(string)
         else:
-            self.unpack(b'0x00' * self.__size__)
+            self.unpack(CHAR_ZERO * self.__size__)
         for key, value in kargs.items():
             setattr(self, key, value)
 
