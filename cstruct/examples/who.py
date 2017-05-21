@@ -91,12 +91,12 @@ class Utmp(CStruct):
         "           pts/34       2013-06-12 15:04             26396 id=s/34  term=0 exit=0"
 #        if self.ut_type not in [6,7]:
 #            return
-        print "%-10s %-12s %15s %15s %-8s" % (
+        print("%-10s %-12s %15s %15s %-8s" % (
                     str_from_c(self.ut_user),
                     str_from_c(self.ut_line),
                     time.strftime("%Y-%m-%d %H:%M", time.gmtime(self.ut_tv.tv_sec)),
                     self.ut_pid,
-                    str_from_c(self.ut_host) and "(%s)" % str_from_c(self.ut_host) or str_from_c(self.ut_id) and "id=%s" % str_from_c(self.ut_id) or "")
+                    str_from_c(self.ut_host) and "(%s)" % str_from_c(self.ut_host) or str_from_c(self.ut_id) and "id=%s" % str_from_c(self.ut_id) or ""))
 
 def main():
     utmp = len(sys.argv) > 1 and  sys.argv[1] or "/var/run/utmp"
