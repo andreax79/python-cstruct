@@ -73,7 +73,7 @@ class TestCStruct(TestCase):
         mbr = MBR()
         self.assertEqual(len(mbr), 512)
         self.assertEqual(mbr.size, 512)
-        
+
     def test_unpack(self):
         mbr = MBR()
         mbr.unpack(MBR_DATA)
@@ -100,6 +100,12 @@ class TestCStruct(TestCase):
         p = Position(head=254, sector=63, cyl=134)
         mbr = MBR(MBR_DATA)
         self.assertEqual(mbr.partitions[0].end, p)
+
+    def test_none(self):
+        mbr = MBR()
+        self.assertEqual(mbr.partitions[0].end.sector, 0)
+        mbr.unpack(None)
+        self.assertEqual(mbr.partitions[0].end.head, 0)
 
 
 if __name__ == '__main__':
