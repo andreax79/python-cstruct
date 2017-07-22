@@ -99,7 +99,7 @@ f.close()
 
 __author__  = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
 __license__ = 'MIT'
-__version__ = '1.4'
+__version__ = '1.5'
 __date__ = '15 August 2013'
 
 import re
@@ -295,7 +295,13 @@ class CStruct(_CStructParent):
     """
 
     def __init__(self, string=None, **kargs):
-        self.unpack(string)
+        if string is not None:
+            self.unpack(string)
+        else:
+            try:
+                self.unpack(string)
+            except:
+                pass
         for key, value in kargs.items():
             setattr(self, key, value)
 
@@ -369,6 +375,9 @@ class CStruct(_CStructParent):
                 v = v[:vlen] + [0] * (vlen - len(v))
                 data.extend(v)
         return struct.pack(self.__fmt__, *data)
+
+    def clear(self):
+        self.unpack(None)
 
     def __len__(self):
         """ Structure size (in bytes) """

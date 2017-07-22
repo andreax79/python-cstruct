@@ -38,3 +38,11 @@
 
 - default value fix
 
+## 1.5
+
+2017-07-22
+
+### Fix
+
+- compatibiliy fix
+
