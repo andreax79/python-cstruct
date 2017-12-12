@@ -142,8 +142,8 @@ C_TYPE_TO_FORMAT = {
     'uint16':               'H',
     'int32':                'i',
     'uint32':               'I',
-    'int64':                'l',
-    'uint64':               'L',
+    'int64':                'q',
+    'uint64':               'Q',
 }
 
 STRUCTS = {
