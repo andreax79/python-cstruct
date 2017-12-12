@@ -46,3 +46,11 @@
 
 - compatibiliy fix
 
+### 1.6
+
+2017-12-12
+
+### Fix
+
+- fixed size of 64-bit integers, they now have 64 bits, not 32
+
