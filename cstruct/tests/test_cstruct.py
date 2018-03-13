@@ -52,7 +52,7 @@ class Partition(cstruct.CStruct):
         unsigned char partition_type;
         struct Position end;
         unsigned int start_sect;    /* starting sector counting from 0 */
-        unsigned int sectors;       /* nr of sectors in partition */
+        unsigned int sectors;       // nr of sectors in partition
     """
 
 
