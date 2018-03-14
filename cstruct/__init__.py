@@ -195,6 +195,7 @@ class CStructMeta(type):
         # remove the comments
         st = st.replace("*/","*/\n")
         st = "  ".join(re.split("/\*.*\*/",st))
+        st = "\n".join([s.split("//")[0] for s in st.split("\n")])
         st.replace("\n", " ")
         for line_s in st.split(";"):
             line_s = line_s.strip()
