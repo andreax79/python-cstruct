@@ -54,3 +54,11 @@
 
 - fixed size of 64-bit integers, they now have 64 bits, not 32
 
+### 1.7
+
+2018-03-14
+
+### Improved
+
+- add support for // comments
+
