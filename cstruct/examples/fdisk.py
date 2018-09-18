@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #*****************************************************************************
 #
 # Copyright (c) 2013 Andrea Bonomi <andrea.bonomi@gmail.com>
@@ -77,12 +78,11 @@ def main():
     if len(sys.argv) != 2:
         print("usage: %s disk" % sys.argv[0])
         sys.exit(2)
-    f = open(sys.argv[1], "rb")
-    mbr = MBR()
-    data = f.read(len(mbr))
-    mbr.unpack(data)
-    mbr.print_info()
-    f.close()
+    with open(sys.argv[1], "rb") as f:
+        mbr = MBR()
+        data = f.read(len(mbr))
+        mbr.unpack(data)
+        mbr.print_info()
 
 if __name__ == "__main__":
         main()

@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #*****************************************************************************
 #
 # Copyright (c) 2013 Andrea Bonomi <andrea.bonomi@gmail.com>
@@ -55,7 +56,6 @@ define("UT_HOSTSIZE", 256)
 
 typedef("int", "pid_t")
 typedef("long", "time_t")
-typedef("int32", "int32_t")
 
 class ExitStatus(CStruct):
     __struct__ = """
@@ -69,7 +69,7 @@ class Timeval(CStruct):
     """
 
 def str_from_c(string):
-    return string.split("\0")[0];
+    return string.decode().split("\0")[0]
 
 class Utmp(CStruct):
     __struct__ = """
@@ -99,7 +99,7 @@ class Utmp(CStruct):
                     str_from_c(self.ut_host) and "(%s)" % str_from_c(self.ut_host) or str_from_c(self.ut_id) and "id=%s" % str_from_c(self.ut_id) or ""))
 
 def main():
-    utmp = len(sys.argv) > 1 and  sys.argv[1] or "/var/run/utmp"
+    utmp = len(sys.argv) > 1 and sys.argv[1] or "/var/run/utmp"
     with open(utmp, "rb") as f:
         utmp = Utmp()
         data = f.read(len(utmp))
