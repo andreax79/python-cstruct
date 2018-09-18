@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """C-style structs for Python
 
@@ -73,7 +74,7 @@ f.close()
 
 #*****************************************************************************
 #
-# Copyright (c) 2013-2017 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2018 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #
@@ -99,7 +100,7 @@ f.close()
 
 __author__  = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
 __license__ = 'MIT'
-__version__ = '1.6'
+__version__ = '1.8'
 __date__ = '15 August 2013'
 
 import re
@@ -137,13 +138,21 @@ C_TYPE_TO_FORMAT = {
     'double':               'd',
     'void *':               'P',
     'int8':                 'b',
+    'int8_t':               'b',
     'uint8':                'B',
+    'uint8_t':              'B',
     'int16':                'h',
+    'int16_t':              'h',
     'uint16':               'H',
+    'uint16_t':             'H',
     'int32':                'i',
+    'int32_t':              'i',
     'uint32':               'I',
+    'uint32_t':             'I',
     'int64':                'q',
+    'int64_t':              'q',
     'uint64':               'Q',
+    'uint64_t':             'Q',
 }
 
 STRUCTS = {
