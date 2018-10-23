@@ -281,7 +281,7 @@ _CStructParent = CStructMeta('_CStructParent', (object, ), {})
 if sys.version_info < (2, 6):
     EMPTY_BYTES_STRING = str()
     CHAR_ZERO = '\0'
-if sys.version_info < (3, 0):
+elif sys.version_info < (3, 0):
     EMPTY_BYTES_STRING = bytes()
     CHAR_ZERO = bytes('\0')
 else:
