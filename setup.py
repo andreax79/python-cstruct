@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.7'
+version = '1.8'
 
 def readme():
     try:
@@ -18,7 +18,6 @@ Convert C struct definitions into Python classes with methods for serializing/de
           'Operating System :: OS Independent',
           'Programming Language :: Python',
           'Topic :: Software Development :: Libraries :: Python Modules',
-          'Programming Language :: Python :: 2.4',
           'Programming Language :: Python :: 2.5',
           'Programming Language :: Python :: 2.6',
           'Programming Language :: Python :: 2.7',
@@ -30,6 +29,7 @@ Convert C struct definitions into Python classes with methods for serializing/de
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
       ],
       keywords='struct',
       author='Andrea Bonomi',

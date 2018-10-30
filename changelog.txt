@@ -62,3 +62,16 @@
 
 - add support for // comments
 
+### 1.8
+
+2018-10-30
+
+### Improved
+
+- add *_t types
+
+### Fix
+
+- fix python 2.5 support in main module
+- examples fix
+
