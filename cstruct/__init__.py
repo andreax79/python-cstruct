@@ -312,8 +312,9 @@ class CStruct(_CStructParent):
                 self.unpack(string)
             except:
                 pass
+        self.__values__ = {}
         for key, value in kargs.items():
-            setattr(self, key, value)
+            self.__values__[key] = value
 
     def unpack(self, string):
         """
@@ -326,29 +327,29 @@ class CStruct(_CStructParent):
         for field in self.__fields__:
             (vtype, vlen) = self.__fields_types__[field]
             if vtype == 'char': # string
-                setattr(self, field, data[i])
-                i = i + 1
+                self.__values__[field] = data[i]
+                i += 1
             elif isinstance(vtype, CStructMeta):
                 num = int(vlen / vtype.size)
                 if num == 1: # single struct
                     sub_struct = vtype()
                     sub_struct.unpack(EMPTY_BYTES_STRING.join(data[i:i+sub_struct.size]))
-                    setattr(self, field, sub_struct)
-                    i = i + sub_struct.size
+                    self.__values__[field] = sub_struct
+                    i += sub_struct.size
                 else: # multiple struct
                     sub_structs = []
                     for j in range(0, num):
                         sub_struct = vtype()
                         sub_struct.unpack(EMPTY_BYTES_STRING.join(data[i:i+sub_struct.size]))
-                        i = i + sub_struct.size
+                        i += sub_struct.size
                         sub_structs.append(sub_struct)
-                    setattr(self, field, sub_structs)
+                    self.__values__[field] = sub_structs
             elif vlen == 1:
-                setattr(self, field, data[i])
-                i = i + vlen
+                self.__values__[field] = data[i]
+                i += vlen
             else:
-                setattr(self, field, list(data[i:i+vlen]))
-                i = i + vlen
+                self.__values__[field] = list(data[i:i+vlen])
+                i += vlen
 
     def pack(self):
         """
@@ -358,17 +359,17 @@ class CStruct(_CStructParent):
         for field in self.__fields__:
             (vtype, vlen) = self.__fields_types__[field]
             if vtype == 'char': # string
-                data.append(getattr(self, field))
+                data.append(self.__values__.get(field))
             elif isinstance(vtype, CStructMeta):
                 num = int(vlen / vtype.size)
                 if num == 1: # single struct
-                    v = getattr(self, field, vtype())
+                    v = self.__values__.get(field, vtype())
                     v = v.pack()
                     if sys.version_info >= (3, 0):
                         v = ([bytes([x]) for x in v])
                     data.extend(v)
                 else: # multiple struct
-                    values = getattr(self, field, [])
+                    values = self.__values__.get(field, [])
                     for j in range(0, num):
                         try:
                             v = values[j]
@@ -379,12 +380,25 @@ class CStruct(_CStructParent):
                             v = ([bytes([x]) for x in v])
                         data.extend(v)
             elif vlen == 1:
-                data.append(getattr(self, field))
+                data.append(self.__values__.get(field))
             else:
-                v = getattr(self, field)
+                v = self.__values__.get(field)
                 v = v[:vlen] + [0] * (vlen - len(v))
                 data.extend(v)
         return struct.pack(self.__fmt__, *data)
+
+    def __getattr__(self, name):
+        if name in self.__fields__:
+            try:
+                return self.__values__[name]
+            except KeyError:
+                raise AttributeError("'{}' object has no attribute '{}'".format(self.__name__, name))
+        return super(CStruct, self).__getattr__(name)
+
+    def __setattr__(self, name, value):
+        if name in self.__fields__:
+            self.__values__[name] = value
+        super(CStruct, self).__setattr__(name, value)
 
     def clear(self):
         self.unpack(None)
