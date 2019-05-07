@@ -182,12 +182,13 @@ class CStructMeta(type):
         __struct__ = dict.get("__struct__", None)
         if __struct__ is not None:
             dict['__fmt__'], dict['__fields__'], dict['__fields_types__'] = mcs.parse_struct(__struct__)
+            dict['__values__'] = {}
             if '__byte_order__' in dict:
                 dict['__fmt__'] = dict['__byte_order__'] + dict['__fmt__']
             # Add the missing fields to the class
             for field in dict['__fields__']:
-                if field not in dict:
-                    dict[field] = None
+                if field not in dict['__values__']:
+                    dict['__values__'][field] = None
             # Calculate the structure size
             dict['__size__'] = struct.calcsize(dict['__fmt__'])
         new_class = type.__new__(mcs, name, bases, dict)
