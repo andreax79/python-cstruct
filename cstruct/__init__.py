@@ -14,7 +14,7 @@ serializing the values into a string.
 Example:
 The following program reads the DOS partition information from a disk.
 
-#!/usr/bin/python
+#!/usr/bin/env python
 import cstruct
 
 class Position(cstruct.CStruct):
@@ -63,18 +63,17 @@ class MBR(cstruct.CStruct):
             partition.print_info()
 
 disk = "mbr"
-f = open(disk, "rb")
-mbr = MBR()
-data = f.read(len(mbr))
-mbr.unpack(data)
-mbr.print_info()
-f.close()
+with open(disk, "rb") as f:
+    mbr = MBR()
+    data = f.read(len(mbr))
+    mbr.unpack(data)
+    mbr.print_info()
 
 """
 
 #*****************************************************************************
 #
-# Copyright (c) 2013-2018 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #
@@ -100,22 +99,30 @@ f.close()
 
 __author__  = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
 __license__ = 'MIT'
-__version__ = '1.8'
+__version__ = '1.9'
 __date__ = '15 August 2013'
 
 import re
 import struct
 import sys
+import hashlib
+from collections import namedtuple
 
-__all__ = ['LITTLE_ENDIAN',
-           'BIG_ENDIAN',
-           'CStruct',
-           'define',
-           'typedef',
-          ]
+__all__ = [
+    'LITTLE_ENDIAN',
+    'BIG_ENDIAN',
+    'CStruct',
+    'define',
+    'typedef',
+    'factory'
+]
 
+# little-endian, std. size & alignment
 LITTLE_ENDIAN = '<'
+# big-endian, std. size & alignment
 BIG_ENDIAN = '>'
+# native order, size & alignment
+NATIVE_ORDER = '@'
 
 C_TYPE_TO_FORMAT = {
     'char':                 's',
@@ -176,66 +183,75 @@ def typedef(type_, alias):
     """
     TYPEDEFS[alias] = type_
 
-class CStructMeta(type):
+FieldType = namedtuple('FieldType', [ 'vtype', 'vlen', 'vfmt', 'prefixed_vfmt', 'flexible_array' ])
 
-    def __new__(mcs, name, bases, dict):
-        __struct__ = dict.get("__struct__", None)
-        if __struct__ is not None:
-            dict['__fmt__'], dict['__fields__'], dict['__fields_types__'] = mcs.parse_struct(__struct__)
-            if '__byte_order__' in dict:
-                dict['__fmt__'] = dict['__byte_order__'] + dict['__fmt__']
-            # Add the missing fields to the class
-            for field in dict['__fields__']:
-                if field not in dict:
-                    dict[field] = None
-            # Calculate the structure size
-            dict['__size__'] = struct.calcsize(dict['__fmt__'])
-        new_class = type.__new__(mcs, name, bases, dict)
-        if __struct__ is not None:
-            STRUCTS[name] = new_class
-        return new_class
+def factory(__struct__, __name__=None, **kargs):
+    """
+    Return a new class mapping a C struct definition.
 
-    @staticmethod
-    def parse_struct(st):
-        # naive C struct parsing
-        fmt = []
-        fields = []
-        fields_types = {}
-        # remove the comments
-        st = st.replace("*/","*/\n")
-        st = "  ".join(re.split("/\*.*\*/",st))
-        st = "\n".join([s.split("//")[0] for s in st.split("\n")])
-        st = st.replace("\n", " ")
-        for line_s in st.split(";"):
-            line_s = line_s.strip()
-            if line_s:
-                line = line_s.split()
-                if len(line) < 2:
-                    raise Exception("Error parsing: " + line_s)
-                vtype = line[0].strip()
-                # signed/unsigned/struct
-                if vtype == 'unsigned' or vtype == 'signed' or vtype == 'struct' and len(line) > 2:
-                    vtype = vtype + " " + line[1].strip()
-                    del line[0]
+    :param __struct__:     definition of the struct (or union) in C syntax
+    :param __name__:       (optional) name of the new class. If empty, a name based on the __struct__ hash is generated
+    :param __byte_order__: (optional) byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
+    :param _is_union__:    (optional) True for union, False for struct (default)
+    :returns:              CStruct subclass
+    """
+    kargs = dict(kargs)
+    kargs['__struct__'] = __struct__
+    if __name__ is None: # Anonymous struct
+        __name__ = 'CStruct%s' % hashlib.sha1(__struct__.encode('utf-8')).hexdigest()
+        kargs['__anonymous__'] = True
+    kargs['__name__'] = __name__
+    return type(__name__, (CStruct,), kargs)
+
+def parse_struct(__struct__, __fields__=None, __is_union__=False, __byte_order__=None, **kargs):
+    __is_union__ = bool(__is_union__)
+    # naive C struct parsing
+    fmt = []
+    fields = []
+    fields_types = {}
+    # remove the comments
+    st = __struct__.replace("*/","*/\n")
+    st = "  ".join(re.split("/\*.*\*/",st))
+    st = "\n".join([s.split("//")[0] for s in st.split("\n")])
+    st = st.replace("\n", " ")
+    flexible_array = False
+    for line_s in st.split(";"):
+        line_s = line_s.strip()
+        if line_s:
+            line = line_s.split()
+            if len(line) < 2:
+                raise Exception("Error parsing: " + line_s)
+            # flexible array member must be the last member of such a struct
+            if flexible_array:
+                raise Exception("Flexible array member must be the last member of such a struct")
+            vtype = line[0].strip()
+            # signed/unsigned/struct
+            if vtype == 'unsigned' or vtype == 'signed' or vtype == 'struct' and len(line) > 2:
+                vtype = vtype + " " + line[1].strip()
+                del line[0]
+            vname = line[1]
+            # short int, long int, or long long
+            if vname == 'int' or vname == 'long':
+                vtype = vtype + " " + vname
+                del line[0]
                 vname = line[1]
-                # short int, long int, or long long
-                if vname == 'int' or vname == 'long':
-                    vtype = vtype + " " + vname
-                    del line[0]
-                    vname = line[1]
-                # void *
-                if vname.startswith("*"):
-                    vname = vname[1:]
-                    vtype = 'void *'
-                # parse length
-                vlen = 1
-                if "[" in vname:
-                    t = vname.split("[")
-                    if len(t) != 2:
-                        raise Exception("Error parsing: " + line_s)
-                    vname = t[0].strip()
-                    vlen = t[1]
-                    vlen = vlen.split("]")[0].strip()
+            # void *
+            if vname.startswith("*"):
+                vname = vname[1:]
+                vtype = 'void *'
+            # parse length
+            vlen = 1
+            if "[" in vname:
+                t = vname.split("[")
+                if len(t) != 2:
+                    raise Exception("Error parsing: " + line_s)
+                vname = t[0].strip()
+                vlen = t[1]
+                vlen = vlen.split("]")[0].strip()
+                if not vlen:
+                    flexible_array = True
+                    vlen = 0
+                else:
                     try:
                         vlen = int(vlen)
                     except:
@@ -244,27 +260,68 @@ class CStructMeta(type):
                             raise
                         else:
                             vlen = int(vlen)
-                while vtype in TYPEDEFS:
-                    vtype = TYPEDEFS[vtype]
-                if vtype.startswith('struct '):
-                    vtype = vtype[7:]
-                    t = STRUCTS.get(vtype, None)
-                    if t is None:
-                        raise Exception("Unknow struct \"" + vtype + "\"")
-                    vtype = t
-                    ttype = "c"
-                    vlen = vtype.size * vlen
-                else:
-                    ttype = C_TYPE_TO_FORMAT.get(vtype, None)
-                    if ttype is None:
-                        raise Exception("Unknow type \"" + vtype + "\"")
-                fields.append(vname)
-                fields_types[vname] = (vtype, vlen)
-                if vlen > 1:
-                    fmt.append(str(vlen))
-                fmt.append(ttype)
+            while vtype in TYPEDEFS:
+                vtype = TYPEDEFS[vtype]
+            if vtype.startswith('struct '):
+                vtype = vtype[7:]
+                t = STRUCTS.get(vtype, None)
+                if t is None:
+                    raise Exception("Unknow struct \"" + vtype + "\"")
+                vtype = t
+                ttype = "c"
+                vlen = vtype.size * vlen
+            else:
+                ttype = C_TYPE_TO_FORMAT.get(vtype, None)
+                if ttype is None:
+                    raise Exception("Unknow type \"" + vtype + "\"")
+            fields.append(vname)
+            vfmt = (str(vlen) if vlen > 1 or flexible_array else '') + ttype
+            prefixed_vfmt = (__byte_order__ + vfmt) if __byte_order__ is not None else vfmt
+            fields_types[vname] = FieldType(vtype, vlen, vfmt, prefixed_vfmt, flexible_array)
+            fmt.append(vfmt)
+
+    if __is_union__: # C union
+        # Calculate the union size as size of its largest element
+        size = max([struct.calcsize(x.prefixed_vfmt) for x in fields_types.values()])
+        fmt = '%ds' % size
+    else: # C struct
         fmt = "".join(fmt)
-        return fmt, fields, fields_types
+        # Calculate the struct size
+        size = struct.calcsize(fmt)
+
+    # Add the byte order as prefix
+    if __byte_order__ is not None:
+        fmt = __byte_order__ + fmt
+
+    # Prepare the result
+    result = {
+        '__fmt__': fmt,
+        '__fields__': fields,
+        '__fields_types__': fields_types,
+        '__size__': size,
+        '__is_union__': __is_union__,
+        '__byte_order__': __byte_order__
+    }
+
+    # Add the missing fields to the class
+    for field in __fields__ or []:
+        if field not in dict:
+            result[field] = None
+    return result
+
+class CStructMeta(type):
+
+    def __new__(mcs, name, bases, dict):
+        __struct__ = dict.get("__struct__", None)
+        # Parse the struct
+        if __struct__ is not None:
+            dict.update(parse_struct(**dict))
+        # Create the new class
+        new_class = type.__new__(mcs, name, bases, dict)
+        # Register the class
+        if __struct__ is not None and not dict.get('__anonymous__'):
+            STRUCTS[name] = new_class
+        return new_class
 
     def __len__(cls):
         return cls.__size__
@@ -278,22 +335,19 @@ class CStructMeta(type):
 # http://mikewatkins.ca/2008/11/29/python-2-and-3-metaclasses/#using-the-metaclass-in-python-2-x-and-3-x
 _CStructParent = CStructMeta('_CStructParent', (object, ), {})
 
-if sys.version_info < (2, 6):
-    EMPTY_BYTES_STRING = str()
-    CHAR_ZERO = '\0'
-elif sys.version_info < (3, 0):
-    EMPTY_BYTES_STRING = bytes()
+EMPTY_BYTES_STRING = bytes()
+if sys.version_info < (3, 0):
     CHAR_ZERO = bytes('\0')
 else:
-    EMPTY_BYTES_STRING = bytes()
     CHAR_ZERO = bytes('\0', 'ascii')
 
 class CStruct(_CStructParent):
     """
     Convert C struct definitions into Python classes.
 
-    __struct__ = definition of the struct in C syntax
-    __byte_order__ = (optional) valid values are LITTLE_ENDIAN and BIG_ENDIAN
+    __struct__ = definition of the struct (or union) in C syntax
+    __byte_order__ = (optional) byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
+    __is_union__ = (optional) True for union definitions, False for struct definitions (default)
 
     The following fields are generated from the C struct definition
     __fmt__ = struct format string
@@ -321,34 +375,52 @@ class CStruct(_CStructParent):
         """
         if string is None:
             string = CHAR_ZERO * self.__size__
-        data = struct.unpack(self.__fmt__, string)
+        if not self.__is_union__:
+            data = struct.unpack_from(self.__fmt__, string, 0)
         i = 0
         for field in self.__fields__:
-            (vtype, vlen) = self.__fields_types__[field]
-            if vtype == 'char': # string
-                setattr(self, field, data[i])
+            field_type = self.__fields_types__[field]
+            if field_type.flexible_array: # TODO
+                raise NotImplementedError("Flexible array member are not supported")
+            if field_type.vtype == 'char': # string
+                if self.__is_union__:
+                    setattr(self, field, struct.unpack_from(field_type.prefixed_vfmt, string, 0)[0])
+                else:
+                    setattr(self, field, data[i])
                 i = i + 1
-            elif isinstance(vtype, CStructMeta):
-                num = int(vlen / vtype.size)
+            elif isinstance(field_type.vtype, CStructMeta):
+                num = int(field_type.vlen / field_type.vtype.size)
                 if num == 1: # single struct
-                    sub_struct = vtype()
-                    sub_struct.unpack(EMPTY_BYTES_STRING.join(data[i:i+sub_struct.size]))
+                    sub_struct = field_type.vtype()
+                    if self.__is_union__:
+                        sub_struct.unpack(string)
+                    else:
+                        sub_struct.unpack(EMPTY_BYTES_STRING.join(data[i:i+sub_struct.size]))
                     setattr(self, field, sub_struct)
                     i = i + sub_struct.size
                 else: # multiple struct
                     sub_structs = []
                     for j in range(0, num):
-                        sub_struct = vtype()
-                        sub_struct.unpack(EMPTY_BYTES_STRING.join(data[i:i+sub_struct.size]))
+                        sub_struct = field_type.vtype()
+                        if self.__is_union__:
+                            sub_struct.unpack(string[j*sub_struct.size:(j+1)*sub_struct.size])
+                        else:
+                            sub_struct.unpack(EMPTY_BYTES_STRING.join(data[i:i+sub_struct.size]))
                         i = i + sub_struct.size
                         sub_structs.append(sub_struct)
                     setattr(self, field, sub_structs)
-            elif vlen == 1:
-                setattr(self, field, data[i])
-                i = i + vlen
+            elif field_type.vlen == 1:
+                if self.__is_union__:
+                    setattr(self, field, struct.unpack_from(field_type.prefixed_vfmt, string, 0)[0])
+                else:
+                    setattr(self, field, data[i])
+                i = i + field_type.vlen
             else:
-                setattr(self, field, list(data[i:i+vlen]))
-                i = i + vlen
+                if self.__is_union__:
+                    setattr(self, field, list(struct.unpack_from(field_type.prefixed_vfmt, string, 0)[0]))
+                else:
+                    setattr(self, field, list(data[i:i+field_type.vlen]))
+                i = i + field_type.vlen
 
     def pack(self):
         """
@@ -356,13 +428,15 @@ class CStruct(_CStructParent):
         """
         data = []
         for field in self.__fields__:
-            (vtype, vlen) = self.__fields_types__[field]
-            if vtype == 'char': # string
+            field_type = self.__fields_types__[field]
+            if field_type.flexible_array: # TODO
+                raise NotImplementedError("Flexible array member are not supported")
+            if field_type.vtype == 'char': # string
                 data.append(getattr(self, field))
-            elif isinstance(vtype, CStructMeta):
-                num = int(vlen / vtype.size)
+            elif isinstance(field_type.vtype, CStructMeta):
+                num = int(field_type.vlen / field_type.vtype.size)
                 if num == 1: # single struct
-                    v = getattr(self, field, vtype())
+                    v = getattr(self, field, field_type.vtype())
                     v = v.pack()
                     if sys.version_info >= (3, 0):
                         v = ([bytes([x]) for x in v])
@@ -373,16 +447,16 @@ class CStruct(_CStructParent):
                         try:
                             v = values[j]
                         except:
-                            v = vtype()
+                            v = field_type.vtype()
                         v = v.pack()
                         if sys.version_info >= (3, 0):
                             v = ([bytes([x]) for x in v])
                         data.extend(v)
-            elif vlen == 1:
+            elif field_type.vlen == 1:
                 data.append(getattr(self, field))
             else:
                 v = getattr(self, field)
-                v = v[:vlen] + [0] * (vlen - len(v))
+                v = v[:field_type.vlen] + [0] * (field_type.vlen - len(v))
                 data.extend(v)
         return struct.pack(self.__fmt__, *data)
 

@@ -18,7 +18,7 @@ Example
 The following program reads the DOS partition information from a disk.
 
 ```python
-#!/usr/bin/python
+#!/usr/bin/env python
 import cstruct
 
 class Position(cstruct.CStruct):

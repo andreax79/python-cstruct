@@ -75,3 +75,16 @@
 - fix python 2.5 support in main module
 - examples fix
 
+### 1.9
+
+2019-07-XX
+
+### Improved
+
+- drop python < 2.6 support
+
+### Added
+
+- flexible array parsing
+- union initial support
+

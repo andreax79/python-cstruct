@@ -1,16 +1,12 @@
 from setuptools import setup, find_packages
-
-version = '1.8'
+from cstruct import __version__
 
 def readme():
-    try:
-        f = open('README.md')
+    with open('README.md') as f:
         return f.read()
-    finally:
-        f.close()
 
 setup(name='cstruct',
-      version=version,
+      version=__version__,
       description="C-style structs for Python",
       long_description="""\
 Convert C struct definitions into Python classes with methods for serializing/deserializing.""",
@@ -18,7 +14,6 @@ Convert C struct definitions into Python classes with methods for serializing/de
           'Operating System :: OS Independent',
           'Programming Language :: Python',
           'Topic :: Software Development :: Libraries :: Python Modules',
-          'Programming Language :: Python :: 2.5',
           'Programming Language :: Python :: 2.6',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3',
@@ -30,13 +25,14 @@ Convert C struct definitions into Python classes with methods for serializing/de
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
+          'Programming Language :: Python :: 3.8',
       ],
       keywords='struct',
       author='Andrea Bonomi',
       author_email='andrea.bonomi@gmail.com',
       url='http://github.com/andreax79/python-cstruct',
       license='MIT',
-      packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+      packages=find_packages(exclude=['ez_setup', 'examples']),
       include_package_data=True,
       zip_safe=True,
       install_requires=[
@@ -45,4 +41,6 @@ Convert C struct definitions into Python classes with methods for serializing/de
       entry_points="""
       # -*- Entry points: -*-
       """,
-      )
+      test_suite='nose.collector',
+      tests_require=['nose'],
+)
