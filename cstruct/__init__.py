@@ -105,13 +105,14 @@ __date__ = '15 August 2013'
 import re
 import struct
 import sys
+import array
 import hashlib
-from collections import namedtuple
 
 __all__ = [
     'LITTLE_ENDIAN',
     'BIG_ENDIAN',
     'CStruct',
+    'MemCStruct',
     'define',
     'typedef',
     'factory'
@@ -183,7 +184,55 @@ def typedef(type_, alias):
     """
     TYPEDEFS[alias] = type_
 
-FieldType = namedtuple('FieldType', [ 'vtype', 'vlen', 'vfmt', 'prefixed_vfmt', 'flexible_array' ])
+
+class FieldType(object):
+
+    def __init__(self, vtype, vlen, vsize, fmt, offset, flexible_array):
+        """
+        Struct/Union field
+
+        :param vtype: field type
+        :param vlen: number of elements
+        :param vsize: size in bytes
+        :param fmt: struct format prefixed by byte order
+        :param offset: relative memory position of the field (relative to the struct)
+        :param flexible_array: True for flexible arrays
+        """
+        self.vtype = vtype
+        self.vlen = vlen
+        self.vsize = vsize
+        self.fmt = fmt
+        self.offset = offset
+        self.flexible_array = flexible_array
+
+    def unpack_from(self, buffer, offset=0):
+        if self.flexible_array: # TODO
+            raise NotImplementedError("Flexible array member are not supported")
+        if isinstance(self.vtype, CStructMeta):
+            if self.vlen == 1: # single struct/union
+                result = self.vtype()
+                result.unpack_from(buffer, self.offset + offset)
+                return result
+            else: # multiple struct/union
+                result = []
+                for j in range(0, self.vlen):
+                    sub_struct = self.vtype()
+                    sub_struct.unpack_from(buffer, self.offset + offset + j * sub_struct.size)
+                    result.append(sub_struct)
+                return result
+        else:
+            result = struct.unpack_from(self.fmt, buffer, self.offset + offset)
+            if self.vlen == 1 or self.vtype == 'char':
+                return result[0]
+            else:
+                return list(result)
+
+    def pack(self, data):
+        if self.vlen == 1 or self.vtype == 'char':
+            return struct.pack(self.fmt, data)
+        else:
+            return struct.pack(self.fmt, *data)
+
 
 def factory(__struct__, __name__=None, **kargs):
     """
@@ -192,7 +241,7 @@ def factory(__struct__, __name__=None, **kargs):
     :param __struct__:     definition of the struct (or union) in C syntax
     :param __name__:       (optional) name of the new class. If empty, a name based on the __struct__ hash is generated
     :param __byte_order__: (optional) byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
-    :param _is_union__:    (optional) True for union, False for struct (default)
+    :param __is_union__:   (optional) True for union, False for struct (default)
     :returns:              CStruct subclass
     """
     kargs = dict(kargs)
@@ -215,6 +264,7 @@ def parse_struct(__struct__, __fields__=None, __is_union__=False, __byte_order__
     st = "\n".join([s.split("//")[0] for s in st.split("\n")])
     st = st.replace("\n", " ")
     flexible_array = False
+    offset = 0
     for line_s in st.split(";"):
         line_s = line_s.strip()
         if line_s:
@@ -269,25 +319,26 @@ def parse_struct(__struct__, __fields__=None, __is_union__=False, __byte_order__
                     raise Exception("Unknow struct \"" + vtype + "\"")
                 vtype = t
                 ttype = "c"
-                vlen = vtype.size * vlen
+                fmt = str(vlen * vtype.size) + ttype
             else:
                 ttype = C_TYPE_TO_FORMAT.get(vtype, None)
                 if ttype is None:
                     raise Exception("Unknow type \"" + vtype + "\"")
+                fmt = (str(vlen) if vlen > 1 or flexible_array else '') + ttype
             fields.append(vname)
-            vfmt = (str(vlen) if vlen > 1 or flexible_array else '') + ttype
-            prefixed_vfmt = (__byte_order__ + vfmt) if __byte_order__ is not None else vfmt
-            fields_types[vname] = FieldType(vtype, vlen, vfmt, prefixed_vfmt, flexible_array)
-            fmt.append(vfmt)
+            fmt = (__byte_order__ + fmt) if __byte_order__ is not None else fmt
+            vsize = struct.calcsize(fmt)
+            fields_types[vname] = FieldType(vtype, vlen, vsize, fmt, offset, flexible_array)
+            if not __is_union__: # C struct
+                offset = offset + vsize
 
     if __is_union__: # C union
         # Calculate the union size as size of its largest element
-        size = max([struct.calcsize(x.prefixed_vfmt) for x in fields_types.values()])
+        size = max([struct.calcsize(x.fmt) for x in fields_types.values()])
         fmt = '%ds' % size
     else: # C struct
         fmt = "".join(fmt)
-        # Calculate the struct size
-        size = struct.calcsize(fmt)
+        size = offset # (offset is calculated as size sum)
 
     # Add the byte order as prefix
     if __byte_order__ is not None:
@@ -295,7 +346,6 @@ def parse_struct(__struct__, __fields__=None, __is_union__=False, __byte_order__
 
     # Prepare the result
     result = {
-        '__fmt__': fmt,
         '__fields__': fields,
         '__fields_types__': fields_types,
         '__size__': size,
@@ -341,22 +391,8 @@ if sys.version_info < (3, 0):
 else:
     CHAR_ZERO = bytes('\0', 'ascii')
 
-class CStruct(_CStructParent):
-    """
-    Convert C struct definitions into Python classes.
 
-    __struct__ = definition of the struct (or union) in C syntax
-    __byte_order__ = (optional) byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
-    __is_union__ = (optional) True for union definitions, False for struct definitions (default)
-
-    The following fields are generated from the C struct definition
-    __fmt__ = struct format string
-    __size__ = lenght of the structure in bytes
-    __fields__ = list of structure fields
-    __fields_types__ = dictionary mapping field names to types
-    Every fields defined in the structure is added to the class
-
-    """
+class AbstractCStruct(_CStructParent):
 
     def __init__(self, string=None, **kargs):
         if string is not None:
@@ -369,96 +405,23 @@ class CStruct(_CStructParent):
         for key, value in kargs.items():
             setattr(self, key, value)
 
-    def unpack(self, string):
+    def unpack(self, buffer):
         """
         Unpack the string containing packed C structure data
         """
-        if string is None:
-            string = CHAR_ZERO * self.__size__
-        if not self.__is_union__:
-            data = struct.unpack_from(self.__fmt__, string, 0)
-        i = 0
-        for field in self.__fields__:
-            field_type = self.__fields_types__[field]
-            if field_type.flexible_array: # TODO
-                raise NotImplementedError("Flexible array member are not supported")
-            if field_type.vtype == 'char': # string
-                if self.__is_union__:
-                    setattr(self, field, struct.unpack_from(field_type.prefixed_vfmt, string, 0)[0])
-                else:
-                    setattr(self, field, data[i])
-                i = i + 1
-            elif isinstance(field_type.vtype, CStructMeta):
-                num = int(field_type.vlen / field_type.vtype.size)
-                if num == 1: # single struct
-                    sub_struct = field_type.vtype()
-                    if self.__is_union__:
-                        sub_struct.unpack(string)
-                    else:
-                        sub_struct.unpack(EMPTY_BYTES_STRING.join(data[i:i+sub_struct.size]))
-                    setattr(self, field, sub_struct)
-                    i = i + sub_struct.size
-                else: # multiple struct
-                    sub_structs = []
-                    for j in range(0, num):
-                        sub_struct = field_type.vtype()
-                        if self.__is_union__:
-                            sub_struct.unpack(string[j*sub_struct.size:(j+1)*sub_struct.size])
-                        else:
-                            sub_struct.unpack(EMPTY_BYTES_STRING.join(data[i:i+sub_struct.size]))
-                        i = i + sub_struct.size
-                        sub_structs.append(sub_struct)
-                    setattr(self, field, sub_structs)
-            elif field_type.vlen == 1:
-                if self.__is_union__:
-                    setattr(self, field, struct.unpack_from(field_type.prefixed_vfmt, string, 0)[0])
-                else:
-                    setattr(self, field, data[i])
-                i = i + field_type.vlen
-            else:
-                if self.__is_union__:
-                    setattr(self, field, list(struct.unpack_from(field_type.prefixed_vfmt, string, 0)[0]))
-                else:
-                    setattr(self, field, list(data[i:i+field_type.vlen]))
-                i = i + field_type.vlen
+        return self.unpack_from(buffer)
+
+    def unpack_from(self, buffer, offset=0):
+        """
+        Unpack the string containing packed C structure data
+        """
+        return NotImplemented
 
     def pack(self):
         """
         Pack the structure data into a string
         """
-        data = []
-        for field in self.__fields__:
-            field_type = self.__fields_types__[field]
-            if field_type.flexible_array: # TODO
-                raise NotImplementedError("Flexible array member are not supported")
-            if field_type.vtype == 'char': # string
-                data.append(getattr(self, field))
-            elif isinstance(field_type.vtype, CStructMeta):
-                num = int(field_type.vlen / field_type.vtype.size)
-                if num == 1: # single struct
-                    v = getattr(self, field, field_type.vtype())
-                    v = v.pack()
-                    if sys.version_info >= (3, 0):
-                        v = ([bytes([x]) for x in v])
-                    data.extend(v)
-                else: # multiple struct
-                    values = getattr(self, field, [])
-                    for j in range(0, num):
-                        try:
-                            v = values[j]
-                        except:
-                            v = field_type.vtype()
-                        v = v.pack()
-                        if sys.version_info >= (3, 0):
-                            v = ([bytes([x]) for x in v])
-                        data.extend(v)
-            elif field_type.vlen == 1:
-                data.append(getattr(self, field))
-            else:
-                v = getattr(self, field)
-                v = v[:field_type.vlen] + [0] * (field_type.vlen - len(v))
-                data.extend(v)
-        return struct.pack(self.__fmt__, *data)
+        return NotImplemented
 
     def clear(self):
         self.unpack(None)
@@ -487,3 +450,151 @@ class CStruct(_CStructParent):
     def __repr__(self):
         return self.__str__()
 
+
+class CStruct(AbstractCStruct):
+    """
+    Convert C struct definitions into Python classes.
+
+    __struct__ = definition of the struct (or union) in C syntax
+    __byte_order__ = (optional) byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
+    __is_union__ = (optional) True for union definitions, False for struct definitions (default)
+
+    The following fields are generated from the C struct definition
+    __size__ = lenght of the structure in bytes
+    __fields__ = list of structure fields
+    __fields_types__ = dictionary mapping field names to types
+    Every fields defined in the structure is added to the class
+
+    """
+
+    def unpack_from(self, buffer, offset=0):
+        """
+        Unpack the string containing packed C structure data
+        """
+        if buffer is None:
+            buffer = CHAR_ZERO * self.__size__
+        for field, field_type in self.__fields_types__.items():
+            setattr(self, field, field_type.unpack_from(buffer, offset))
+
+    def pack(self):
+        """
+        Pack the structure data into a string
+        """
+        result = []
+        for field in self.__fields__:
+            field_type = self.__fields_types__[field]
+            if isinstance(field_type.vtype, CStructMeta):
+                if field_type.vlen == 1: # single struct
+                    v = getattr(self, field, field_type.vtype())
+                    v = v.pack()
+                    result.append(v)
+                else: # multiple struct
+                    values = getattr(self, field, [])
+                    for j in range(0, field_type.vlen):
+                        try:
+                            v = values[j]
+                        except:
+                            v = field_type.vtype()
+                        v = v.pack()
+                        result.append(v)
+            else:
+                data = getattr(self, field)
+                result.append(field_type.pack(data))
+        return EMPTY_BYTES_STRING.join(result)
+
+
+class CStructList(list):
+
+    def __init__(self, values=None, name=None, parent=None):
+        list.__init__(self, values)
+        self.name = name
+        self.parent = parent
+
+    def __setitem__(self, key, value):
+        list.__setitem__(self, key, value)
+        # Notify the parent when a value is changed
+        if self.parent is not None:
+            self.parent.on_change_list(self.name, key, value)
+
+
+class MemCStruct(AbstractCStruct):
+    """
+    Convert C struct definitions into Python classes.
+
+    __struct__ = definition of the struct (or union) in C syntax
+    __byte_order__ = (optional) byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
+    __is_union__ = (optional) True for union definitions, False for struct definitions (default)
+
+    The following fields are generated from the C struct definition
+    __mem_ = representation of the memory as an array of bytes
+    __size__ = lenght of the structure in bytes
+    __fields__ = list of structure fields
+    __fields_types__ = dictionary mapping field names to types
+    Every fields defined in the structure is added to the class
+
+    """
+
+    def unpack_from(self, buffer, offset=0):
+        """
+        Unpack the string containing packed C structure data
+        """
+        self.__base__ = offset # Base offset
+        if buffer is None:
+            self.__mem__ = array.array('B', CHAR_ZERO * self.__size__)
+        elif isinstance(buffer, array.array):
+            self.__mem__ = buffer
+        else:
+            self.__mem__ = array.array('B', buffer)
+        for field, field_type in self.__fields_types__.items():
+            if field_type.flexible_array: # TODO
+                raise NotImplementedError("Flexible array member are not supported")
+            if isinstance(field_type.vtype, CStructMeta):
+                setattr(self, field, field_type.unpack_from(self.__mem__, offset))
+
+    def memcpy(self, destination, source, num):
+        """
+        Copies the values of num bytes from source to the struct memory
+
+        :param destination: destination address
+        :param source: source data to be copied
+        :param num: Number of bytes to copy.
+        """
+        self.__mem__[ destination: destination + num ] =  array.array('B', source)
+
+    def pack(self):
+        """
+        Pack the structure data into a string
+        """
+        try:
+            return self.__mem__.tobytes()
+        except AttributeError:
+            return self.__mem__.tostring()
+
+    def __getattr__(self, attr):
+        field_type = self.__fields_types__[attr]
+        result = field_type.unpack_from(self.__mem__, self.__base__)
+        if isinstance(result, list):
+            return CStructList(result, name=attr, parent=self)
+        else:
+            return result
+
+    def __setattr__(self, attr, value):
+        field_type = self.__fields_types__.get(attr)
+        if field_type is None:
+            object.__setattr__(self, attr, value)
+        else:
+            if isinstance(field_type.vtype, CStructMeta):
+                object.__setattr__(self, attr, value)
+            else:
+                addr = field_type.offset + self.__base__
+                self.memcpy(addr, field_type.pack(value), field_type.vsize)
+
+    def on_change_list(self, attr, key, value):
+        field_type = self.__fields_types__[attr]
+        # Calculate the single field format and size
+        fmt = (self.__byte_order__ + field_type.fmt[-1]) if self.__byte_order__ is not None else field_type.fmt[-1]
+        size = struct.calcsize(fmt)
+        # Calculate the single field memory position
+        addr = field_type.offset + self.__base__ + size * key
+        # Update the memory
+        self.memcpy(addr, struct.pack(fmt, value), size)
