@@ -114,7 +114,9 @@ __all__ = [
     'CStruct',
     'MemCStruct',
     'define',
+    'undef',
     'typedef',
+    'sizeof',
     'factory'
 ]
 
@@ -174,15 +176,52 @@ TYPEDEFS = {
 
 def define(key, value):
     """
-    Add a definition that can be used in the C struct
+    Define a constant that can be used in the C struct
+
+    :param key: identifier
+    :param value: value of the constant
     """
     DEFINES[key] = value
 
+def undef(key):
+    """
+    Undefine a symbol that was previously defined with define
+
+    :param key: identifier
+    """
+    del DEFINES[key]
+
 def typedef(type_, alias):
     """
-    Define an alias for a data type
+    Define an alias name for a data type
+
+    :param type_: data type
+    :param alias: new alias name
     """
     TYPEDEFS[alias] = type_
+
+def sizeof(type_):
+    """
+    Return the size of the type.
+
+    :param type_: C type, struct or union (e.g. 'short int' or 'struct ZYZ')
+    :return: size in bytes
+    """
+    while type_ in TYPEDEFS:
+        type_ = TYPEDEFS[type_]
+    if type_.startswith('struct '):
+        type_ = type_[7:]
+        t = STRUCTS.get(type_, None)
+        if t is None:
+            raise Exception("Unknow struct \"" + type_ + "\"")
+        else:
+            return t.size
+    else:
+        ttype = C_TYPE_TO_FORMAT.get(type_, None)
+        if ttype is None:
+            raise Exception("Unknow type \"" + type_ + "\"")
+        else:
+            return struct.calcsize(ttype)
 
 
 class FieldType(object):
