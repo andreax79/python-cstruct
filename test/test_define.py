@@ -27,57 +27,38 @@
 
 from unittest import TestCase, main
 import cstruct
-from cstruct import define, sizeof
-import struct
+from cstruct import (define, undef, sizeof, typedef)
 
-class TestUnion(cstruct.CStruct):
-    __is_union__ = True
+class Position(cstruct.CStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __struct__ = """
-        uint8   a;
-        uint8   a1;
-        uint16  b;
-        uint32  c;
-        struct Partition d;
-        struct Partition e[4];
+        unsigned char head;
+        unsigned char sector;
+        unsigned char cyl;
     """
 
-define('INIT_THREAD_SIZE', 2048 * sizeof('long'))
 
-# class TaskUnion(cstruct.CStruct):
-#     __is_union__ = True
-#     __struct__ = """
-#         struct task_struct task;
-#         unsigned long stack[INIT_TASK_SIZE/sizeof(long)];
-#     """
+class TestCaseDefine(TestCase):
 
-class TestCaseUnion(TestCase):
+    def test_sizeof(self):
+        self.assertEqual(sizeof('int'), 4)
+        define('INIT_THREAD_SIZE', 2048 * sizeof('long'))
+        self.assertEqual(cstruct.DEFINES['INIT_THREAD_SIZE'], 16384)
+        self.assertEqual(sizeof('struct Position'), 3)
+        self.assertEqual(sizeof('struct Position'), len(Position))
+        self.assertEqual(sizeof(Position), 3)
+        self.assertRaises(KeyError, lambda : sizeof('bla'))
+        self.assertRaises(KeyError, lambda : sizeof('struct Bla'))
 
-    # def test_sizeof(self):
-    #     self.assertEqual(cstruct.DEFINES['INIT_THREAD_SIZE'], 16384)
-    #     self.assertEqual(sizeof('struct TestUnion'), 64)
-    #
-    def test_union(self):
-        pass
-        #raise Exception()
+    def test_define(self):
+        define('A', 10)
+        self.assertEqual(cstruct.DEFINES['A'], 10)
+        undef('A')
+        self.assertRaises(KeyError, lambda : cstruct.DEFINES['A'])
 
-    def test_union_unpack(self):
-        union = TestUnion()
-        union.unpack(None)
-        self.assertEqual(union.a, 0)
-        self.assertEqual(union.a1, 0)
-        self.assertEqual(union.b, 0)
-        self.assertEqual(union.c, 0)
-        union.unpack(struct.pack('b', 10) + cstruct.CHAR_ZERO * union.size)
-        self.assertEqual(union.a, 10)
-        self.assertEqual(union.a1, 10)
-        self.assertEqual(union.b, 10)
-        self.assertEqual(union.c, 10)
-        union.unpack(struct.pack('h', 1979) + cstruct.CHAR_ZERO * union.size)
-        self.assertEqual(union.a, 187)
-        self.assertEqual(union.a1, 187)
-        self.assertEqual(union.b, 1979)
-        self.assertEqual(union.c, 1979)
+    def test_typedef(self):
+        typedef('int', 'integer')
+        self.assertEqual(sizeof('integer'), 4)
 
 if __name__ == '__main__':
     main()
