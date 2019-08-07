@@ -24,9 +24,8 @@
 # IN THE SOFTWARE.
 #
 
-import array
+import ctypes
 import struct
-from .base import CHAR_ZERO
 from .abstract import (CStructMeta, AbstractCStruct)
 
 class CStructList(list):
@@ -52,7 +51,7 @@ class MemCStruct(AbstractCStruct):
     __is_union__ = (optional) True for union definitions, False for struct definitions (default)
 
     The following fields are generated from the C struct definition
-    __mem_ = representation of the memory as an array of bytes
+    __mem_ = mutable character buffer
     __size__ = lenght of the structure in bytes
     __fields__ = list of structure fields
     __fields_types__ = dictionary mapping field names to types
@@ -62,20 +61,21 @@ class MemCStruct(AbstractCStruct):
 
     def unpack_from(self, buffer, offset=0):
         """
-        Unpack the string containing packed C structure data
+        Unpack bytes containing packed C structure data
         """
         self.__base__ = offset # Base offset
         if buffer is None:
-            self.__mem__ = array.array('B', CHAR_ZERO * self.__size__)
-        elif isinstance(buffer, array.array):
+            self.__mem__ = ctypes.create_string_buffer(self.__size__)
+        elif isinstance(buffer, ctypes.Array):
             self.__mem__ = buffer
         else:
-            self.__mem__ = array.array('B', buffer)
+            self.__mem__ = ctypes.create_string_buffer(buffer)
         for field, field_type in self.__fields_types__.items():
             if field_type.flexible_array: # TODO
                 raise NotImplementedError("Flexible array member are not supported")
             if isinstance(field_type.vtype, CStructMeta):
                 setattr(self, field, field_type.unpack_from(self.__mem__, offset))
+        return True
 
     def memcpy(self, destination, source, num):
         """
@@ -83,18 +83,15 @@ class MemCStruct(AbstractCStruct):
 
         :param destination: destination address
         :param source: source data to be copied
-        :param num: Number of bytes to copy.
+        :param num: Number of bytes to copy
         """
-        self.__mem__[ destination: destination + num ] =  array.array('B', source)
+        ctypes.memmove(ctypes.byref(self.__mem__, destination), source, num)
 
     def pack(self):
         """
-        Pack the structure data into a string
+        Pack the structure data into bytes
         """
-        try:
-            return self.__mem__.tobytes()
-        except AttributeError:
-            return self.__mem__.tostring()
+        return self.__mem__.raw[:-1] # the buffer is one item larger than its size and the last element is NUL
 
     def __getattr__(self, attr):
         field_type = self.__fields_types__[attr]
