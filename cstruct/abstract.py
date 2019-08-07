@@ -25,7 +25,8 @@
 #
 
 from .base import STRUCTS
-from .c_parser import parse_struct
+import hashlib
+from .c_parser import (parse_struct, Tokens)
 
 __all__ = [
     'CStructMeta',
@@ -72,6 +73,27 @@ class AbstractCStruct(_CStructParent):
                 pass
         for key, value in kargs.items():
             setattr(self, key, value)
+
+    @classmethod
+    def parse(cls, __struct__, __name__=None, **kargs):
+        """
+        Return a new class mapping a C struct/union definition.
+
+        :param __struct__:     definition of the struct (or union) in C syntax
+        :param __name__:       (optional) name of the new class. If empty, a name based on the __struct__ hash is generated
+        :param __byte_order__: (optional) byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
+        :param __is_union__:   (optional) True for union, False for struct (default)
+        :returns:              cls subclass
+        """
+        kargs = dict(kargs)
+        if not isinstance(__struct__, Tokens):
+            __struct__ = Tokens(__struct__)
+        kargs['__struct__'] = __struct__
+        if __name__ is None: # Anonymous struct
+            __name__ = cls.__name__ + '_' + hashlib.sha1(str(__struct__).encode('utf-8')).hexdigest()
+            kargs['__anonymous__'] = True
+        kargs['__name__'] = __name__
+        return type(__name__, (cls,), kargs)
 
     def unpack(self, buffer):
         """

@@ -27,6 +27,7 @@
 import re
 import struct
 from .base import (
+    NATIVE_ORDER,
     DEFINES,
     TYPEDEFS,
     STRUCTS,
@@ -38,6 +39,9 @@ __all__ = [
     'Tokens',
     'parse_struct'
 ]
+
+def align(__byte_order__):
+    return __byte_order__ is None or __byte_order__ == NATIVE_ORDER
 
 class FieldType(object):
 
@@ -121,17 +125,16 @@ class Tokens():
         return str(self.tokens)
 
 
-def parse_type(tokens, __cls__):
-    from . import factory
+def parse_type(tokens, __cls__, __byte_order__):
     if len(tokens) < 2:
         raise Exception("Parsing error")
     vtype = tokens.pop()
     # signed/unsigned/struct
-    if vtype == 'unsigned' or vtype == 'signed' or vtype == 'struct' and len(tokens) > 1:
+    if vtype in ['signed', 'unsigned', 'struct', 'union'] and len(tokens) > 1:
         vtype = vtype + " " + tokens.pop()
     next_token = tokens.pop()
     # short int, long int, or long long
-    if next_token == 'int' or next_token == 'long':
+    if next_token in ['int', 'long']:
         vtype = vtype + " " + next_token
         next_token = tokens.pop()
     # void *
@@ -170,9 +173,9 @@ def parse_type(tokens, __cls__):
         kind, vtype = vtype.split(' ', 1)
         if tokens.get() == '{': # Named nested struct
             tokens.pop()
-            vtype = factory(tokens, __name__=vtype, __cls__=__cls__,  __is_union__=__is_union__)
+            vtype = __cls__.parse(tokens, __name__=vtype, __is_union__=__is_union__, __byte_order__=__byte_order__)
         elif vtype == '{': # Unnamed nested struct
-            vtype = factory(tokens, __is_union__=__is_union__)
+            vtype = __cls__.parse(tokens, __is_union__=__is_union__, __byte_order__=__byte_order__)
         else:
             try:
                 vtype = STRUCTS[vtype]
@@ -180,12 +183,18 @@ def parse_type(tokens, __cls__):
                 raise Exception("Unknow %s \"%s\"" % (kind, vtype))
         ttype = "c"
         fmt = str(vlen * vtype.size) + ttype
+        # alignment/
+        alignment = vtype.__alignment__
     else: # other types
         ttype = C_TYPE_TO_FORMAT.get(vtype, None)
         if ttype is None:
             raise Exception("Unknow type \"" + vtype + "\"")
         fmt = (str(vlen) if vlen > 1 or flexible_array else '') + ttype
-    return vtype, vlen, fmt, flexible_array
+        # alignment
+        alignment = struct.calcsize((__byte_order__ + ttype) if __byte_order__ is not None else ttype)
+    fmt = (__byte_order__ + fmt) if __byte_order__ is not None else fmt
+    vsize = struct.calcsize(fmt)
+    return vtype, vlen, vsize, fmt, flexible_array, alignment
 
 
 def parse_struct(__struct__, __cls__=None, __fields__=None, __is_union__=False, __byte_order__=None, **kargs):
@@ -195,6 +204,7 @@ def parse_struct(__struct__, __cls__=None, __fields__=None, __is_union__=False, 
     fields_types = {}
     flexible_array = False
     offset = 0
+    max_alignment = 0
     if isinstance(__struct__, Tokens):
         tokens = __struct__
     else:
@@ -206,11 +216,17 @@ def parse_struct(__struct__, __cls__=None, __fields__=None, __is_union__=False, 
         # flexible array member must be the last member of such a struct
         if flexible_array:
             raise Exception("Flexible array member must be the last member of such a struct")
-        vtype, vlen, fmt, flexible_array = parse_type(tokens, __cls__)
+        vtype, vlen, vsize, fmt, flexible_array, alignment = parse_type(tokens, __cls__, __byte_order__)
         vname = tokens.pop()
         fields.append(vname)
-        fmt = (__byte_order__ + fmt) if __byte_order__ is not None else fmt
-        vsize = struct.calcsize(fmt)
+        # calculate the max field size (for the alignment)
+        max_alignment = max(max_alignment, alignment)
+        # align stuct if byte order is native
+        if not __is_union__ and align(__byte_order__) and vtype != 'char':
+            modulo = offset % alignment
+            if modulo: # not aligned to the field size
+                delta = alignment - modulo
+                offset = offset + delta
         fields_types[vname] = FieldType(vtype, vlen, vsize, fmt, offset, flexible_array)
         if not __is_union__: # C struct
             offset = offset + vsize
@@ -224,6 +240,12 @@ def parse_struct(__struct__, __cls__=None, __fields__=None, __is_union__=False, 
         fmt = '%ds' % size
     else: # C struct
         fmt = "".join(fmt)
+        # add padding to stuct if byte order is native
+        if not __is_union__ and align(__byte_order__):
+            modulo = offset % max_alignment
+            if modulo: # not aligned to the max field size
+                delta = max_alignment - modulo
+                offset = offset + delta
         size = offset # (offset is calculated as size sum)
 
     # Add the byte order as prefix
@@ -236,7 +258,8 @@ def parse_struct(__struct__, __cls__=None, __fields__=None, __is_union__=False, 
         '__fields_types__': fields_types,
         '__size__': size,
         '__is_union__': __is_union__,
-        '__byte_order__': __byte_order__
+        '__byte_order__': __byte_order__,
+        '__alignment__': max_alignment
     }
 
     # Add the missing fields to the class

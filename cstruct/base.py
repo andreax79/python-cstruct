@@ -27,6 +27,10 @@
 import sys
 
 __all__ = [
+    'LITTLE_ENDIAN',
+    'BIG_ENDIAN',
+    'NATIVE_ORDER',
+    'CHAR_ZERO',
     'STRUCTS',
     'DEFINES',
     'TYPEDEFS',
@@ -35,6 +39,13 @@ __all__ = [
     'CHAR_ZERO'
 ]
 
+# little-endian, std. size & alignment
+LITTLE_ENDIAN = '<'
+# big-endian, std. size & alignment
+BIG_ENDIAN = '>'
+# native order, size & alignment
+NATIVE_ORDER = '@'
+
 STRUCTS = {
 }
 
@@ -42,6 +53,19 @@ DEFINES = {
 }
 
 TYPEDEFS = {
+    'short int':            'short',
+    'unsigned short int':   'unsigned short',
+    'ushort':               'unsigned short',
+    'long int':             'long',
+    'unsigned long int':    'unsigned long',
+    'int8_t':               'int8',
+    'uint8_t':              'uint8',
+    'int16_t':              'int16',
+    'uint16_t':             'uint16',
+    'int32_t':              'int32',
+    'uint32_t':             'uint32',
+    'int64_t':              'int64',
+    'uint64_t':             'uint64',
 }
 
 C_TYPE_TO_FORMAT = {
@@ -49,37 +73,24 @@ C_TYPE_TO_FORMAT = {
     'signed char':          'b',
     'unsigned char':        'B',
     'short':                'h',
-    'short int':            'h',
-    'ushort':               'H',
     'unsigned short':       'H',
-    'unsigned short int':   'H',
     'int':                  'i',
     'unsigned int':         'I',
     'long':                 'l',
-    'long int':             'l',
     'unsigned long':        'L',
-    'unsigned long int':    'L',
     'long long':            'q',
     'unsigned long long':   'Q',
     'float':                'f',
     'double':               'd',
     'void *':               'P',
     'int8':                 'b',
-    'int8_t':               'b',
     'uint8':                'B',
-    'uint8_t':              'B',
     'int16':                'h',
-    'int16_t':              'h',
     'uint16':               'H',
-    'uint16_t':             'H',
     'int32':                'i',
-    'int32_t':              'i',
     'uint32':               'I',
-    'uint32_t':             'I',
     'int64':                'q',
-    'int64_t':              'q',
     'uint64':               'Q',
-    'uint64_t':             'Q',
 }
 
 EMPTY_BYTES_STRING = bytes()

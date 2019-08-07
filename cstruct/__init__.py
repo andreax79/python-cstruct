@@ -30,8 +30,10 @@ __version__ = '1.9'
 __date__ = '15 August 2013'
 
 import struct
-import hashlib
 from .base import (
+    LITTLE_ENDIAN,
+    BIG_ENDIAN,
+    NATIVE_ORDER,
     STRUCTS,
     DEFINES,
     TYPEDEFS,
@@ -39,7 +41,6 @@ from .base import (
     CHAR_ZERO,
     EMPTY_BYTES_STRING
 )
-from .c_parser import Tokens
 from .abstract import CStructMeta
 from .cstruct import CStruct
 from .mem_cstruct import MemCStruct
@@ -47,6 +48,7 @@ from .mem_cstruct import MemCStruct
 __all__ = [
     'LITTLE_ENDIAN',
     'BIG_ENDIAN',
+    'NATIVE_ORDER',
     'CHAR_ZERO',
     'EMPTY_BYTES_STRING',
     'CStruct',
@@ -55,15 +57,8 @@ __all__ = [
     'undef',
     'typedef',
     'sizeof',
-    'factory'
+    'parse'
 ]
-
-# little-endian, std. size & alignment
-LITTLE_ENDIAN = '<'
-# big-endian, std. size & alignment
-BIG_ENDIAN = '>'
-# native order, size & alignment
-NATIVE_ORDER = '@'
 
 def define(key, value):
     """
@@ -116,9 +111,9 @@ def sizeof(type_):
         else:
             return struct.calcsize(ttype)
 
-def factory(__struct__, __cls__=None, __name__=None, **kargs):
+def parse(__struct__, __cls__=None, **kargs):
     """
-    Return a new class mapping a C struct definition.
+    Return a new class mapping a C struct/union definition.
 
     :param __struct__:     definition of the struct (or union) in C syntax
     :param __cls__:        (optional) super class - CStruct(default) or MemCStruct
@@ -127,16 +122,7 @@ def factory(__struct__, __cls__=None, __name__=None, **kargs):
     :param __is_union__:   (optional) True for union, False for struct (default)
     :returns:              __cls__ subclass
     """
-    kargs = dict(kargs)
-    if not isinstance(__struct__, Tokens):
-        __struct__ = Tokens(__struct__)
-    kargs['__struct__'] = __struct__
-    if __name__ is None: # Anonymous struct
-        __name__ = 'CStruct%s' % hashlib.sha1(str(__struct__).encode('utf-8')).hexdigest()
-        kargs['__anonymous__'] = True
-    kargs['__name__'] = __name__
     if __cls__ is None:
         __cls__ = CStruct
-    return type(__name__, (__cls__,), kargs) # TODO
-
+    return __cls__.parse(__struct__, **kargs)
 

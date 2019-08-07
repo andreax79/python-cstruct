@@ -169,7 +169,7 @@ class TestCStruct(TestCase):
         self.assertEqual(mbr.partitions[0].end.head, 0x00)
 
     def test_inline(self):
-        TestStruct = cstruct.factory('unsigned char head; unsigned char sector; unsigned char cyl;')
+        TestStruct = cstruct.parse('unsigned char head; unsigned char sector; unsigned char cyl;',__byte_order__=cstruct.LITTLE_ENDIAN)
         s = TestStruct(head=254, sector=63, cyl=134)
         p = Position(head=254, sector=63, cyl=134)
         self.assertEqual(s.pack(), p.pack())

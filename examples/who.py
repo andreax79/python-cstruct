@@ -46,7 +46,7 @@
 #            pts/28       2013-07-30 20:49             24942 id=s/28  term=0 exit=0
 #            pts/27       2013-08-02 17:59             31326 id=s/27  term=0 exit=0
 #012345678901234567890123456789012345678901234567890123456789012345678901234567890
-from cstruct import define, typedef, CStruct
+from cstruct import define, typedef, CStruct, NATIVE_ORDER
 import sys
 import time
 
@@ -69,29 +69,33 @@ class Timeval(CStruct):
     """
 
 def str_from_c(string):
+    #return str(string.split("\0")[0])
     return string.decode().split("\0")[0]
 
 class Utmp(CStruct):
+    __byte_order__ = NATIVE_ORDER
     __struct__ = """
-        short int ut_type;          /* Type of login.  */
-        pid_t ut_pid;               /* Process ID of login process.  */
-        char ut_line[UT_LINESIZE];  /* Devicename.  */
-        char ut_id[4];              /* Inittab ID.  */
-        char ut_user[UT_NAMESIZE];  /* Username.  */
-        char ut_host[UT_HOSTSIZE];  /* Hostname for remote login.  */
-        struct ExitStatus ut_exit;  /* Exit status of a process marked as DEAD_PROCESS.  */
-        int32_t ut_session;         /* Session ID, used for windowing.  */
-        struct Timeval ut_tv;       /* Time entry was made.  */
-        int32_t ut_addr_v6[4];      /* Internet address of remote host.  */
-        char __unused[20];          /* Reserved for future use.  */
+        short   ut_type;              /* Type of record */
+        pid_t   ut_pid;               /* PID of login process */
+        char    ut_line[UT_LINESIZE]; /* Device name of tty - "/dev/" */
+        char    ut_id[4];             /* Terminal name suffix, or inittab(5) ID */
+        char    ut_user[UT_NAMESIZE]; /* Username */
+        char    ut_host[UT_HOSTSIZE]; /* Hostname for remote login, or kernel version for run-level messages */
+        struct  ExitStatus ut_exit;   /* Exit status of a process marked as DEAD_PROCESS; not used by Linux init (1 */
+        int32_t ut_session;           /* Session ID (getsid(2)), used for windowing */
+        struct {
+           int32_t tv_sec;            /* Seconds */
+           int32_t tv_usec;           /* Microseconds */
+        } ut_tv;                      /* Time entry was made */
+        int32_t ut_addr_v6[4];        /* Internet address of remote host; IPv4 address uses just ut_addr_v6[0] */
+        char __unused[20];            /* Reserved for future use */
     """
 
-    def print_info(self):
+    def print_info(self, all_):
         "andreax  + pts/0        2013-08-21 08:58   .         32341 (l26.box)"
         "           pts/34       2013-06-12 15:04             26396 id=s/34  term=0 exit=0"
-#        if self.ut_type not in [6,7]:
-#            return
-        print("%-10s %-12s %15s %15s %-8s" % (
+        if all_ or self.ut_type in [6,7]:
+            print("%-10s %-12s %15s %15s %-8s" % (
                     str_from_c(self.ut_user),
                     str_from_c(self.ut_line),
                     time.strftime("%Y-%m-%d %H:%M", time.gmtime(self.ut_tv.tv_sec)),
@@ -100,12 +104,13 @@ class Utmp(CStruct):
 
 def main():
     utmp = len(sys.argv) > 1 and sys.argv[1] or "/var/run/utmp"
+    all_ = '-a' in sys.argv
     with open(utmp, "rb") as f:
         utmp = Utmp()
         data = f.read(len(utmp))
         while(data):
             utmp.unpack(data)
-            utmp.print_info()
+            utmp.print_info(all_)
             data = f.read(len(utmp))
 
 if __name__ == "__main__":
