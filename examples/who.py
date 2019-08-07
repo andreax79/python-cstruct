@@ -46,7 +46,7 @@
 #            pts/28       2013-07-30 20:49             24942 id=s/28  term=0 exit=0
 #            pts/27       2013-08-02 17:59             31326 id=s/27  term=0 exit=0
 #012345678901234567890123456789012345678901234567890123456789012345678901234567890
-from cstruct import define, typedef, CStruct, NATIVE_ORDER
+from cstruct import define, typedef, MemCStruct, NATIVE_ORDER
 import sys
 import time
 
@@ -57,12 +57,12 @@ define("UT_HOSTSIZE", 256)
 typedef("int", "pid_t")
 typedef("long", "time_t")
 
-class ExitStatus(CStruct):
+class ExitStatus(MemCStruct):
     __struct__ = """
         short   e_termination;      /* Process termination status.  */
         short   e_exit;             /* Process exit status.  */
     """
-class Timeval(CStruct):
+class Timeval(MemCStruct):
     __struct__ = """
         int32_t tv_sec;             /* Seconds.  */
         int32_t tv_usec;            /* Microseconds.  */
@@ -72,7 +72,7 @@ def str_from_c(string):
     #return str(string.split("\0")[0])
     return string.decode().split("\0")[0]
 
-class Utmp(CStruct):
+class Utmp(MemCStruct):
     __byte_order__ = NATIVE_ORDER
     __struct__ = """
         short   ut_type;              /* Type of record */
@@ -107,11 +107,8 @@ def main():
     all_ = '-a' in sys.argv
     with open(utmp, "rb") as f:
         utmp = Utmp()
-        data = f.read(len(utmp))
-        while(data):
-            utmp.unpack(data)
+        while utmp.unpack(f):
             utmp.print_info(all_)
-            data = f.read(len(utmp))
 
 if __name__ == "__main__":
     main()

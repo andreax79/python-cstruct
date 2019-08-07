@@ -45,16 +45,20 @@ class CStruct(AbstractCStruct):
 
     def unpack_from(self, buffer, offset=0):
         """
-        Unpack the string containing packed C structure data
+        Unpack bytes containing packed C structure data
+
+        :param buffer: bytes to be unpacked
+        :param offset: optional buffer offset
         """
         if buffer is None:
             buffer = CHAR_ZERO * self.__size__
         for field, field_type in self.__fields_types__.items():
             setattr(self, field, field_type.unpack_from(buffer, offset))
+        return True
 
     def pack(self):
         """
-        Pack the structure data into a string
+        Pack the structure data into bytes
         """
         result = []
         for field in self.__fields__:

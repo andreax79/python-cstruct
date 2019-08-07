@@ -62,6 +62,9 @@ class MemCStruct(AbstractCStruct):
     def unpack_from(self, buffer, offset=0):
         """
         Unpack bytes containing packed C structure data
+
+        :param buffer: bytes to be unpacked
+        :param offset: optional buffer offset
         """
         self.__base__ = offset # Base offset
         if buffer is None:
@@ -72,7 +75,7 @@ class MemCStruct(AbstractCStruct):
             self.__mem__ = ctypes.create_string_buffer(buffer)
         for field, field_type in self.__fields_types__.items():
             if field_type.flexible_array: # TODO
-                raise NotImplementedError("Flexible array member are not supported")
+                raise NotImplementedError("Flexible array member are not supported") # pragma: no cover
             if isinstance(field_type.vtype, CStructMeta):
                 setattr(self, field, field_type.unpack_from(self.__mem__, offset))
         return True

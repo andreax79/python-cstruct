@@ -28,6 +28,7 @@
 from unittest import TestCase, main
 import cstruct
 from cstruct import (sizeof, typedef)
+import io
 import os
 import sys
 if sys.version_info >= (3, 0):
@@ -128,7 +129,8 @@ class TestCStruct(TestCase):
 
     def test_unpack(self):
         mbr = MBR()
-        mbr.unpack(MBR_DATA)
+        f = io.BytesIO(MBR_DATA)
+        mbr.unpack(f)
         if sys.version_info >= (3, 0):
             self.assertEqual(mbr.signature[0], 0x55)
             self.assertEqual(mbr.signature[1], 0xaa)

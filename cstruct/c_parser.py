@@ -65,7 +65,7 @@ class FieldType(object):
 
     def unpack_from(self, buffer, offset=0):
         if self.flexible_array: # TODO
-            raise NotImplementedError("Flexible array member are not supported")
+            raise NotImplementedError("Flexible array member are not supported") # pragma: no cover
         if isinstance(self.vtype, type): # is class
             if self.vlen == 1: # single struct/union
                 result = self.vtype()

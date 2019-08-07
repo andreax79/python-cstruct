@@ -63,12 +63,12 @@ _CStructParent = CStructMeta('_CStructParent', (object, ), {})
 
 class AbstractCStruct(_CStructParent):
 
-    def __init__(self, string=None, **kargs):
-        if string is not None:
-            self.unpack(string)
+    def __init__(self, buffer=None, **kargs):
+        if buffer is not None:
+            self.unpack(buffer)
         else:
             try:
-                self.unpack(string)
+                self.unpack(buffer)
             except:
                 pass
         for key, value in kargs.items():
@@ -97,19 +97,28 @@ class AbstractCStruct(_CStructParent):
 
     def unpack(self, buffer):
         """
-        Unpack the string containing packed C structure data
+        Unpack bytes containing packed C structure data
+
+        :param buffer: bytes or binary stream to be unpacked
         """
+        if hasattr(buffer, 'read'):
+            buffer = buffer.read(self.__size__)
+            if not buffer:
+                return False
         return self.unpack_from(buffer)
 
     def unpack_from(self, buffer, offset=0): # pragma: no cover
         """
-        Unpack the string containing packed C structure data
+        Unpack bytes containing packed C structure data
+
+        :param buffer: bytes to be unpacked
+        :param offset: optional buffer offset
         """
         return NotImplemented
 
     def pack(self): # pragma: no cover
         """
-        Pack the structure data into a string
+        Pack the structure data into bytes
         """
         return NotImplemented
 
