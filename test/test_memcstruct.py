@@ -38,46 +38,54 @@ else:
 
 class Position(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        unsigned char head;
-        unsigned char sector;
-        unsigned char cyl;
+    __def__ = """
+        struct {
+            unsigned char head;
+            unsigned char sector;
+            unsigned char cyl;
+        }
     """
 
 class Partition(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        unsigned char status;       /* 0x80 - active */
-        struct Position start;
-        unsigned char partition_type;
-        struct Position end;
-        unsigned int start_sect;    /* starting sector counting from 0 */
-        unsigned int sectors;       // nr of sectors in partition
+    __def__ = """
+        struct {
+            unsigned char status;       /* 0x80 - active */
+            struct Position start;
+            unsigned char partition_type;
+            struct Position end;
+            unsigned int start_sect;    /* starting sector counting from 0 */
+            unsigned int sectors;       // nr of sectors in partition
+        }
     """
 
 
 class MBR(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        char unused[440];
-        unsigned char disk_signature[4];
-        unsigned char usualy_nulls[2];
-        struct Partition partitions[4];
-        char signature[2];
+    __def__ = """
+        struct {
+            char unused[440];
+            unsigned char disk_signature[4];
+            unsigned char usualy_nulls[2];
+            struct Partition partitions[4];
+            char signature[2];
+        }
     """
 
 
 class Dummy(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        char c;
-        char vc[10];
-        int i;
-        int vi[10];
-        long long l;
-        long vl[10];
-        float f;
-        float vf[10];
+    __def__ = """
+            struct {
+            char c;
+            char vc[10];
+            int i;
+            int vi[10];
+            long long l;
+            long vl[10];
+            float f;
+            float vf[10];
+        }
     """
 
 typedef('char',  'BYTE')
@@ -86,34 +94,37 @@ typedef('int',   'DWORD')
 
 class PartitionFlat(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        BYTE status;            // 0x80 for bootable, 0x00 for not bootable
-        BYTE startAddrHead;     // head address of start of partition
-        WORD startAddrCylSec;
-        BYTE partType;
-        BYTE endAddrHead;       // head address of start of partition
-        WORD endAddrCylSec;
-        DWORD startLBA;         // address of first sector in partition
-        DWORD endLBA;           // address of last sector in partition
+    __def__ = """
+        struct {
+            BYTE status;            // 0x80 for bootable, 0x00 for not bootable
+            BYTE startAddrHead;     // head address of start of partition
+            WORD startAddrCylSec;
+            BYTE partType;
+            BYTE endAddrHead;       // head address of start of partition
+            WORD endAddrCylSec;
+            DWORD startLBA;         // address of first sector in partition
+            DWORD endLBA;           // address of last sector in partition
+        }
     """
 
 class PartitionNested(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        BYTE status;            // 0x80 for bootable, 0x00 for not bootable
+    __def__ = """
         struct {
-            BYTE addrHead;      // head address of start of partition
-            WORD addrCylSec;
-        } start;
-        BYTE partType;
-        struct b {
-            BYTE addrHead;      // head address of start of partition
-            WORD addrCylSec;
-        } end;
-        DWORD startLBA;         // address of first sector in partition
-        DWORD endLBA;           // address of last sector in partition
+            BYTE status;            // 0x80 for bootable, 0x00 for not bootable
+            struct {
+                BYTE addrHead;      // head address of start of partition
+                WORD addrCylSec;
+            } start;
+            BYTE partType;
+            struct b {
+                BYTE addrHead;      // head address of start of partition
+                WORD addrCylSec;
+            } end;
+            DWORD startLBA;         // address of first sector in partition
+            DWORD endLBA;           // address of last sector in partition
+        }
     """
-
 
 class TestMemCStruct(TestCase):
 
@@ -169,7 +180,7 @@ class TestMemCStruct(TestCase):
         self.assertEqual(mbr.partitions[0].end.head, 0x00)
 
     def test_inline(self):
-        TestStruct = cstruct.MemCStruct.parse('unsigned char head; unsigned char sector; unsigned char cyl;')
+        TestStruct = cstruct.MemCStruct.parse('struct { unsigned char head; unsigned char sector; unsigned char cyl; }',__byte_order__=cstruct.LITTLE_ENDIAN)
         s = TestStruct(head=254, sector=63, cyl=134)
         p = Position(head=254, sector=63, cyl=134)
         self.assertEqual(s.pack(), p.pack())

@@ -23,21 +23,25 @@ import cstruct
 
 class Position(cstruct.CStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        unsigned char head;
-        unsigned char sector;
-        unsigned char cyl;
+    __def__ = """
+        struct {
+            unsigned char head;
+            unsigned char sector;
+            unsigned char cyl;
+        }
     """
 
 class Partition(cstruct.CStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        unsigned char status;       /* 0x80 - active */
-        struct Position start;
-        unsigned char partition_type;
-        struct Position end;
-        unsigned int start_sect;    /* starting sector counting from 0 */
-        unsigned int sectors;       /* nr of sectors in partition */
+    __def__ = """
+        struct {
+            unsigned char status;       /* 0x80 - active */
+            struct Position start;
+            unsigned char partition_type;
+            struct Position end;
+            unsigned int start_sect;    /* starting sector counting from 0 */
+            unsigned int sectors;       /* nr of sectors in partition */
+        }
     """
 
     def print_info(self):
@@ -50,12 +54,14 @@ class Partition(cstruct.CStruct):
 
 class MBR(cstruct.CStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        char unused[440];
-        unsigned char disk_signature[4];
-        unsigned char usualy_nulls[2];
-        struct Partition partitions[4];
-        char signature[2];
+    __def__ = """
+        struct {
+            char unused[440];
+            unsigned char disk_signature[4];
+            unsigned char usualy_nulls[2];
+            struct Partition partitions[4];
+            char signature[2];
+        }
     """
 
     def print_info(self):
@@ -69,8 +75,7 @@ class MBR(cstruct.CStruct):
 disk = "mbr"
 with open(disk, "rb") as f:
     mbr = MBR()
-    data = f.read(len(mbr))
-    mbr.unpack(data)
+    mbr.unpack(f)
     mbr.print_info()
 ```
 

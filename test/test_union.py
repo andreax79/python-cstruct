@@ -31,24 +31,26 @@ from cstruct import define, sizeof
 import struct
 
 class TestUnion(cstruct.CStruct):
-    __is_union__ = True
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        uint8   a;
-        uint8   a1;
-        uint16  b;
-        uint32  c;
-        struct Partition d;
-        struct Partition e[4];
+    __def__ = """
+        union {
+            uint8   a;
+            uint8   a1;
+            uint16  b;
+            uint32  c;
+            struct Partition d;
+            struct Partition e[4];
+        }
     """
 
 define('INIT_THREAD_SIZE', 2048 * sizeof('long'))
 
 # class TaskUnion(cstruct.CStruct):
-#     __is_union__ = True
-#     __struct__ = """
-#         struct task_struct task;
-#         unsigned long stack[INIT_TASK_SIZE/sizeof(long)];
+#     __def__ = """
+#         union {
+#             struct task_struct task;
+#             unsigned long stack[INIT_TASK_SIZE/sizeof(long)];
+#         }
 #     """
 
 class TestCaseUnion(TestCase):

@@ -37,7 +37,8 @@ from .base import (
 __all__ = [
     'FieldType',
     'Tokens',
-    'parse_struct'
+    'parse_struct',
+    'parse_def'
 ]
 
 def align(__byte_order__):
@@ -169,13 +170,16 @@ def parse_type(tokens, __cls__, __byte_order__):
         vtype = TYPEDEFS[vtype]
     # calculate fmt
     if vtype.startswith('struct ') or vtype.startswith('union '): # struct/union
-        __is_union__ = vtype.startswith('union ')
+        # __is_union__ = vtype.startswith('union ')
         kind, vtype = vtype.split(' ', 1)
         if tokens.get() == '{': # Named nested struct
-            tokens.pop()
-            vtype = __cls__.parse(tokens, __name__=vtype, __is_union__=__is_union__, __byte_order__=__byte_order__)
+            tokens.push(vtype)
+            tokens.push(kind)
+            vtype = __cls__.parse(tokens, __name__=vtype, __byte_order__=__byte_order__)
         elif vtype == '{': # Unnamed nested struct
-            vtype = __cls__.parse(tokens, __is_union__=__is_union__, __byte_order__=__byte_order__)
+            tokens.push(vtype)
+            tokens.push(kind)
+            vtype = __cls__.parse(tokens, __byte_order__=__byte_order__)
         else:
             try:
                 vtype = STRUCTS[vtype]
@@ -195,6 +199,26 @@ def parse_type(tokens, __cls__, __byte_order__):
     fmt = (__byte_order__ + fmt) if __byte_order__ is not None else fmt
     vsize = struct.calcsize(fmt)
     return vtype, vlen, vsize, fmt, flexible_array, alignment
+
+
+def parse_def(__def__, __cls__=None, __byte_order__=None, **kargs):
+    # naive C struct parsing
+    if isinstance(__def__, Tokens):
+        tokens = __def__
+    else:
+        tokens = Tokens(__def__)
+    kind = tokens.pop()
+    if kind not in [ 'struct', 'union' ]:
+        raise Exception("struct or union expected - " + kind)
+    __is_union__ = kind == 'union'
+    vtype = tokens.pop()
+    if tokens.get() == '{': # Named nested struct
+        tokens.pop()
+        return parse_struct(tokens, __cls__=__cls__, __name__=vtype, __is_union__=__is_union__, __byte_order__=__byte_order__)
+    elif vtype == '{': # Unnamed nested struct
+        return parse_struct(tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__)
+    else:
+        raise Exception("%s definition expected" % vtype)
 
 
 def parse_struct(__struct__, __cls__=None, __fields__=None, __is_union__=False, __byte_order__=None, **kargs):
@@ -262,8 +286,8 @@ def parse_struct(__struct__, __cls__=None, __fields__=None, __is_union__=False, 
         '__alignment__': max_alignment
     }
 
-    # Add the missing fields to the class
-    for field in __fields__ or []:
-        if field not in dict:
-            result[field] = None
+    # # Add the missing fields to the class
+    # for field in __fields__ or []:
+    #     if field not in dict:
+    #         result[field] = None
     return result

@@ -31,10 +31,12 @@ from cstruct import (define, undef, sizeof, typedef)
 
 class Position(cstruct.CStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        unsigned char head;
-        unsigned char sector;
-        unsigned char cyl;
+    __def__ = """
+        struct {
+            unsigned char head;
+            unsigned char sector;
+            unsigned char cyl;
+        }
     """
 
 

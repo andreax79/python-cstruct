@@ -26,7 +26,7 @@
 
 from .base import STRUCTS
 import hashlib
-from .c_parser import (parse_struct, Tokens)
+from .c_parser import (parse_struct, parse_def, Tokens)
 
 __all__ = [
     'CStructMeta',
@@ -39,8 +39,13 @@ class CStructMeta(type):
         __struct__ = dict.get("__struct__", None)
         dict['__cls__'] = bases[0]
         # Parse the struct
-        if __struct__ is not None:
-            dict.update(parse_struct(**dict))
+        if '__struct__' in dict:
+            if isinstance(dict['__struct__'], ("".__class__, u"".__class__, Tokens)):
+                dict.update(parse_struct(**dict))
+            __struct__ = True
+        if '__def__' in dict:
+            dict.update(parse_def(**dict))
+            __struct__ = True
         # Create the new class
         new_class = type.__new__(mcs, name, bases, dict)
         # Register the class
@@ -86,9 +91,11 @@ class AbstractCStruct(_CStructParent):
         :returns:              cls subclass
         """
         kargs = dict(kargs)
-        if not isinstance(__struct__, Tokens):
-            __struct__ = Tokens(__struct__)
         kargs['__struct__'] = __struct__
+        if isinstance(__struct__, ("".__class__, u"".__class__, Tokens)):
+            del kargs['__struct__']
+            kargs.update(parse_def(__struct__, __cls__=cls, **kargs))
+            kargs['__struct__'] = None
         if __name__ is None: # Anonymous struct
             __name__ = cls.__name__ + '_' + hashlib.sha1(str(__struct__).encode('utf-8')).hexdigest()
             kargs['__anonymous__'] = True
