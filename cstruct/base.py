@@ -24,8 +24,6 @@
 # IN THE SOFTWARE.
 #
 
-import sys
-
 __all__ = [
     'LITTLE_ENDIAN',
     'BIG_ENDIAN',
@@ -94,5 +92,5 @@ C_TYPE_TO_FORMAT = {
 }
 
 EMPTY_BYTES_STRING = bytes()
-CHAR_ZERO = bytes('\0', 'ascii') if sys.version_info >= (3, 0) else bytes('\0')
+CHAR_ZERO = bytes('\0', 'ascii')
 
