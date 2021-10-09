@@ -25,7 +25,7 @@
 #
 
 from abc import ABCMeta
-from typing import Any, Optional
+from typing import cast, Any, BinaryIO, Optional, Type, Union
 from .base import STRUCTS
 import hashlib
 from .c_parser import (parse_struct, parse_def, Tokens)
@@ -82,7 +82,7 @@ class AbstractCStruct(_CStructParent):
             setattr(self, key, value)
 
     @classmethod
-    def parse(cls, __struct__, __name__=None, **kargs):
+    def parse(cls, __struct__, __name__: Optional[str] = None, **kargs) -> Type[Any]:
         """
         Return a new class mapping a C struct/union definition.
 
@@ -104,7 +104,7 @@ class AbstractCStruct(_CStructParent):
         kargs['__name__'] = __name__
         return type(__name__, (cls,), kargs)
 
-    def unpack(self, buffer):
+    def unpack(self, buffer: Optional[Union[bytes, BinaryIO]]) -> bool:
         """
         Unpack bytes containing packed C structure data
 
@@ -116,27 +116,27 @@ class AbstractCStruct(_CStructParent):
                 return False
         return self.unpack_from(buffer)
 
-    def unpack_from(self, buffer: Optional[bytes], offset: int = 0):  # pragma: no cover
+    def unpack_from(self, buffer: Optional[bytes], offset: int = 0) -> bool:  # pragma: no cover
         """
         Unpack bytes containing packed C structure data
 
         :param buffer: bytes to be unpacked
         :param offset: optional buffer offset
         """
-        return NotImplemented
+        raise NotImplementedError
 
-    def pack(self):  # pragma: no cover
+    def pack(self) -> bytes:  # pragma: no cover
         """
         Pack the structure data into bytes
         """
-        return NotImplemented
+        raise NotImplementedError
 
     def clear(self) -> None:
         self.unpack(None)
 
     def __len__(self) -> int:
         """ Structure size (in bytes) """
-        return self.__size__
+        return cast(int, self.__size__)
 
     @property
     def size(self) -> int:
