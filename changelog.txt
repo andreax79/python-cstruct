@@ -103,4 +103,5 @@
 ### Improved
 
 - refactoring
-
+- Python 3.9 support
+- Github workfows
