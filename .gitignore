@@ -35,3 +35,6 @@ nosetests.xml
 .pydevproject
 
 .eggs/
+/share
+/include
+.mypy_cache
