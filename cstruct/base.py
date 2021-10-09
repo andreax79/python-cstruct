@@ -24,6 +24,8 @@
 # IN THE SOFTWARE.
 #
 
+from typing import Any, Dict, Type
+
 __all__ = [
     'LITTLE_ENDIAN',
     'BIG_ENDIAN',
@@ -44,13 +46,13 @@ BIG_ENDIAN = '>'
 # native order, size & alignment
 NATIVE_ORDER = '@'
 
-STRUCTS = {
+STRUCTS: Dict[str, Type[Any]] = {
 }
 
-DEFINES = {
+DEFINES: Dict[str, Any] = {
 }
 
-TYPEDEFS = {
+TYPEDEFS: Dict[str, str] = {
     'short int':            'short',
     'unsigned short int':   'unsigned short',
     'ushort':               'unsigned short',
@@ -66,7 +68,7 @@ TYPEDEFS = {
     'uint64_t':             'uint64',
 }
 
-C_TYPE_TO_FORMAT = {
+C_TYPE_TO_FORMAT: Dict[str, str] = {
     'char':                 's',
     'signed char':          'b',
     'unsigned char':        'B',

@@ -30,6 +30,11 @@ __version__ = '1.9'
 __date__ = '15 August 2013'
 
 import struct
+from typing import (
+    Any,
+    Dict,
+    Type
+)
 from .base import (
     LITTLE_ENDIAN,
     BIG_ENDIAN,
@@ -41,7 +46,7 @@ from .base import (
     CHAR_ZERO,
     EMPTY_BYTES_STRING
 )
-from .abstract import CStructMeta
+from .abstract import CStructMeta, AbstractCStruct
 from .cstruct import CStruct
 from .mem_cstruct import MemCStruct
 
@@ -60,7 +65,7 @@ __all__ = [
     'parse'
 ]
 
-def define(key, value):
+def define(key: str, value: Any) -> None:
     """
     Define a constant that can be used in the C struct
 
@@ -69,7 +74,7 @@ def define(key, value):
     """
     DEFINES[key] = value
 
-def undef(key):
+def undef(key: str) -> None:
     """
     Undefine a symbol that was previously defined with define
 
@@ -77,7 +82,7 @@ def undef(key):
     """
     del DEFINES[key]
 
-def typedef(type_, alias):
+def typedef(type_: str, alias: str) -> None:
     """
     Define an alias name for a data type
 
@@ -86,7 +91,7 @@ def typedef(type_, alias):
     """
     TYPEDEFS[alias] = type_
 
-def sizeof(type_):
+def sizeof(type_: str) -> int:
     """
     Return the size of the type.
 
@@ -111,7 +116,7 @@ def sizeof(type_):
         else:
             return struct.calcsize(ttype)
 
-def parse(__struct__, __cls__=None, **kargs):
+def parse(__struct__: str , __cls__: Type[Any] = None, **kargs: Any) -> AbstractCStruct:
     """
     Return a new class mapping a C struct/union definition.
 

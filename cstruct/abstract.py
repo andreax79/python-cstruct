@@ -24,6 +24,8 @@
 # IN THE SOFTWARE.
 #
 
+from abc import ABCMeta
+from typing import Any, Optional
 from .base import STRUCTS
 import hashlib
 from .c_parser import (parse_struct, parse_def, Tokens)
@@ -33,31 +35,31 @@ __all__ = [
     'AbstractCStruct'
 ]
 
-class CStructMeta(type):
+class CStructMeta(ABCMeta):
 
-    def __new__(mcs, name, bases, dict):
-        __struct__ = dict.get("__struct__", None)
-        dict['__cls__'] = bases[0]
+    def __new__(cls, name: str, bases, dct):
+        __struct__ = dct.get("__struct__", None)
+        dct['__cls__'] = bases[0]
         # Parse the struct
-        if '__struct__' in dict:
-            if isinstance(dict['__struct__'], ("".__class__, u"".__class__, Tokens)):
-                dict.update(parse_struct(**dict))
+        if '__struct__' in dct:
+            if isinstance(dct['__struct__'], ("".__class__, u"".__class__, Tokens)):
+                dct.update(parse_struct(**dct))
             __struct__ = True
-        if '__def__' in dict:
-            dict.update(parse_def(**dict))
+        if '__def__' in dct:
+            dct.update(parse_def(**dct))
             __struct__ = True
         # Create the new class
-        new_class = type.__new__(mcs, name, bases, dict)
+        new_class = type.__new__(cls, name, bases, dct)
         # Register the class
-        if __struct__ is not None and not dict.get('__anonymous__'):
+        if __struct__ is not None and not dct.get('__anonymous__'):
             STRUCTS[name] = new_class
         return new_class
 
-    def __len__(cls):
+    def __len__(cls) -> int:
         return cls.__size__
 
     @property
-    def size(cls):
+    def size(cls) -> int:
         """ Structure size (in bytes) """
         return cls.__size__
 
@@ -68,7 +70,7 @@ _CStructParent = CStructMeta('_CStructParent', (object, ), {})
 
 class AbstractCStruct(_CStructParent):
 
-    def __init__(self, buffer=None, **kargs):
+    def __init__(self, buffer=None, **kargs) -> None:
         if buffer is not None:
             self.unpack(buffer)
         else:
@@ -96,7 +98,7 @@ class AbstractCStruct(_CStructParent):
             del kargs['__struct__']
             kargs.update(parse_def(__struct__, __cls__=cls, **kargs))
             kargs['__struct__'] = None
-        if __name__ is None: # Anonymous struct
+        if __name__ is None:  # Anonymous struct
             __name__ = cls.__name__ + '_' + hashlib.sha1(str(__struct__).encode('utf-8')).hexdigest()
             kargs['__anonymous__'] = True
         kargs['__name__'] = __name__
@@ -114,7 +116,7 @@ class AbstractCStruct(_CStructParent):
                 return False
         return self.unpack_from(buffer)
 
-    def unpack_from(self, buffer, offset=0): # pragma: no cover
+    def unpack_from(self, buffer: Optional[bytes], offset: int = 0):  # pragma: no cover
         """
         Unpack bytes containing packed C structure data
 
@@ -123,37 +125,35 @@ class AbstractCStruct(_CStructParent):
         """
         return NotImplemented
 
-    def pack(self): # pragma: no cover
+    def pack(self):  # pragma: no cover
         """
         Pack the structure data into bytes
         """
         return NotImplemented
 
-    def clear(self):
+    def clear(self) -> None:
         self.unpack(None)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """ Structure size (in bytes) """
         return self.__size__
 
     @property
-    def size(self):
+    def size(self) -> int:
         """ Structure size (in bytes) """
         return self.__size__
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return (isinstance(other, self.__class__) and self.__dict__ == other.__dict__)
 
-    def __ne__(self, other):
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
-    def __str__(self):
+    def __str__(self) -> str:
         result = []
         for field in self.__fields__:
             result.append(field + "=" + str(getattr(self, field, None)))
         return type(self).__name__ + "(" + ", ".join(result) + ")"
 
-    def __repr__(self): # pragma: no cover
+    def __repr__(self) -> str:  # pragma: no cover
         return self.__str__()
-
-

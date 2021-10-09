@@ -26,6 +26,14 @@
 
 import re
 import struct
+from typing import (
+    Union,
+    Optional,
+    Any,
+    Tuple,
+    Dict,
+    Type
+)
 from .base import (
     NATIVE_ORDER,
     DEFINES,
@@ -34,19 +42,14 @@ from .base import (
     C_TYPE_TO_FORMAT
 )
 
-__all__ = [
-    'FieldType',
-    'Tokens',
-    'parse_struct',
-    'parse_def'
-]
 
-def align(__byte_order__):
+def align(__byte_order__: Optional[str]) -> bool:
     return __byte_order__ is None or __byte_order__ == NATIVE_ORDER
+
 
 class FieldType(object):
 
-    def __init__(self, vtype, vlen, vsize, fmt, offset, flexible_array):
+    def __init__(self, vtype: str, vlen: int, vsize: int, fmt: str, offset: int, flexible_array: bool) -> None:
         """
         Struct/Union field
 
@@ -64,7 +67,7 @@ class FieldType(object):
         self.offset = offset
         self.flexible_array = flexible_array
 
-    def unpack_from(self, buffer, offset=0):
+    def unpack_from(self, buffer: bytes, offset: int = 0) -> Any:
         if self.flexible_array: # TODO
             raise NotImplementedError("Flexible array member are not supported") # pragma: no cover
         if isinstance(self.vtype, type): # is class
@@ -86,20 +89,20 @@ class FieldType(object):
             else:
                 return result[0]
 
-    def pack(self, data):
+    def pack(self, data: Any) -> bytes:
         if self.is_array:
             return struct.pack(self.fmt, *data)
         else:
             return struct.pack(self.fmt, data)
 
     @property
-    def is_array(self):
+    def is_array(self) -> bool:
         return not (self.vlen == 1 or self.vtype == 'char')
 
 
-class Tokens():
+class Tokens(object):
 
-    def __init__(self, __struct__):
+    def __init__(self, __struct__: str) -> None:
         # remove the comments
         st = __struct__.replace("*/","*/\n")
         st = "  ".join(re.split("/\*.*\*/",st))
@@ -110,23 +113,25 @@ class Tokens():
                 .replace("}", " } "))
         self.tokens = st.split()
 
-    def pop(self):
+    def pop(self) -> str:
         return self.tokens.pop(0)
 
-    def get(self):
+    def get(self) -> str:
         return self.tokens[0]
 
-    def push(self, value):
+    def push(self, value: str) -> None:
         return self.tokens.insert(0, value)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.tokens)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.tokens)
 
 
-def parse_type(tokens, __cls__, __byte_order__):
+def parse_type(tokens: Tokens,
+               __cls__: Type[Any],  #  Type['AbstractCStruct'],
+               __byte_order__: Optional[str]) -> Tuple[str, int, int, str, bool, int]:
     if len(tokens) < 2:
         raise Exception("Parsing error")
     vtype = tokens.pop()
@@ -150,20 +155,19 @@ def parse_type(tokens, __cls__, __byte_order__):
         if len(t) != 2:
             raise Exception("Error parsing: " + next_token)
         next_token = t[0].strip()
-        vlen = t[1]
-        vlen = vlen.split("]")[0].strip()
-        if not vlen:
+        t_vlen = t[1].split("]")[0].strip()
+        if not t_vlen:
             flexible_array = True
             vlen = 0
         else:
             try:
-                vlen = int(vlen)
+                vlen = int(t_vlen)
             except:
-                vlen = DEFINES.get(vlen, None)
-                if vlen is None:
+                t_vlen = DEFINES.get(t_vlen, None)
+                if t_vlen is None:
                     raise
                 else:
-                    vlen = int(vlen)
+                    vlen = int(t_vlen)
     tokens.push(next_token)
     # resolve typedefs
     while vtype in TYPEDEFS:
@@ -175,33 +179,38 @@ def parse_type(tokens, __cls__, __byte_order__):
         if tokens.get() == '{': # Named nested struct
             tokens.push(vtype)
             tokens.push(kind)
-            vtype = __cls__.parse(tokens, __name__=vtype, __byte_order__=__byte_order__)
+            tvtype = __cls__.parse(tokens, __name__=vtype, __byte_order__=__byte_order__)
         elif vtype == '{': # Unnamed nested struct
             tokens.push(vtype)
             tokens.push(kind)
-            vtype = __cls__.parse(tokens, __byte_order__=__byte_order__)
+            tvtype = __cls__.parse(tokens, __byte_order__=__byte_order__)
         else:
             try:
-                vtype = STRUCTS[vtype]
+                tvtype = STRUCTS[vtype]
             except KeyError:
                 raise Exception("Unknow %s \"%s\"" % (kind, vtype))
         ttype = "c"
-        fmt = str(vlen * vtype.size) + ttype
+        fmt = str(vlen * tvtype.size) + ttype
         # alignment/
-        alignment = vtype.__alignment__
+        alignment = tvtype.__alignment__
     else: # other types
-        ttype = C_TYPE_TO_FORMAT.get(vtype, None)
-        if ttype is None:
+        try:
+            ttype = C_TYPE_TO_FORMAT[vtype]
+        except KeyError:
             raise Exception("Unknow type \"" + vtype + "\"")
         fmt = (str(vlen) if vlen > 1 or flexible_array else '') + ttype
         # alignment
         alignment = struct.calcsize((__byte_order__ + ttype) if __byte_order__ is not None else ttype)
+        tvtype = vtype
     fmt = (__byte_order__ + fmt) if __byte_order__ is not None else fmt
     vsize = struct.calcsize(fmt)
-    return vtype, vlen, vsize, fmt, flexible_array, alignment
+    return tvtype, vlen, vsize, fmt, flexible_array, alignment
 
 
-def parse_def(__def__, __cls__=None, __byte_order__=None, **kargs):
+def parse_def(__def__: Union[str, Tokens],
+              __cls__: Type[Any],  # Type['AbstractCStruct'],
+              __byte_order__: Optional[str] = None,
+              **kargs: Any) -> Dict[str, Any]:
     # naive C struct parsing
     if isinstance(__def__, Tokens):
         tokens = __def__
@@ -214,21 +223,25 @@ def parse_def(__def__, __cls__=None, __byte_order__=None, **kargs):
     vtype = tokens.pop()
     if tokens.get() == '{': # Named nested struct
         tokens.pop()
-        return parse_struct(tokens, __cls__=__cls__, __name__=vtype, __is_union__=__is_union__, __byte_order__=__byte_order__)
+        return parse_struct(tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__)
     elif vtype == '{': # Unnamed nested struct
         return parse_struct(tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__)
     else:
         raise Exception("%s definition expected" % vtype)
 
 
-def parse_struct(__struct__, __cls__=None, __fields__=None, __is_union__=False, __byte_order__=None, **kargs):
+def parse_struct(__struct__: Union[str, Tokens],
+                 __cls__: Type[Any],  # Type['AbstractCStruct'],
+                 __is_union__: bool = False,
+                 __byte_order__: Optional[str] = None,
+                 **kargs: Any) -> Dict[str, Any]:
     # naive C struct parsing
     __is_union__ = bool(__is_union__)
     fields = []
     fields_types = {}
-    flexible_array = False
-    offset = 0
-    max_alignment = 0
+    flexible_array: bool = False
+    offset: int = 0
+    max_alignment: int = 0
     if isinstance(__struct__, Tokens):
         tokens = __struct__
     else:

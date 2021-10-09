@@ -24,6 +24,7 @@
 # IN THE SOFTWARE.
 #
 
+from typing import Optional
 from .base import CHAR_ZERO
 from .abstract import (CStructMeta, AbstractCStruct)
 
@@ -43,7 +44,9 @@ class CStruct(AbstractCStruct):
 
     """
 
-    def unpack_from(self, buffer, offset=0):
+    __size__: int = 0
+
+    def unpack_from(self, buffer: Optional[bytes], offset: int = 0) -> bool:
         """
         Unpack bytes containing packed C structure data
 
@@ -56,7 +59,7 @@ class CStruct(AbstractCStruct):
             setattr(self, field, field_type.unpack_from(buffer, offset))
         return True
 
-    def pack(self):
+    def pack(self) -> bytes:
         """
         Pack the structure data into bytes
         """
