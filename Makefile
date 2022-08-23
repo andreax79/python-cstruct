@@ -29,7 +29,7 @@ lint:
 	flake8 cstruct tests
 
 test:
-	python3 setup.py test
+	pytest
 
 typecheck:
 	mypy --strict --no-warn-unused-ignores cstruct
