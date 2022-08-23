@@ -72,7 +72,8 @@ class MemCStruct(AbstractCStruct):
         """
         self.__base__ = offset  # Base offset
         if buffer is None:
-            self.__mem__ = ctypes.create_string_buffer(self.__size__)
+            # the buffer is one item larger than its size and the last element is NUL
+            self.__mem__ = ctypes.create_string_buffer(self.__size__ + 1)
         elif isinstance(buffer, ctypes.Array):
             self.__mem__ = buffer
         else:

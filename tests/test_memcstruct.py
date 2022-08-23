@@ -649,6 +649,20 @@ def test_len():
     assert mbr.size == 512
 
 
+def test_pack_len():
+    buffer = b'\x00' * 512
+    mbr = MBR(buffer)
+    d = mbr.pack()
+    assert len(d) == 512
+    mbr = MBR()
+    mbr.unpack(MBR_DATA)
+    d = mbr.pack()
+    assert len(d) == 512
+    mbr = MBR()
+    d = mbr.pack()
+    assert len(d) == 512
+
+
 def test_sizeof():
     assert sizeof("struct Partition") == sizeof("struct PartitionFlat")
     assert sizeof("struct Partition") == sizeof("struct PartitionNested")
