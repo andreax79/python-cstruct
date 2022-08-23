@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#*****************************************************************************
+# *****************************************************************************
 #
 # Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
@@ -23,12 +23,38 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 #
-#*****************************************************************************
+# *****************************************************************************
 
 from unittest import TestCase, main
 import cstruct
 from cstruct import define, sizeof
 import struct
+
+
+class Position(cstruct.CStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = """
+        struct {
+            unsigned char head;
+            unsigned char sector;
+            unsigned char cyl;
+        }
+    """
+
+
+class Partition(cstruct.CStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = """
+        struct {
+            unsigned char status;       /* 0x80 - active */
+            struct Position start;
+            unsigned char partition_type;
+            struct Position end;
+            unsigned int start_sect;    /* starting sector counting from 0 */
+            unsigned int sectors;       // nr of sectors in partition
+        }
+    """
+
 
 class TestUnion(cstruct.CStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
@@ -43,15 +69,23 @@ class TestUnion(cstruct.CStruct):
         }
     """
 
-define('INIT_THREAD_SIZE', 2048 * sizeof('long'))
 
-# class TaskUnion(cstruct.CStruct):
-#     __def__ = """
-#         union {
-#             struct task_struct task;
-#             unsigned long stack[INIT_TASK_SIZE/sizeof(long)];
-#         }
-#     """
+class TestStruct(cstruct.CStruct):
+    __def__ = """
+       struct test_union {
+	    char magic[4];
+	    union {
+		struct {
+		    uint32 a;
+		    uint32 b;
+		} a;
+		struct {
+		    char   b[8];
+		} b;
+	    } c;
+       }
+    """
+
 
 class TestCaseUnion(TestCase):
 
@@ -60,8 +94,10 @@ class TestCaseUnion(TestCase):
     #     self.assertEqual(sizeof('struct TestUnion'), 64)
     #
     def test_union(self):
-        pass
-        #raise Exception()
+        s = TestStruct()
+        self.assertEqual(len(s), 12)
+        print(len(s))
+        raise Exception()
 
     def test_union_unpack(self):
         union = TestUnion()
@@ -81,6 +117,6 @@ class TestCaseUnion(TestCase):
         self.assertEqual(union.b, 1979)
         self.assertEqual(union.c, 1979)
 
+
 if __name__ == '__main__':
     main()
-

@@ -24,17 +24,13 @@
 # IN THE SOFTWARE.
 #
 
-__author__  = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
+__author__ = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
 __license__ = 'MIT'
 __version__ = '2.1'
 __date__ = '15 August 2013'
 
 import struct
-from typing import (
-    Any,
-    Dict,
-    Type
-)
+from typing import Any, Dict, Type
 from .base import (
     LITTLE_ENDIAN,
     BIG_ENDIAN,
@@ -44,7 +40,7 @@ from .base import (
     TYPEDEFS,
     C_TYPE_TO_FORMAT,
     CHAR_ZERO,
-    EMPTY_BYTES_STRING
+    EMPTY_BYTES_STRING,
 )
 from .abstract import CStructMeta, AbstractCStruct
 from .cstruct import CStruct
@@ -62,8 +58,9 @@ __all__ = [
     'undef',
     'typedef',
     'sizeof',
-    'parse'
+    'parse',
 ]
+
 
 def define(key: str, value: Any) -> None:
     """
@@ -74,6 +71,7 @@ def define(key: str, value: Any) -> None:
     """
     DEFINES[key] = value
 
+
 def undef(key: str) -> None:
     """
     Undefine a symbol that was previously defined with define
@@ -81,6 +79,7 @@ def undef(key: str) -> None:
     :param key: identifier
     """
     del DEFINES[key]
+
 
 def typedef(type_: str, alias: str) -> None:
     """
@@ -90,6 +89,7 @@ def typedef(type_: str, alias: str) -> None:
     :param alias: new alias name
     """
     TYPEDEFS[alias] = type_
+
 
 def sizeof(type_: str) -> int:
     """
@@ -116,7 +116,8 @@ def sizeof(type_: str) -> int:
         else:
             return struct.calcsize(ttype)
 
-def parse(__struct__: str , __cls__: Type[Any] = None, **kargs: Any) -> AbstractCStruct:
+
+def parse(__struct__: str, __cls__: Type[Any] = None, **kargs: Any) -> AbstractCStruct:
     """
     Return a new class mapping a C struct/union definition.
 
@@ -130,4 +131,3 @@ def parse(__struct__: str , __cls__: Type[Any] = None, **kargs: Any) -> Abstract
     if __cls__ is None:
         __cls__ = CStruct
     return __cls__.parse(__struct__, **kargs)
-

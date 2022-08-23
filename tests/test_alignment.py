@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#*****************************************************************************
+# *****************************************************************************
 #
 # Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
@@ -23,10 +23,10 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 #
-#*****************************************************************************
+# *****************************************************************************
 
 from unittest import TestCase, main
-from cstruct import (sizeof, typedef, define, CStruct, NATIVE_ORDER)
+from cstruct import sizeof, typedef, define, CStruct, NATIVE_ORDER
 
 define("UT_NAMESIZE", 32)
 define("UT_LINESIZE", 32)
@@ -35,6 +35,7 @@ define("UT_HOSTSIZE", 256)
 typedef("int", "pid_t")
 typedef("long", "time_t")
 
+
 class ExitStatus(CStruct):
     __def__ = """
         struct {
@@ -42,6 +43,8 @@ class ExitStatus(CStruct):
             short   e_exit;             /* Process exit status.  */
         }
     """
+
+
 class Timeval(CStruct):
     __def__ = """
         struct {
@@ -49,6 +52,7 @@ class Timeval(CStruct):
             int32_t tv_usec;            /* Microseconds.  */
         }
     """
+
 
 class Utmp(CStruct):
     __byte_order__ = NATIVE_ORDER
@@ -114,6 +118,7 @@ class AllTypes(CStruct):
         }
     """
 
+
 class Foo1(CStruct):
     __byte_order__ = NATIVE_ORDER
     __def__ = """
@@ -123,6 +128,7 @@ class Foo1(CStruct):
             long x;
         }
     """
+
 
 class Foo2(CStruct):
     __byte_order__ = NATIVE_ORDER
@@ -135,6 +141,7 @@ class Foo2(CStruct):
         }
     """
 
+
 class Foo3(CStruct):
     __byte_order__ = NATIVE_ORDER
     __def__ = """
@@ -144,6 +151,7 @@ class Foo3(CStruct):
         }
     """
 
+
 class Foo4(CStruct):
     __byte_order__ = NATIVE_ORDER
     __def__ = """
@@ -152,6 +160,7 @@ class Foo4(CStruct):
             char c;
         }
     """
+
 
 class Foo5(CStruct):
     __byte_order__ = NATIVE_ORDER
@@ -165,6 +174,7 @@ class Foo5(CStruct):
         }
     """
 
+
 class Foo10(CStruct):
     __byte_order__ = NATIVE_ORDER
     __def__ = """
@@ -175,8 +185,8 @@ class Foo10(CStruct):
         }
     """
 
-class TestAlignament(TestCase):
 
+class TestAlignament(TestCase):
     def test_utmp_sizeof(self):
         self.assertEqual(sizeof("struct Utmp"), 384)
 
@@ -199,6 +209,7 @@ class TestAlignament(TestCase):
 
     def test_foo10_sizeof(self):
         self.assertEqual(sizeof("struct Foo10"), 24)
+
 
 if __name__ == '__main__':
     main()

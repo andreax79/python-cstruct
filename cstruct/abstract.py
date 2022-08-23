@@ -28,15 +28,12 @@ from abc import ABCMeta
 from typing import cast, Any, BinaryIO, Optional, Type, Union
 from .base import STRUCTS
 import hashlib
-from .c_parser import (parse_struct, parse_def, Tokens)
+from .c_parser import parse_struct, parse_def, Tokens
 
-__all__ = [
-    'CStructMeta',
-    'AbstractCStruct'
-]
+__all__ = ['CStructMeta', 'AbstractCStruct']
+
 
 class CStructMeta(ABCMeta):
-
     def __new__(cls, name: str, bases, dct):
         __struct__ = dct.get("__struct__", None)
         dct['__cls__'] = bases[0]
@@ -60,16 +57,16 @@ class CStructMeta(ABCMeta):
 
     @property
     def size(cls) -> int:
-        """ Structure size (in bytes) """
+        """Structure size (in bytes)"""
         return cls.__size__
+
 
 # Workaround for Python 2.x/3.x metaclass, thanks to
 # http://mikewatkins.ca/2008/11/29/python-2-and-3-metaclasses/#using-the-metaclass-in-python-2-x-and-3-x
-_CStructParent = CStructMeta('_CStructParent', (object, ), {})
+_CStructParent = CStructMeta('_CStructParent', (object,), {})
 
 
 class AbstractCStruct(_CStructParent):
-
     def __init__(self, buffer=None, **kargs) -> None:
         if buffer is not None:
             self.unpack(buffer)
@@ -135,16 +132,16 @@ class AbstractCStruct(_CStructParent):
         self.unpack(None)
 
     def __len__(self) -> int:
-        """ Structure size (in bytes) """
+        """Structure size (in bytes)"""
         return cast(int, self.__size__)
 
     @property
     def size(self) -> int:
-        """ Structure size (in bytes) """
+        """Structure size (in bytes)"""
         return self.__size__
 
     def __eq__(self, other: Any) -> bool:
-        return (isinstance(other, self.__class__) and self.__dict__ == other.__dict__)
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)

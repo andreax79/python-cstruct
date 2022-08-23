@@ -26,7 +26,8 @@
 
 from typing import Optional
 from .base import CHAR_ZERO
-from .abstract import (CStructMeta, AbstractCStruct)
+from .abstract import CStructMeta, AbstractCStruct
+
 
 class CStruct(AbstractCStruct):
     """
@@ -67,11 +68,11 @@ class CStruct(AbstractCStruct):
         for field in self.__fields__:
             field_type = self.__fields_types__[field]
             if isinstance(field_type.vtype, CStructMeta):
-                if field_type.vlen == 1: # single struct
+                if field_type.vlen == 1:  # single struct
                     v = getattr(self, field, field_type.vtype())
                     v = v.pack()
                     result.append(v)
-                else: # multiple struct
+                else:  # multiple struct
                     values = getattr(self, field, [])
                     for j in range(0, field_type.vlen):
                         try:
@@ -84,4 +85,3 @@ class CStruct(AbstractCStruct):
                 data = getattr(self, field)
                 result.append(field_type.pack(data))
         return bytes().join(result)
-

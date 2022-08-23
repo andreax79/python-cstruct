@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#*****************************************************************************
+# *****************************************************************************
 #
 # Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
@@ -23,11 +23,12 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 #
-#*****************************************************************************
+# *****************************************************************************
 
 from unittest import TestCase, main
 import cstruct
-from cstruct import (define, undef, sizeof, typedef)
+from cstruct import define, undef, sizeof, typedef
+
 
 class Position(cstruct.CStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
@@ -41,7 +42,6 @@ class Position(cstruct.CStruct):
 
 
 class TestCaseDefine(TestCase):
-
     def test_sizeof(self):
         self.assertEqual(sizeof('int'), 4)
         define('INIT_THREAD_SIZE', 2048 * sizeof('long'))
@@ -49,19 +49,19 @@ class TestCaseDefine(TestCase):
         self.assertEqual(sizeof('struct Position'), 3)
         self.assertEqual(sizeof('struct Position'), len(Position))
         self.assertEqual(sizeof(Position), 3)
-        self.assertRaises(KeyError, lambda : sizeof('bla'))
-        self.assertRaises(KeyError, lambda : sizeof('struct Bla'))
+        self.assertRaises(KeyError, lambda: sizeof('bla'))
+        self.assertRaises(KeyError, lambda: sizeof('struct Bla'))
 
     def test_define(self):
         define('A', 10)
         self.assertEqual(cstruct.DEFINES['A'], 10)
         undef('A')
-        self.assertRaises(KeyError, lambda : cstruct.DEFINES['A'])
+        self.assertRaises(KeyError, lambda: cstruct.DEFINES['A'])
 
     def test_typedef(self):
         typedef('int', 'integer')
         self.assertEqual(sizeof('integer'), 4)
 
+
 if __name__ == '__main__':
     main()
-

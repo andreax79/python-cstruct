@@ -36,7 +36,7 @@ __all__ = [
     'TYPEDEFS',
     'C_TYPE_TO_FORMAT',
     'EMPTY_BYTES_STRING',
-    'CHAR_ZERO'
+    'CHAR_ZERO',
 ]
 
 # little-endian, std. size & alignment
@@ -46,53 +46,50 @@ BIG_ENDIAN = '>'
 # native order, size & alignment
 NATIVE_ORDER = '@'
 
-STRUCTS: Dict[str, Type[Any]] = {
-}
+STRUCTS: Dict[str, Type[Any]] = {}
 
-DEFINES: Dict[str, Any] = {
-}
+DEFINES: Dict[str, Any] = {}
 
 TYPEDEFS: Dict[str, str] = {
-    'short int':            'short',
-    'unsigned short int':   'unsigned short',
-    'ushort':               'unsigned short',
-    'long int':             'long',
-    'unsigned long int':    'unsigned long',
-    'int8_t':               'int8',
-    'uint8_t':              'uint8',
-    'int16_t':              'int16',
-    'uint16_t':             'uint16',
-    'int32_t':              'int32',
-    'uint32_t':             'uint32',
-    'int64_t':              'int64',
-    'uint64_t':             'uint64',
+    'short int': 'short',
+    'unsigned short int': 'unsigned short',
+    'ushort': 'unsigned short',
+    'long int': 'long',
+    'unsigned long int': 'unsigned long',
+    'int8_t': 'int8',
+    'uint8_t': 'uint8',
+    'int16_t': 'int16',
+    'uint16_t': 'uint16',
+    'int32_t': 'int32',
+    'uint32_t': 'uint32',
+    'int64_t': 'int64',
+    'uint64_t': 'uint64',
 }
 
 C_TYPE_TO_FORMAT: Dict[str, str] = {
-    'char':                 's',
-    'signed char':          'b',
-    'unsigned char':        'B',
-    'short':                'h',
-    'unsigned short':       'H',
-    'int':                  'i',
-    'unsigned int':         'I',
-    'long':                 'l',
-    'unsigned long':        'L',
-    'long long':            'q',
-    'unsigned long long':   'Q',
-    'float':                'f',
-    'double':               'd',
-    'void *':               'P',
-    'int8':                 'b',
-    'uint8':                'B',
-    'int16':                'h',
-    'uint16':               'H',
-    'int32':                'i',
-    'uint32':               'I',
-    'int64':                'q',
-    'uint64':               'Q',
+    'char': 's',
+    'signed char': 'b',
+    'unsigned char': 'B',
+    'short': 'h',
+    'unsigned short': 'H',
+    'int': 'i',
+    'unsigned int': 'I',
+    'long': 'l',
+    'unsigned long': 'L',
+    'long long': 'q',
+    'unsigned long long': 'Q',
+    'float': 'f',
+    'double': 'd',
+    'void *': 'P',
+    'int8': 'b',
+    'uint8': 'B',
+    'int16': 'h',
+    'uint16': 'H',
+    'int32': 'i',
+    'uint32': 'I',
+    'int64': 'q',
+    'uint64': 'Q',
 }
 
 EMPTY_BYTES_STRING = bytes()
 CHAR_ZERO = bytes('\0', 'ascii')
-

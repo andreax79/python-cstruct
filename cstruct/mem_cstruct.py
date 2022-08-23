@@ -24,18 +24,13 @@
 # IN THE SOFTWARE.
 #
 
-from typing import (
-    Any,
-    List,
-    Optional
-)
+from typing import Any, List, Optional
 import ctypes
 import struct
-from .abstract import (CStructMeta, AbstractCStruct)
+from .abstract import CStructMeta, AbstractCStruct
 
 
 class CStructList(List[Any]):
-
     def __init__(self, values: List[Any], name: str, parent: Optional['MemCStruct'] = None) -> None:
         super().__init__(values)
         self.name = name
