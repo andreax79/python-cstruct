@@ -3,6 +3,13 @@ Python-CStruct
 
 C-style structs for Python
 
+[![Build Status](https://github.com/andreax79/python-cstruct/workflows/Tests/badge.svg)](https://github.com/andreax79/python-cstruct/actions)
+[![PyPI version](https://badge.fury.io/py/cstruct.svg)](https://badge.fury.io/py/cstruct)
+[![PyPI](https://img.shields.io/pypi/pyversions/cstruct.svg)](https://pypi.org/project/cstruct)
+[![Downloads](https://pepy.tech/badge/cstruct/month)](https://pepy.tech/project/cstruct)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+
 Convert C struct/union definitions into Python classes with methods for
 serializing/deserializing.
 The usage is very simple: create a class subclassing cstruct.MemCStruct
