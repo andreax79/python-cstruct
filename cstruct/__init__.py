@@ -26,11 +26,11 @@
 
 __author__ = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
 __license__ = 'MIT'
-__version__ = '2.1'
+__version__ = '2.2'
 __date__ = '15 August 2013'
 
 import struct
-from typing import Any, Dict, Type
+from typing import Any, Type
 from .base import (
     LITTLE_ENDIAN,
     BIG_ENDIAN,
