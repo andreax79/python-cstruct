@@ -3,14 +3,14 @@ Python-CStruct
 
 C-style structs for Python
 
-Convert C struct definitions into Python classes with methods for
+Convert C struct/union definitions into Python classes with methods for
 serializing/deserializing.
-The usage is very simple: create a class subclassing cstruct.CStruct
-and add a C struct definition as a string in the __struct__ field.
-The C struct definition is parsed at runtime and the struct format string
+The usage is very simple: create a class subclassing cstruct.MemCStruct
+and add a C struct/union definition as a string in the __struct__ field.
+The C struct/union definition is parsed at runtime and the struct format string
 is generated. The class offers the method "unpack" for deserializing
-a string of bytes into a Python object and the method "pack" for
-serializing the values into a string.
+an array of bytes into a Python object and the method "pack" for
+serializing the values into an array of bytes.
 
 Example
 -------
@@ -21,7 +21,7 @@ The following program reads the DOS partition information from a disk.
 #!/usr/bin/env python
 import cstruct
 
-class Position(cstruct.CStruct):
+class Position(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
         struct {
@@ -31,7 +31,7 @@ class Position(cstruct.CStruct):
         }
     """
 
-class Partition(cstruct.CStruct):
+class Partition(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
         struct {
@@ -52,7 +52,7 @@ class Partition(cstruct.CStruct):
         print("starting sector: %08X" % self.start_sect)
         print("size MB: %s" % (self.sectors / 2 / 1024))
 
-class MBR(cstruct.CStruct):
+class MBR(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
         struct {
