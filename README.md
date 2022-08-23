@@ -8,7 +8,7 @@ C-style structs for Python
 [![PyPI](https://img.shields.io/pypi/pyversions/cstruct.svg)](https://pypi.org/project/cstruct)
 [![Downloads](https://pepy.tech/badge/cstruct/month)](https://pepy.tech/project/cstruct)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-
+[![Known Vulnerabilities](https://snyk.io/test/github/andreax79/python-cstruct/badge.svg)](https://snyk.io/test/github/andreax79/python-cstruct)
 
 Convert C struct/union definitions into Python classes with methods for
 serializing/deserializing.

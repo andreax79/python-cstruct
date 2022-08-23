@@ -25,30 +25,35 @@
 #
 
 from abc import ABCMeta
-from typing import cast, Any, BinaryIO, Optional, Type, Union
+from collections import OrderedDict
+from typing import Any, BinaryIO, List, Dict, Optional, Type, Tuple, Union
 from .base import STRUCTS
 import hashlib
 from .c_parser import parse_struct, parse_def, Tokens
+from .field import calculate_padding, FieldType
 
 __all__ = ['CStructMeta', 'AbstractCStruct']
 
 
 class CStructMeta(ABCMeta):
-    def __new__(cls, name: str, bases, dct):
-        __struct__ = dct.get("__struct__", None)
-        dct['__cls__'] = bases[0]
+    __size__: int = 0
+
+    # def __new__(cls: Type[type], name: str, bases: tuple, classdict: dict) -> MetaClass:
+    def __new__(metacls: Type[type], name: str, bases: Tuple[str], namespace: Dict[str, Any]) -> Type[Any]:
+        __struct__ = namespace.get('__struct__', None)
+        namespace['__cls__'] = bases[0] if bases else None
         # Parse the struct
-        if '__struct__' in dct:
-            if isinstance(dct['__struct__'], ("".__class__, u"".__class__, Tokens)):
-                dct.update(parse_struct(**dct))
+        if '__struct__' in namespace:
+            if isinstance(namespace['__struct__'], (str, Tokens)):
+                namespace.update(parse_struct(**namespace))
             __struct__ = True
-        if '__def__' in dct:
-            dct.update(parse_def(**dct))
+        if '__def__' in namespace:
+            namespace.update(parse_def(**namespace))
             __struct__ = True
         # Create the new class
-        new_class = type.__new__(cls, name, bases, dct)
+        new_class: Type[Any] = super().__new__(metacls, name, bases, namespace)
         # Register the class
-        if __struct__ is not None and not dct.get('__anonymous__'):
+        if __struct__ is not None and not namespace.get('__anonymous__'):
             STRUCTS[name] = new_class
         return new_class
 
@@ -57,29 +62,38 @@ class CStructMeta(ABCMeta):
 
     @property
     def size(cls) -> int:
-        """Structure size (in bytes)"""
+        "Structure size (in bytes)"
         return cls.__size__
 
 
-# Workaround for Python 2.x/3.x metaclass, thanks to
-# http://mikewatkins.ca/2008/11/29/python-2-and-3-metaclasses/#using-the-metaclass-in-python-2-x-and-3-x
-_CStructParent = CStructMeta('_CStructParent', (object,), {})
+class AbstractCStruct(metaclass=CStructMeta):
+    __size__: int = 0
+    __fields__: List[str] = []
+    __fields_types__: Dict[str, FieldType]
+    __byte_order__: Optional[str] = None
+    __alignment__: int = 0
+    __is_union__: bool = False
 
-
-class AbstractCStruct(_CStructParent):
-    def __init__(self, buffer=None, **kargs) -> None:
+    def __init__(
+        self, buffer: Optional[Union[bytes, BinaryIO]] = None, flexible_array_length: Optional[int] = None, **kargs: Dict[str, Any]
+    ) -> None:
+        self.set_flexible_array_length(flexible_array_length)
+        self.__fields__ = [x for x in self.__fields__]  # Create a copy
+        self.__fields_types__ = OrderedDict({k: v.copy() for k, v in self.__fields_types__.items()})  # Create a copy
         if buffer is not None:
             self.unpack(buffer)
         else:
             try:
                 self.unpack(buffer)
-            except:
+            except Exception:
                 pass
         for key, value in kargs.items():
             setattr(self, key, value)
 
     @classmethod
-    def parse(cls, __struct__, __name__: Optional[str] = None, **kargs) -> Type[Any]:
+    def parse(
+        cls, __struct__: Union[str, Tokens, Dict[str, Any]], __name__: Optional[str] = None, **kargs: Dict[str, Any]
+    ) -> Type["AbstractCStruct"]:
         """
         Return a new class mapping a C struct/union definition.
 
@@ -89,31 +103,51 @@ class AbstractCStruct(_CStructParent):
         :param __is_union__:   (optional) True for union, False for struct (default)
         :returns:              cls subclass
         """
-        kargs = dict(kargs)
-        kargs['__struct__'] = __struct__
-        if isinstance(__struct__, ("".__class__, u"".__class__, Tokens)):
-            del kargs['__struct__']
-            kargs.update(parse_def(__struct__, __cls__=cls, **kargs))
-            kargs['__struct__'] = None
+        cls_kargs: Dict[str, Any] = dict(kargs)
+        cls_kargs['__struct__'] = __struct__
+        if isinstance(__struct__, (str, Tokens)):
+            del cls_kargs['__struct__']
+            cls_kargs.update(parse_def(__struct__, __cls__=cls, **cls_kargs))
+            cls_kargs['__struct__'] = None
+        elif isinstance(__struct__, dict):
+            del cls_kargs['__struct__']
+            cls_kargs.update(__struct__)
+            cls_kargs['__struct__'] = None
         if __name__ is None:  # Anonymous struct
             __name__ = cls.__name__ + '_' + hashlib.sha1(str(__struct__).encode('utf-8')).hexdigest()
-            kargs['__anonymous__'] = True
-        kargs['__name__'] = __name__
-        return type(__name__, (cls,), kargs)
+            cls_kargs['__anonymous__'] = True
+        cls_kargs['__name__'] = __name__
+        return type(__name__, (cls,), cls_kargs)
 
-    def unpack(self, buffer: Optional[Union[bytes, BinaryIO]]) -> bool:
+    def set_flexible_array_length(self, flexible_array_length: Optional[int]) -> None:
+        """
+        Set flexible array length (i.e. number of elements)
+
+        :flexible_array_length: flexible array length
+        """
+        if flexible_array_length is not None:
+            # Search for the flexible array
+            flexible_array: Optional[FieldType] = [x for x in self.__fields_types__.values() if x.flexible_array][0]
+            if flexible_array is None:
+                raise ValueError("Flexible array not found in struct")
+            flexible_array.vlen = flexible_array_length
+
+    def unpack(self, buffer: Optional[Union[bytes, BinaryIO]], flexible_array_length: Optional[int] = None) -> bool:
         """
         Unpack bytes containing packed C structure data
 
         :param buffer: bytes or binary stream to be unpacked
         """
+        self.set_flexible_array_length(flexible_array_length)
         if hasattr(buffer, 'read'):
-            buffer = buffer.read(self.__size__)
+            buffer = buffer.read(self.size)  # type: ignore
             if not buffer:
                 return False
         return self.unpack_from(buffer)
 
-    def unpack_from(self, buffer: Optional[bytes], offset: int = 0) -> bool:  # pragma: no cover
+    def unpack_from(
+        self, buffer: Optional[bytes], offset: int = 0, flexible_array_length: Optional[int] = None
+    ) -> bool:  # pragma: no cover
         """
         Unpack bytes containing packed C structure data
 
@@ -123,22 +157,35 @@ class AbstractCStruct(_CStructParent):
         raise NotImplementedError
 
     def pack(self) -> bytes:  # pragma: no cover
-        """
-        Pack the structure data into bytes
-        """
+        "Pack the structure data into bytes"
         raise NotImplementedError
 
     def clear(self) -> None:
         self.unpack(None)
 
     def __len__(self) -> int:
-        """Structure size (in bytes)"""
-        return cast(int, self.__size__)
+        "Actual structure size (in bytes)"
+        return self.size
 
     @property
     def size(self) -> int:
-        """Structure size (in bytes)"""
-        return self.__size__
+        "Actual structure size (in bytes)"
+        if not self.__fields_types__:  # no fields
+            return 0
+        elif self.__is_union__:  # C union
+            # Calculate the sizeof union as size of its largest element
+            return max(x.vsize for x in self.__fields_types__.values())
+        else:  # C struct
+            # Calculate the sizeof struct as last item's offset + size + padding
+            last_field_type = list(self.__fields_types__.values())[-1]
+            size = last_field_type.offset + last_field_type.vsize
+            padding = calculate_padding(self.__byte_order__, self.__alignment__, size)
+            return size + padding
+
+    @classmethod
+    def sizeof(cls) -> int:
+        "Structure size in bytes (flexible array member size is omitted)"
+        return cls.__size__
 
     def __eq__(self, other: Any) -> bool:
         return other is not None and isinstance(other, self.__class__) and self.__dict__ == other.__dict__

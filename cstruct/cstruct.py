@@ -24,9 +24,9 @@
 # IN THE SOFTWARE.
 #
 
-from typing import Optional
+from typing import List, Optional
 from .base import CHAR_ZERO
-from .abstract import CStructMeta, AbstractCStruct
+from .abstract import AbstractCStruct
 
 
 class CStruct(AbstractCStruct):
@@ -38,24 +38,24 @@ class CStruct(AbstractCStruct):
     __is_union__ = (optional) True for union definitions, False for struct definitions (default)
 
     The following fields are generated from the C struct definition
-    __size__ = lenght of the structure in bytes
+    __size__ = size of the structure in bytes (flexible array member size is omitted)
     __fields__ = list of structure fields
     __fields_types__ = dictionary mapping field names to types
     Every fields defined in the structure is added to the class
 
     """
 
-    __size__: int = 0
-
-    def unpack_from(self, buffer: Optional[bytes], offset: int = 0) -> bool:
+    def unpack_from(self, buffer: Optional[bytes], offset: int = 0, flexible_array_length: Optional[int] = None) -> bool:
         """
         Unpack bytes containing packed C structure data
 
         :param buffer: bytes to be unpacked
         :param offset: optional buffer offset
+        :param flexible_array_length: optional flexible array lenght (number of elements)
         """
+        self.set_flexible_array_length(flexible_array_length)
         if buffer is None:
-            buffer = CHAR_ZERO * self.__size__
+            buffer = CHAR_ZERO * self.size
         for field, field_type in self.__fields_types__.items():
             setattr(self, field, field_type.unpack_from(buffer, offset))
         return True
@@ -64,12 +64,11 @@ class CStruct(AbstractCStruct):
         """
         Pack the structure data into bytes
         """
-        result = []
-        for field in self.__fields__:
-            field_type = self.__fields_types__[field]
-            if isinstance(field_type.vtype, CStructMeta):
+        result: List[bytes] = []
+        for field, field_type in self.__fields_types__.items():
+            if field_type.is_struct or field_type.is_union:
                 if field_type.vlen == 1:  # single struct
-                    v = getattr(self, field, field_type.vtype())
+                    v = getattr(self, field, field_type.ref())
                     v = v.pack()
                     result.append(v)
                 else:  # multiple struct
@@ -77,8 +76,8 @@ class CStruct(AbstractCStruct):
                     for j in range(0, field_type.vlen):
                         try:
                             v = values[j]
-                        except:
-                            v = field_type.vtype()
+                        except KeyError:
+                            v = field_type.ref()
                         v = v.pack()
                         result.append(v)
             else:

@@ -30,7 +30,7 @@ __version__ = '2.3'
 __date__ = '15 August 2013'
 
 import struct
-from typing import Any, Type
+from typing import Any, Dict, Optional, Type
 from .base import (
     LITTLE_ENDIAN,
     BIG_ENDIAN,
@@ -44,6 +44,7 @@ from .base import (
 )
 from .abstract import CStructMeta, AbstractCStruct
 from .cstruct import CStruct
+from .c_parser import parse_def
 from .mem_cstruct import MemCStruct
 
 __all__ = [
@@ -56,6 +57,7 @@ __all__ = [
     'MemCStruct',
     'define',
     'undef',
+    'getdef',
     'typedef',
     'sizeof',
     'parse',
@@ -79,6 +81,15 @@ def undef(key: str) -> None:
     :param key: identifier
     """
     del DEFINES[key]
+
+
+def getdef(key: str) -> Any:
+    """
+    Return the value for a constant
+
+    :param key: identifier
+    """
+    return DEFINES[key]
 
 
 def typedef(type_: str, alias: str) -> None:
@@ -108,7 +119,7 @@ def sizeof(type_: str) -> int:
         if t is None:
             raise KeyError("Unknow %s \"%s\"" % (kind, type_))
         else:
-            return t.size
+            return t.sizeof()
     else:
         ttype = C_TYPE_TO_FORMAT.get(type_, None)
         if ttype is None:
@@ -117,9 +128,12 @@ def sizeof(type_: str) -> int:
             return struct.calcsize(ttype)
 
 
-def parse(__struct__: str, __cls__: Type[Any] = None, **kargs: Any) -> AbstractCStruct:
+def parse(
+    __struct__: str, __cls__: Optional[Type[AbstractCStruct]] = None, __name__: Optional[str] = None, **kargs: Dict[str, Any]
+) -> Optional[Type[AbstractCStruct]]:
     """
     Return a new class mapping a C struct/union definition.
+    If the string does not contains any definition, return None.
 
     :param __struct__:     definition of the struct (or union) in C syntax
     :param __cls__:        (optional) super class - CStruct(default) or MemCStruct
@@ -130,4 +144,8 @@ def parse(__struct__: str, __cls__: Type[Any] = None, **kargs: Any) -> AbstractC
     """
     if __cls__ is None:
         __cls__ = CStruct
-    return __cls__.parse(__struct__, **kargs)
+    cls_def = parse_def(__struct__, __cls__=__cls__, **kargs)
+    if cls_def is None:
+        return None
+    else:
+        return __cls__.parse(cls_def, __name__, **kargs)

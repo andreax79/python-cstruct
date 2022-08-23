@@ -186,31 +186,48 @@ class Foo10(CStruct):
 
 
 def test_utmp_sizeof():
+    assert Utmp.__fields_types__['ut_type'].padding == 0
+    assert Utmp.__fields_types__['ut_pid'].padding == 2
     assert sizeof("struct Utmp") == 384
+    assert Utmp().size == 384
 
 
 # http://www.catb.org/esr/structure-packing/
 
 
 def test_foo1_sizeof():
+    assert Foo1.__fields_types__['p'].padding == 0
+    assert Foo1.__fields_types__['c'].padding == 0
+    assert Foo1.__fields_types__['x'].padding == 7
     assert sizeof("struct Foo1") == 24
+    assert Foo1().size == 24
 
 
 def test_foo2_sizeof():
     assert sizeof("struct Foo2") == 24
+    assert Foo2().size == 24
 
 
 def test_foo3_sizeof():
     assert sizeof("struct Foo3") == 16
+    assert Foo3().size == 16
 
 
 def test_foo4_sizeof():
     assert sizeof("struct Foo4") == 4
+    assert Foo4().size == 4
 
 
 def test_foo5_sizeof():
+    assert Foo5.__fields_types__['c'].padding == 0
+    assert Foo5.__fields_types__['inner'].padding == 7
     assert sizeof("struct Foo5") == 24
+    assert Foo5().size == 24
 
 
 def test_foo10_sizeof():
+    assert Foo10.__fields_types__['c'].padding == 0
+    assert Foo10.__fields_types__['p'].padding == 7
+    assert Foo10.__fields_types__['s'].padding == 0
     assert sizeof("struct Foo10") == 24
+    assert Foo10().size == 24

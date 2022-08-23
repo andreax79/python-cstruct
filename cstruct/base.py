@@ -24,7 +24,10 @@
 # IN THE SOFTWARE.
 #
 
-from typing import Any, Dict, Type
+from typing import Any, Dict, Type, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .abstract import AbstractCStruct
 
 __all__ = [
     'LITTLE_ENDIAN',
@@ -46,7 +49,7 @@ BIG_ENDIAN = '>'
 # native order, size & alignment
 NATIVE_ORDER = '@'
 
-STRUCTS: Dict[str, Type[Any]] = {}
+STRUCTS: Dict[str, Type["AbstractCStruct"]] = {}
 
 DEFINES: Dict[str, Any] = {}
 

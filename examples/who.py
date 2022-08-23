@@ -46,13 +46,38 @@
 #            pts/28       2013-07-30 20:49             24942 id=s/28  term=0 exit=0
 #            pts/27       2013-08-02 17:59             31326 id=s/27  term=0 exit=0
 # 012345678901234567890123456789012345678901234567890123456789012345678901234567890
-from cstruct import define, typedef, MemCStruct, NATIVE_ORDER
+from cstruct import parse, getdef, typedef, MemCStruct, NATIVE_ORDER
+from pathlib import Path
+import argparse
 import sys
 import time
 
-define("UT_NAMESIZE", 32)
-define("UT_LINESIZE", 32)
-define("UT_HOSTSIZE", 256)
+DEFAULT_FILENAME = "/var/run/utmp"
+
+parse(
+    """
+/* Values for ut_type field, below */
+
+#define EMPTY             0 /* Record does not contain valid info
+                              (formerly known as UT_UNKNOWN on Linux) */
+#define RUN_LVL           1 /* Change in system run-level (see
+                              init(1)) */
+#define BOOT_TIME         2 /* Time of system boot (in ut_tv) */
+#define NEW_TIME          3 /* Time after system clock change
+                              (in ut_tv) */
+#define OLD_TIME          4 /* Time before system clock change
+                              (in ut_tv) */
+#define INIT_PROCESS      5 /* Process spawned by init(1) */
+#define LOGIN_PROCESS     6 /* Session leader process for user login */
+#define USER_PROCESS      7 /* Normal process */
+#define DEAD_PROCESS      8 /* Terminated process */
+#define ACCOUNTING        9 /* Not implemented */
+
+#define UT_LINESIZE      32
+#define UT_NAMESIZE      32
+#define UT_HOSTSIZE     256
+"""
+)
 
 typedef("int", "pid_t")
 typedef("long", "time_t")
@@ -73,7 +98,6 @@ class Timeval(MemCStruct):
 
 
 def str_from_c(string):
-    # return str(string.split("\0")[0])
     return string.decode().split("\0")[0]
 
 
@@ -96,33 +120,51 @@ class Utmp(MemCStruct):
         char __unused[20];            /* Reserved for future use */
     """
 
-    def print_info(self, all_):
-        "andreax  + pts/0        2013-08-21 08:58   .         32341 (l26.box)"
-        "           pts/34       2013-06-12 15:04             26396 id=s/34  term=0 exit=0"
-        if all_ or self.ut_type in [6, 7]:
-            print(
-                "%-10s %-12s %15s %15s %-8s"
-                % (
-                    str_from_c(self.ut_user),
-                    str_from_c(self.ut_line),
-                    time.strftime("%Y-%m-%d %H:%M", time.gmtime(self.ut_tv.tv_sec)),
-                    self.ut_pid,
-                    str_from_c(self.ut_host)
-                    and "(%s)" % str_from_c(self.ut_host)
-                    or str_from_c(self.ut_id)
-                    and "id=%s" % str_from_c(self.ut_id)
-                    or "",
-                )
-            )
+    @property
+    def user(self):
+        return str_from_c(self.ut_user)
+
+    @property
+    def line(self):
+        return str_from_c(self.ut_line)
+
+    @property
+    def time(self):
+        return time.strftime("%Y-%m-%d %H:%M", time.gmtime(self.ut_tv.tv_sec))
+
+    @property
+    def host(self):
+        if str_from_c(self.ut_host):
+            host = str_from_c(self.ut_host)
+            return f"({host})"
+        elif self.ut_id:
+            ut_id = str_from_c(self.ut_id)
+            return f"id={ut_id}"
+        else:
+            return ""
+
+    def __str__(self):
+        return f"{self.user:<10s} {self.line:<12s} {self.time:<15s} {self.ut_pid:>15} {self.host:<8s}"
+
+    def print_info(self, show_all):
+        if show_all or self.ut_type in (getdef('LOGIN_PROCESS'), getdef('USER_PROCESS')):
+            print(self)
 
 
 def main():
-    utmp = len(sys.argv) > 1 and sys.argv[1] or "/var/run/utmp"
-    all_ = '-a' in sys.argv
-    with open(utmp, "rb") as f:
-        utmp = Utmp()
-        while utmp.unpack(f):
-            utmp.print_info(all_)
+    parser = argparse.ArgumentParser(description="Print information about users who are currently logged in.")
+    parser.add_argument("-a", "--all", action="store_true", dest="show_all", help="show all enties")
+    parser.add_argument("file", nargs="?", help="if FILE is not specified use /var/run/utmp", default=DEFAULT_FILENAME)
+    args = parser.parse_args()
+
+    utmp = Utmp()
+    try:
+        with Path(args.file).open("rb") as f:
+            while utmp.unpack(f):
+                utmp.print_info(args.show_all)
+    except (IOError, OSError) as ex:
+        print(ex)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

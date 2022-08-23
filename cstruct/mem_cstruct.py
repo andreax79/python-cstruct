@@ -27,7 +27,7 @@
 from typing import Any, List, Optional
 import ctypes
 import struct
-from .abstract import CStructMeta, AbstractCStruct
+from .abstract import AbstractCStruct
 
 
 class CStructList(List[Any]):
@@ -36,7 +36,7 @@ class CStructList(List[Any]):
         self.name = name
         self.parent = parent
 
-    def __setitem__(self, key: int, value: List[Any]) -> None:
+    def __setitem__(self, key: int, value: List[Any]) -> None:  # noqa: F811
         super().__setitem__(key, value)
         # Notify the parent when a value is changed
         if self.parent is not None:
@@ -53,35 +53,34 @@ class MemCStruct(AbstractCStruct):
 
     The following fields are generated from the C struct definition
     __mem_ = mutable character buffer
-    __size__ = lenght of the structure in bytes
+    __size__ = size of the structure in bytes (flexible array member size is omitted)
     __fields__ = list of structure fields
     __fields_types__ = dictionary mapping field names to types
     Every fields defined in the structure is added to the class
 
     """
 
-    __size__: int = 0
-    __mem__: ctypes.Array
+    __mem__ = None
 
-    def unpack_from(self, buffer: Optional[bytes], offset: int = 0) -> bool:
+    def unpack_from(self, buffer: Optional[bytes], offset: int = 0, flexible_array_length: Optional[int] = None) -> bool:
         """
         Unpack bytes containing packed C structure data
 
         :param buffer: bytes to be unpacked
         :param offset: optional buffer offset
+        :param flexible_array_length: optional flexible array lenght (number of elements)
         """
+        self.set_flexible_array_length(flexible_array_length)
         self.__base__ = offset  # Base offset
         if buffer is None:
             # the buffer is one item larger than its size and the last element is NUL
-            self.__mem__ = ctypes.create_string_buffer(self.__size__ + 1)
+            self.__mem__ = ctypes.create_string_buffer(self.size + 1)
         elif isinstance(buffer, ctypes.Array):
             self.__mem__ = buffer
         else:
             self.__mem__ = ctypes.create_string_buffer(buffer)
         for field, field_type in self.__fields_types__.items():
-            if field_type.flexible_array:  # TODO
-                raise NotImplementedError("Flexible array member are not supported")  # pragma: no cover
-            if isinstance(field_type.vtype, CStructMeta):
+            if field_type.is_struct or field_type.is_union:
                 setattr(self, field, field_type.unpack_from(self.__mem__, offset))
         return True
 
@@ -101,6 +100,19 @@ class MemCStruct(AbstractCStruct):
         """
         return self.__mem__.raw[:-1]  # the buffer is one item larger than its size and the last element is NUL
 
+    def set_flexible_array_length(self, flexible_array_length: Optional[int]) -> None:
+        """
+        Set flexible array length (i.e. number of elements)
+
+        :flexible_array_length: flexible array length
+        """
+        super().set_flexible_array_length(flexible_array_length)
+        if self.__mem__ is not None:
+            try:
+                ctypes.resize(self.__mem__, self.size + 1)
+            except ValueError:
+                pass
+
     def __getattr__(self, attr: str) -> Any:
         field_type = self.__fields_types__[attr]
         result = field_type.unpack_from(self.__mem__, self.__base__)
@@ -113,12 +125,15 @@ class MemCStruct(AbstractCStruct):
         field_type = self.__fields_types__.get(attr)
         if field_type is None:
             object.__setattr__(self, attr, value)
-        else:
-            if isinstance(field_type.vtype, CStructMeta):
-                object.__setattr__(self, attr, value)
-            else:
-                addr = field_type.offset + self.__base__
-                self.memcpy(addr, field_type.pack(value), field_type.vsize)
+        elif field_type.is_struct or field_type.is_union:
+            object.__setattr__(self, attr, value)
+        else:  # native
+            if field_type.flexible_array and len(value) != field_type.vlen:
+                # flexible array size changed, resize the buffer
+                field_type.vlen = len(value)
+                ctypes.resize(self.__mem__, self.size + 1)
+            addr = field_type.offset + self.__base__
+            self.memcpy(addr, field_type.pack(value), field_type.vsize)
 
     def on_change_list(self, attr: str, key: int, value: Any) -> None:
         field_type = self.__fields_types__[attr]
