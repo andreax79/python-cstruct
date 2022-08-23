@@ -25,9 +25,8 @@
 #
 # *****************************************************************************
 
-from unittest import TestCase, main
 import cstruct
-from cstruct import define, sizeof
+from cstruct import sizeof
 import struct
 
 
@@ -56,7 +55,7 @@ class Partition(cstruct.CStruct):
     """
 
 
-class TestUnion(cstruct.CStruct):
+class UnionT1(cstruct.CStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
         union {
@@ -70,53 +69,43 @@ class TestUnion(cstruct.CStruct):
     """
 
 
-class TestStruct(cstruct.CStruct):
+class StructT1(cstruct.CStruct):
     __def__ = """
        struct test_union {
-	    char magic[4];
-	    union {
-		struct {
-		    uint32 a;
-		    uint32 b;
-		} a;
-		struct {
-		    char   b[8];
-		} b;
-	    } c;
+        char magic[4];
+        union {
+        struct {
+            uint32 a;
+            uint32 b;
+        } a;
+        struct {
+            char   b[8];
+        } b;
+        } c;
        }
     """
 
 
-class TestCaseUnion(TestCase):
-
-    # def test_sizeof(self):
-    #     self.assertEqual(cstruct.DEFINES['INIT_THREAD_SIZE'], 16384)
-    #     self.assertEqual(sizeof('struct TestUnion'), 64)
-    #
-    def test_union(self):
-        s = TestStruct()
-        self.assertEqual(len(s), 12)
-        print(len(s))
-        raise Exception()
-
-    def test_union_unpack(self):
-        union = TestUnion()
-        union.unpack(None)
-        self.assertEqual(union.a, 0)
-        self.assertEqual(union.a1, 0)
-        self.assertEqual(union.b, 0)
-        self.assertEqual(union.c, 0)
-        union.unpack(struct.pack('b', 10) + cstruct.CHAR_ZERO * union.size)
-        self.assertEqual(union.a, 10)
-        self.assertEqual(union.a1, 10)
-        self.assertEqual(union.b, 10)
-        self.assertEqual(union.c, 10)
-        union.unpack(struct.pack('h', 1979) + cstruct.CHAR_ZERO * union.size)
-        self.assertEqual(union.a, 187)
-        self.assertEqual(union.a1, 187)
-        self.assertEqual(union.b, 1979)
-        self.assertEqual(union.c, 1979)
+def test_sizeof():
+    assert sizeof('struct UnionT1') == 64
+    s = UnionT1()
+    assert len(s) == 64
 
 
-if __name__ == '__main__':
-    main()
+def test_union_unpack():
+    union = UnionT1()
+    union.unpack(None)
+    assert union.a == 0
+    assert union.a1 == 0
+    assert union.b == 0
+    assert union.c == 0
+    union.unpack(struct.pack('b', 10) + cstruct.CHAR_ZERO * union.size)
+    assert union.a == 10
+    assert union.a1 == 10
+    assert union.b == 10
+    assert union.c == 10
+    union.unpack(struct.pack('h', 1979) + cstruct.CHAR_ZERO * union.size)
+    assert union.a == 187
+    assert union.a1 == 187
+    assert union.b == 1979
+    assert union.c == 1979

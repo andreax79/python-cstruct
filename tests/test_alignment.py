@@ -25,7 +25,6 @@
 #
 # *****************************************************************************
 
-from unittest import TestCase, main
 from cstruct import sizeof, typedef, define, CStruct, NATIVE_ORDER
 
 define("UT_NAMESIZE", 32)
@@ -186,30 +185,32 @@ class Foo10(CStruct):
     """
 
 
-class TestAlignament(TestCase):
-    def test_utmp_sizeof(self):
-        self.assertEqual(sizeof("struct Utmp"), 384)
-
-    # http://www.catb.org/esr/structure-packing/
-
-    def test_foo1_sizeof(self):
-        self.assertEqual(sizeof("struct Foo1"), 24)
-
-    def test_foo2_sizeof(self):
-        self.assertEqual(sizeof("struct Foo2"), 24)
-
-    def test_foo3_sizeof(self):
-        self.assertEqual(sizeof("struct Foo3"), 16)
-
-    def test_foo4_sizeof(self):
-        self.assertEqual(sizeof("struct Foo4"), 4)
-
-    def test_foo5_sizeof(self):
-        self.assertEqual(sizeof("struct Foo5"), 24)
-
-    def test_foo10_sizeof(self):
-        self.assertEqual(sizeof("struct Foo10"), 24)
+def test_utmp_sizeof():
+    assert sizeof("struct Utmp") == 384
 
 
-if __name__ == '__main__':
-    main()
+# http://www.catb.org/esr/structure-packing/
+
+
+def test_foo1_sizeof():
+    assert sizeof("struct Foo1") == 24
+
+
+def test_foo2_sizeof():
+    assert sizeof("struct Foo2") == 24
+
+
+def test_foo3_sizeof():
+    assert sizeof("struct Foo3") == 16
+
+
+def test_foo4_sizeof():
+    assert sizeof("struct Foo4") == 4
+
+
+def test_foo5_sizeof():
+    assert sizeof("struct Foo5") == 24
+
+
+def test_foo10_sizeof():
+    assert sizeof("struct Foo10") == 24

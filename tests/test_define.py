@@ -25,7 +25,7 @@
 #
 # *****************************************************************************
 
-from unittest import TestCase, main
+import pytest
 import cstruct
 from cstruct import define, undef, sizeof, typedef
 
@@ -41,27 +41,27 @@ class Position(cstruct.CStruct):
     """
 
 
-class TestCaseDefine(TestCase):
-    def test_sizeof(self):
-        self.assertEqual(sizeof('int'), 4)
-        define('INIT_THREAD_SIZE', 2048 * sizeof('long'))
-        self.assertEqual(cstruct.DEFINES['INIT_THREAD_SIZE'], 16384)
-        self.assertEqual(sizeof('struct Position'), 3)
-        self.assertEqual(sizeof('struct Position'), len(Position))
-        self.assertEqual(sizeof(Position), 3)
-        self.assertRaises(KeyError, lambda: sizeof('bla'))
-        self.assertRaises(KeyError, lambda: sizeof('struct Bla'))
-
-    def test_define(self):
-        define('A', 10)
-        self.assertEqual(cstruct.DEFINES['A'], 10)
-        undef('A')
-        self.assertRaises(KeyError, lambda: cstruct.DEFINES['A'])
-
-    def test_typedef(self):
-        typedef('int', 'integer')
-        self.assertEqual(sizeof('integer'), 4)
+def test_sizeof():
+    assert sizeof('int') == 4
+    define('INIT_THREAD_SIZE', 2048 * sizeof('long'))
+    assert cstruct.DEFINES['INIT_THREAD_SIZE'] == 16384
+    assert sizeof('struct Position') == 3
+    assert sizeof('struct Position') == len(Position)
+    assert sizeof(Position) == 3
+    with pytest.raises(KeyError):
+        sizeof('bla')
+    with pytest.raises(KeyError):
+        sizeof('struct Bla')
 
 
-if __name__ == '__main__':
-    main()
+def test_define():
+    define('A', 10)
+    assert cstruct.DEFINES['A'] == 10
+    undef('A')
+    with pytest.raises(KeyError):
+        cstruct.DEFINES['A']
+
+
+def test_typedef():
+    typedef('int', 'integer')
+    assert sizeof('integer') == 4

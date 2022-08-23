@@ -25,7 +25,6 @@
 #
 # *****************************************************************************
 
-from unittest import TestCase, main
 import cstruct
 from cstruct import sizeof, typedef
 import io
@@ -645,102 +644,106 @@ class PartitionNested(cstruct.CStruct):
     """
 
 
-class TestCStruct(TestCase):
-    def test_len(self):
-        mbr = MBR()
-        self.assertEqual(len(mbr), 512)
-        self.assertEqual(mbr.size, 512)
-
-    def test_sizeof(self):
-        self.assertEqual(sizeof("struct Partition"), sizeof("struct PartitionFlat"))
-        self.assertEqual(sizeof("struct Partition"), sizeof("struct PartitionNested"))
-
-    def test_unpack(self):
-        mbr = MBR()
-        f = io.BytesIO(MBR_DATA)
-        mbr.unpack(f)
-        self.assertEqual(mbr.signature[0], 0x55)
-        self.assertEqual(mbr.signature[1], 0xAA)
-        self.assertEqual(mbr.partitions[0].start.head, 0)
-        self.assertEqual(mbr.partitions[0].end.head, 0xFE)
-        self.assertEqual(mbr.partitions[1].start_sect, 0x2117C7)
-
-    def test_pack(self):
-        mbr = MBR(MBR_DATA)
-        d = mbr.pack()
-        self.assertEqual(MBR_DATA, d)
-        mbr.partitions[3].start.head = 123
-        d1 = mbr.pack()
-        mbr1 = MBR(d1)
-        self.assertEqual(mbr1.partitions[3].start.head, 123)
-
-    def test_init(self):
-        p = Position(head=254, sector=63, cyl=134)
-        mbr = MBR(MBR_DATA)
-        self.assertEqual(mbr.partitions[0].end.head, p.head)
-        self.assertEqual(mbr.partitions[0].end.sector, p.sector)
-        self.assertEqual(mbr.partitions[0].end.cyl, p.cyl)
-
-    def test_none(self):
-        mbr = MBR()
-        self.assertEqual(mbr.partitions[0].end.sector, 0)
-        mbr.unpack(None)
-        self.assertEqual(mbr.partitions[0].end.head, 0)
-
-    def test_clear(self):
-        mbr = MBR()
-        mbr.unpack(MBR_DATA)
-        self.assertEqual(mbr.partitions[0].end.head, 0xFE)
-        mbr.clear()
-        self.assertEqual(mbr.partitions[0].end.head, 0x00)
-
-    def test_inline(self):
-        TestStruct = cstruct.parse(
-            'struct TestStruct { unsigned char head; unsigned char sector; unsigned char cyl; }',
-            __byte_order__=cstruct.LITTLE_ENDIAN,
-        )
-        s = TestStruct(head=254, sector=63, cyl=134)
-        p = Position(head=254, sector=63, cyl=134)
-        self.assertEqual(s.pack(), p.pack())
-
-    def test_dummy(self):
-        dummy = Dummy()
-        dummy.c = b'A'
-        dummy.vc = b'ABCDEFGHIJ'
-        dummy.i = 123456
-        for i in range(0, 10):
-            dummy.vi[i] = i * 10
-        dummy.f = 123.456
-        for i in range(0, 10):
-            dummy.vf[i] = 10.0 / (i + 1)
-        dummy.vl = list(range(0, 10))
-        data = dummy.pack()
-        dummy1 = Dummy(data)
-        for i in range(0, 10):
-            dummy1.vl[i] = dummy.vl[i]
-        self.assertEqual(dummy.pack(), dummy1.pack())
-        dummy2 = Dummy(data)
-        dummy2.vf[2] = 79
-        self.assertNotEqual(dummy.pack(), dummy2.pack())
-        dummy3 = Dummy(data)
-        dummy3.vl = list(range(1, 11))
-        self.assertNotEqual(dummy.pack(), dummy3.pack())
-
-    def test_nested(self):
-        data = os.urandom(sizeof("struct PartitionFlat"))
-        flat = PartitionFlat(data)
-        flat.unpack(data)
-        nested = PartitionNested(data)
-        nested.unpack(data)
-        self.assertEqual(flat.status, nested.status)
-        self.assertEqual(flat.startAddrHead, nested.start.addrHead)
-        self.assertEqual(flat.startAddrCylSec, nested.start.addrCylSec)
-        self.assertEqual(flat.partType, nested.partType)
-        self.assertEqual(flat.endAddrHead, nested.end.addrHead)
-        self.assertEqual(flat.endAddrCylSec, nested.end.addrCylSec)
-        self.assertEqual(flat.startLBA, nested.startLBA)
-        self.assertEqual(flat.endLBA, nested.endLBA)
+def test_len():
+    mbr = MBR()
+    assert len(mbr) == 512
+    assert mbr.size == 512
 
 
-if __name__ == '__main__':
-    main()
+def test_sizeof():
+    assert sizeof("struct Partition") == sizeof("struct PartitionFlat")
+    assert sizeof("struct Partition") == sizeof("struct PartitionNested")
+
+
+def test_unpack():
+    mbr = MBR()
+    f = io.BytesIO(MBR_DATA)
+    mbr.unpack(f)
+    assert mbr.signature[0] == 0x55
+    assert mbr.signature[1] == 0xAA
+    assert mbr.partitions[0].start.head == 0
+    assert mbr.partitions[0].end.head == 0xFE
+    assert mbr.partitions[1].start_sect == 0x2117C7
+
+
+def test_pack():
+    mbr = MBR(MBR_DATA)
+    d = mbr.pack()
+    assert MBR_DATA == d
+    mbr.partitions[3].start.head = 123
+    d1 = mbr.pack()
+    mbr1 = MBR(d1)
+    assert mbr1.partitions[3].start.head == 123
+
+
+def test_init():
+    p = Position(head=254, sector=63, cyl=134)
+    mbr = MBR(MBR_DATA)
+    assert mbr.partitions[0].end.head == p.head
+    assert mbr.partitions[0].end.sector == p.sector
+    assert mbr.partitions[0].end.cyl == p.cyl
+
+
+def test_none():
+    mbr = MBR()
+    assert mbr.partitions[0].end.sector == 0
+    mbr.unpack(None)
+    assert mbr.partitions[0].end.head == 0
+
+
+def test_clear():
+    mbr = MBR()
+    mbr.unpack(MBR_DATA)
+    assert mbr.partitions[0].end.head == 0xFE
+    mbr.clear()
+    assert mbr.partitions[0].end.head == 0x00
+
+
+def test_inline():
+    StructT1 = cstruct.parse(
+        'struct StructT1 { unsigned char head; unsigned char sector; unsigned char cyl; }',
+        __byte_order__=cstruct.LITTLE_ENDIAN,
+    )
+    s = StructT1(head=254, sector=63, cyl=134)
+    p = Position(head=254, sector=63, cyl=134)
+    assert s.pack() == p.pack()
+
+
+def test_dummy():
+    dummy = Dummy()
+    dummy.c = b'A'
+    dummy.vc = b'ABCDEFGHIJ'
+    dummy.i = 123456
+    for i in range(0, 10):
+        dummy.vi[i] = i * 10
+    dummy.f = 123.456
+    for i in range(0, 10):
+        dummy.vf[i] = 10.0 / (i + 1)
+    dummy.vl = list(range(0, 10))
+    data = dummy.pack()
+    dummy1 = Dummy(data)
+    for i in range(0, 10):
+        dummy1.vl[i] = dummy.vl[i]
+    assert dummy.pack() == dummy1.pack()
+    dummy2 = Dummy(data)
+    dummy2.vf[2] = 79
+    assert dummy.pack() != dummy2.pack()
+    dummy3 = Dummy(data)
+    dummy3.vl = list(range(1, 11))
+    assert dummy.pack() != dummy3.pack()
+
+
+def test_nested():
+    data = os.urandom(sizeof("struct PartitionFlat"))
+    flat = PartitionFlat(data)
+    flat.unpack(data)
+    nested = PartitionNested(data)
+    nested.unpack(data)
+    assert flat.status == nested.status
+    assert flat.startAddrHead == nested.start.addrHead
+    assert flat.startAddrCylSec == nested.start.addrCylSec
+    assert flat.partType == nested.partType
+    assert flat.endAddrHead == nested.end.addrHead
+    assert flat.endAddrCylSec == nested.end.addrCylSec
+    assert flat.startLBA == nested.startLBA
+    assert flat.endLBA == nested.endLBA
