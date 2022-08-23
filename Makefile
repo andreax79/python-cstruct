@@ -11,7 +11,7 @@ help:
 	@echo - make venv ------- Create virtual environment
 
 black:
-	black -S cstruct tests setup.py
+	black -S cstruct tests examples setup.py
 
 clean:
 	-rm -rf build dist

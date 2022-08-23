@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#*****************************************************************************
+# *****************************************************************************
 #
 # Copyright (c) 2013 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
@@ -24,7 +24,7 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 #
-#*****************************************************************************
+# *****************************************************************************
 
 #            pts/1        2013-06-06 18:09             23120 id=ts/1  term=0 exit=0
 #            system boot  2013-05-20 21:27
@@ -45,7 +45,7 @@
 #            pts/30       2013-07-24 14:40             19054 id=s/30  term=0 exit=0
 #            pts/28       2013-07-30 20:49             24942 id=s/28  term=0 exit=0
 #            pts/27       2013-08-02 17:59             31326 id=s/27  term=0 exit=0
-#012345678901234567890123456789012345678901234567890123456789012345678901234567890
+# 012345678901234567890123456789012345678901234567890123456789012345678901234567890
 from cstruct import define, typedef, MemCStruct, NATIVE_ORDER
 import sys
 import time
@@ -57,20 +57,25 @@ define("UT_HOSTSIZE", 256)
 typedef("int", "pid_t")
 typedef("long", "time_t")
 
+
 class ExitStatus(MemCStruct):
     __struct__ = """
         short   e_termination;      /* Process termination status.  */
         short   e_exit;             /* Process exit status.  */
     """
+
+
 class Timeval(MemCStruct):
     __struct__ = """
         int32_t tv_sec;             /* Seconds.  */
         int32_t tv_usec;            /* Microseconds.  */
     """
 
+
 def str_from_c(string):
-    #return str(string.split("\0")[0])
+    # return str(string.split("\0")[0])
     return string.decode().split("\0")[0]
+
 
 class Utmp(MemCStruct):
     __byte_order__ = NATIVE_ORDER
@@ -94,13 +99,22 @@ class Utmp(MemCStruct):
     def print_info(self, all_):
         "andreax  + pts/0        2013-08-21 08:58   .         32341 (l26.box)"
         "           pts/34       2013-06-12 15:04             26396 id=s/34  term=0 exit=0"
-        if all_ or self.ut_type in [6,7]:
-            print("%-10s %-12s %15s %15s %-8s" % (
+        if all_ or self.ut_type in [6, 7]:
+            print(
+                "%-10s %-12s %15s %15s %-8s"
+                % (
                     str_from_c(self.ut_user),
                     str_from_c(self.ut_line),
                     time.strftime("%Y-%m-%d %H:%M", time.gmtime(self.ut_tv.tv_sec)),
                     self.ut_pid,
-                    str_from_c(self.ut_host) and "(%s)" % str_from_c(self.ut_host) or str_from_c(self.ut_id) and "id=%s" % str_from_c(self.ut_id) or ""))
+                    str_from_c(self.ut_host)
+                    and "(%s)" % str_from_c(self.ut_host)
+                    or str_from_c(self.ut_id)
+                    and "id=%s" % str_from_c(self.ut_id)
+                    or "",
+                )
+            )
+
 
 def main():
     utmp = len(sys.argv) > 1 and sys.argv[1] or "/var/run/utmp"
@@ -110,6 +124,6 @@ def main():
         while utmp.unpack(f):
             utmp.print_info(all_)
 
+
 if __name__ == "__main__":
     main()
-

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#*****************************************************************************
+# *****************************************************************************
 #
 # Copyright (c) 2013 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
@@ -24,12 +24,13 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 #
-#*****************************************************************************
+# *****************************************************************************
 
 import cstruct
 import sys
 
-class Position(cstruct.CStruct):
+
+class Position(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __struct__ = """
         unsigned char head;
@@ -37,7 +38,8 @@ class Position(cstruct.CStruct):
         unsigned char cyl;
     """
 
-class Partition(cstruct.CStruct):
+
+class Partition(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __struct__ = """
         unsigned char status;       /* 0x80 - active */
@@ -56,7 +58,8 @@ class Partition(cstruct.CStruct):
         print("starting sector: %08X" % self.start_sect)
         print("size MB: %s" % (self.sectors / 2 / 1024))
 
-class MBR(cstruct.CStruct):
+
+class MBR(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __struct__ = """
         char unused[440];
@@ -74,6 +77,7 @@ class MBR(cstruct.CStruct):
             print("partition: %s" % i)
             partition.print_info()
 
+
 def main():
     if len(sys.argv) != 2:
         print("usage: %s disk" % sys.argv[0])
@@ -84,6 +88,6 @@ def main():
         mbr.unpack(data)
         mbr.print_info()
 
-if __name__ == "__main__":
-        main()
 
+if __name__ == "__main__":
+    main()
