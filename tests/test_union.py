@@ -30,7 +30,7 @@ from cstruct import sizeof
 import struct
 
 
-class Position(cstruct.CStruct):
+class Position(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
         struct {
@@ -41,7 +41,7 @@ class Position(cstruct.CStruct):
     """
 
 
-class Partition(cstruct.CStruct):
+class Partition(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
         struct {
@@ -55,7 +55,7 @@ class Partition(cstruct.CStruct):
     """
 
 
-class UnionT1(cstruct.CStruct):
+class UnionT1(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
         union {
@@ -66,23 +66,6 @@ class UnionT1(cstruct.CStruct):
             struct Partition d;
             struct Partition e[4];
         }
-    """
-
-
-class StructT1(cstruct.CStruct):
-    __def__ = """
-       struct test_union {
-        char magic[4];
-        union {
-        struct {
-            uint32 a;
-            uint32 b;
-        } a;
-        struct {
-            char   b[8];
-        } b;
-        } c;
-       }
     """
 
 
@@ -109,3 +92,11 @@ def test_union_unpack():
     assert union.a1 == 187
     assert union.b == 1979
     assert union.c == 1979
+    print(union)
+    union2 = UnionT1(union.pack())
+    print(union2)
+    assert len(union) == len(union2)
+    assert union2.a == 187
+    assert union2.a1 == 187
+    assert union2.b == 1979
+    assert union2.c == 1979
