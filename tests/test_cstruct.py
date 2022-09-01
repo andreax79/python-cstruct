@@ -246,3 +246,9 @@ def test_nested():
     assert flat.endAddrCylSec == nested.end.addrCylSec
     assert flat.startLBA == nested.startLBA
     assert flat.endLBA == nested.endLBA
+
+
+def test_null_compare():
+    c = Dummy()
+    assert c is not None
+    assert c != None

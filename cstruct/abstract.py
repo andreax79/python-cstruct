@@ -141,7 +141,7 @@ class AbstractCStruct(_CStructParent):
         return self.__size__
 
     def __eq__(self, other: Any) -> bool:
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+        return other is not None and isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)

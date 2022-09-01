@@ -26,7 +26,7 @@
 
 __author__ = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
 __license__ = 'MIT'
-__version__ = '2.2'
+__version__ = '2.3'
 __date__ = '15 August 2013'
 
 import struct
