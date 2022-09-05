@@ -128,10 +128,10 @@
 
 - Fix compare with None
 
-### 2.4
+### 3.0
 
-2022-XX-XX
+2022-09-05
 
 ### Added
 
-- flexible array support
+- Flexible array support
