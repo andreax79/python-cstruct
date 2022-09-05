@@ -23,7 +23,8 @@ coverage:
 
 .PHONY: docs
 docs:
-	cd docs; $(MAKE) html
+	@mkdocs build
+	@mkdocs gh-deploy
 
 lint:
 	flake8 cstruct tests

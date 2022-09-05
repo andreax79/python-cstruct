@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
 # Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
@@ -29,6 +27,7 @@ import struct
 from enum import Enum
 from typing import Optional, Any, List, Type, TYPE_CHECKING
 from .base import NATIVE_ORDER, C_TYPE_TO_FORMAT
+from .exceptions import ParserError
 
 if TYPE_CHECKING:
     from .abstract import AbstractCStruct
@@ -49,12 +48,32 @@ def calculate_padding(byte_order: Optional[str], alignment: int, pos: int) -> in
 
 
 class Kind(Enum):
+    """
+    Field type
+    """
+
     NATIVE = 0
+    "Native type (e.g. int, char)"
     STRUCT = 1
+    "Struct type"
     UNION = 2
+    "Union type"
 
 
 class FieldType(object):
+    """
+    Struct/Union field
+
+    Attributes:
+        kind (Kind): struct/union/native
+        c_type (str): field type
+        ref (AbstractCStruct): struct/union class ref
+        vlen (int): number of elements
+        flexible_array (bool): True for flexible arrays
+        offset (int): relative memory position of the field (relative to the struct)
+        padding (int): padding
+    """
+
     def __init__(
         self,
         kind: Kind,
@@ -66,14 +85,15 @@ class FieldType(object):
         offset: int,
     ) -> None:
         """
-        Struct/Union field
+        Initialize a Struct/Union field
 
-        :param kind: struct/union/native
-        :param c_type: field type
-        :param ref: struct/union class ref
-        :param vlen: number of elements
-        :param flexible_array: True for flexible arrays
-        :param offset: relative memory position of the field (relative to the struct)
+        Args:
+            kind: struct/union/native
+            c_type: field type
+            ref: struct/union class ref
+            vlen: number of elements
+            flexible_array: True for flexible arrays
+            offset: relative memory position of the field (relative to the struct)
         """
         self.kind = kind
         self.c_type = c_type
@@ -85,6 +105,16 @@ class FieldType(object):
         self.padding = 0
 
     def unpack_from(self, buffer: bytes, offset: int = 0) -> Any:
+        """
+        Unpack bytes containing packed C structure data
+
+        Args:
+            buffer: bytes to be unpacked
+            offset: optional buffer offset
+
+        Returns:
+            data: The unpacked data
+        """
         if self.is_native:
             result = struct.unpack_from(self.fmt, buffer, self.offset + offset)
             if self.is_array:
@@ -105,6 +135,15 @@ class FieldType(object):
                 return instances
 
     def pack(self, data: Any) -> bytes:
+        """
+        Pack the field into bytes
+
+        Args:
+            data: data to be packed
+
+        Returns:
+            bytes: The packed structure
+        """
         if self.flexible_array:
             self.vlen = len(data)  # set flexible array size
             return struct.pack(self.fmt, *data)
@@ -120,14 +159,17 @@ class FieldType(object):
 
     @property
     def is_native(self) -> bool:
+        "True if the field is a native type (e.g. int, char)"
         return self.kind == Kind.NATIVE
 
     @property
     def is_struct(self) -> bool:
+        "True if the field is a struct"
         return self.kind == Kind.STRUCT
 
     @property
     def is_union(self) -> bool:
+        "True if the field is an union"
         return self.kind == Kind.UNION
 
     @property
@@ -137,7 +179,7 @@ class FieldType(object):
             try:
                 return C_TYPE_TO_FORMAT[self.c_type]
             except KeyError:
-                raise Exception("Unknow type \"" + self.c_type + "\"")
+                raise ParserError("Unknow type {}".format(self.c_type))
         else:
             return 'c'
 
@@ -170,7 +212,7 @@ class FieldType(object):
             return self.ref.__alignment__
 
     def align_filed_offset(self) -> None:
-        "Align file if byte order is native"
+        "If the byte order is native, align the field"
         if align(self.byte_order) and self.c_type != 'char':
             self.padding = calculate_padding(self.byte_order, self.alignment, self.base_offset)
             self.offset = self.base_offset + self.padding

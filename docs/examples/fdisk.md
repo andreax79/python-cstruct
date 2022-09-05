@@ -1,0 +1,3 @@
+```
+{!examples/fdisk.py!}
+```

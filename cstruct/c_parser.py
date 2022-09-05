@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
 # Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
@@ -30,6 +28,7 @@ from typing import Union, Optional, Any, Dict, Type, TYPE_CHECKING
 from .base import DEFINES, TYPEDEFS, STRUCTS
 from .field import calculate_padding, Kind, FieldType
 from .c_expr import c_eval
+from .exceptions import CStructException, ParserError
 
 if TYPE_CHECKING:
     from .abstract import AbstractCStruct
@@ -49,7 +48,7 @@ class Tokens(object):
                     _, name, value = line.strip().split(maxsplit=2)
                     DEFINES[name] = c_eval(value)
                 except Exception:
-                    raise Exception("Parsing line {}".format(line))
+                    raise ParserError("Parsing line {}".format(line))
             else:
                 lines.append(line)
         text = " ".join(lines)
@@ -74,7 +73,7 @@ class Tokens(object):
 
 def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Optional[str], offset: int) -> "FieldType":
     if len(tokens) < 2:
-        raise Exception("Parsing error")
+        raise ParserError("Parsing error")
     c_type = tokens.pop()
     # signed/unsigned/struct
     if c_type in ['signed', 'unsigned', 'struct', 'union'] and len(tokens) > 1:
@@ -94,7 +93,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
     if "[" in next_token:
         t = next_token.split("[")
         if len(t) != 2:
-            raise Exception("Error parsing: " + next_token)
+            raise ParserError("Error parsing: " + next_token)
         next_token = t[0].strip()
         vlen_part = t[1]
         vlen_expr = []
@@ -132,7 +131,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
             try:
                 ref = STRUCTS[tail]
             except KeyError:
-                raise Exception("Unknow %s \"%s\"" % (c_type, tail))
+                raise ParserError("Unknow {} {}".format(c_type, tail))
     else:  # other types
         kind = Kind.NATIVE
         ref = None
@@ -154,7 +153,7 @@ def parse_def(
         return None
     kind = tokens.pop()
     if kind not in ['struct', 'union']:
-        raise Exception("struct or union expected - {}".format(kind))
+        raise ParserError("struct or union expected - {}".format(kind))
     __is_union__ = kind == 'union'
     vtype = tokens.pop()
     if tokens.get() == '{':  # Named nested struct
@@ -163,7 +162,7 @@ def parse_def(
     elif vtype == '{':  # Unnamed nested struct
         return parse_struct(tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__)
     else:
-        raise Exception("{} definition expected".format(vtype))
+        raise ParserError("{} definition expected".format(vtype))
 
 
 def parse_struct(
@@ -189,7 +188,7 @@ def parse_struct(
             break
         # flexible array member must be the last member of such a struct
         if flexible_array:
-            raise Exception("Flexible array member must be the last member of such a struct")
+            raise CStructException("Flexible array member must be the last member of such a struct")
         field_type = parse_type(tokens, __cls__, __byte_order__, offset)
         vname = tokens.pop()
         fields_types[vname] = field_type
@@ -201,7 +200,7 @@ def parse_struct(
             offset = field_type.offset + field_type.vsize
         t = tokens.pop()
         if t != ';':
-            raise (Exception("; expected but %s found" % t))
+            raise ParserError("; expected but %s found" % t)
 
     if __is_union__:  # C union
         # Calculate the sizeof union as size of its largest element

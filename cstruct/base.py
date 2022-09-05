@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
 # Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
@@ -38,16 +36,15 @@ __all__ = [
     'DEFINES',
     'TYPEDEFS',
     'C_TYPE_TO_FORMAT',
-    'EMPTY_BYTES_STRING',
     'CHAR_ZERO',
 ]
 
-# little-endian, std. size & alignment
 LITTLE_ENDIAN = '<'
-# big-endian, std. size & alignment
+"Little-endian, std. size & alignment"
 BIG_ENDIAN = '>'
-# native order, size & alignment
+"Big-endian, std. size & alignment"
 NATIVE_ORDER = '@'
+"Native order, size & alignment"
 
 STRUCTS: Dict[str, Type["AbstractCStruct"]] = {}
 
@@ -94,5 +91,4 @@ C_TYPE_TO_FORMAT: Dict[str, str] = {
     'uint64': 'Q',
 }
 
-EMPTY_BYTES_STRING = bytes()
 CHAR_ZERO = bytes('\0', 'ascii')

@@ -27,10 +27,11 @@
 from abc import ABCMeta
 from collections import OrderedDict
 from typing import Any, BinaryIO, List, Dict, Optional, Type, Tuple, Union
-from .base import STRUCTS
 import hashlib
+from .base import STRUCTS
 from .c_parser import parse_struct, parse_def, Tokens
 from .field import calculate_padding, FieldType
+from .exceptions import CStructException
 
 __all__ = ['CStructMeta', 'AbstractCStruct']
 
@@ -38,7 +39,6 @@ __all__ = ['CStructMeta', 'AbstractCStruct']
 class CStructMeta(ABCMeta):
     __size__: int = 0
 
-    # def __new__(cls: Type[type], name: str, bases: tuple, classdict: dict) -> MetaClass:
     def __new__(metacls: Type[type], name: str, bases: Tuple[str], namespace: Dict[str, Any]) -> Type[Any]:
         __struct__ = namespace.get('__struct__', None)
         namespace['__cls__'] = bases[0] if bases else None
@@ -58,6 +58,7 @@ class CStructMeta(ABCMeta):
         return new_class
 
     def __len__(cls) -> int:
+        "Structure size (in bytes)"
         return cls.__size__
 
     @property
@@ -67,12 +68,22 @@ class CStructMeta(ABCMeta):
 
 
 class AbstractCStruct(metaclass=CStructMeta):
+    """
+    Abstract C struct to Python class
+    """
+
     __size__: int = 0
+    " Size in bytes "
     __fields__: List[str] = []
+    " Struct/union fileds "
     __fields_types__: Dict[str, FieldType]
+    " Dictionary mapping field names to types "
     __byte_order__: Optional[str] = None
+    " Byte order "
     __alignment__: int = 0
+    " Alignament "
     __is_union__: bool = False
+    " True if the class is an union, False if it is a struct "
 
     def __init__(
         self, buffer: Optional[Union[bytes, BinaryIO]] = None, flexible_array_length: Optional[int] = None, **kargs: Dict[str, Any]
@@ -92,18 +103,30 @@ class AbstractCStruct(metaclass=CStructMeta):
 
     @classmethod
     def parse(
-        cls, __struct__: Union[str, Tokens, Dict[str, Any]], __name__: Optional[str] = None, **kargs: Dict[str, Any]
+        cls,
+        __struct__: Union[str, Tokens, Dict[str, Any]],
+        __name__: Optional[str] = None,
+        __byte_order__: Optional[str] = None,
+        __is_union__: Optional[bool] = False,
+        **kargs: Dict[str, Any]
     ) -> Type["AbstractCStruct"]:
         """
         Return a new class mapping a C struct/union definition.
 
-        :param __struct__:     definition of the struct (or union) in C syntax
-        :param __name__:       (optional) name of the new class. If empty, a name based on the __struct__ hash is generated
-        :param __byte_order__: (optional) byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
-        :param __is_union__:   (optional) True for union, False for struct (default)
-        :returns:              cls subclass
+        Args:
+            __struct__:     definition of the struct (or union) in C syntax
+            __name__:       name of the new class. If empty, a name based on the __struct__ hash is generated
+            __byte_order__: byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
+            __is_union__:   True for union, False for struct
+
+        Returns:
+            cls: a new class mapping the defintion
         """
         cls_kargs: Dict[str, Any] = dict(kargs)
+        if __byte_order__ is not None:
+            cls_kargs['__byte_order__'] = __byte_order__
+        if __is_union__ is not None:
+            cls_kargs['__is_union__'] = __is_union__
         cls_kargs['__struct__'] = __struct__
         if isinstance(__struct__, (str, Tokens)):
             del cls_kargs['__struct__']
@@ -123,20 +146,23 @@ class AbstractCStruct(metaclass=CStructMeta):
         """
         Set flexible array length (i.e. number of elements)
 
-        :flexible_array_length: flexible array length
+        Args:
+            flexible_array_length: flexible array length
         """
         if flexible_array_length is not None:
             # Search for the flexible array
             flexible_array: Optional[FieldType] = [x for x in self.__fields_types__.values() if x.flexible_array][0]
             if flexible_array is None:
-                raise ValueError("Flexible array not found in struct")
+                raise CStructException("Flexible array not found in struct")
             flexible_array.vlen = flexible_array_length
 
     def unpack(self, buffer: Optional[Union[bytes, BinaryIO]], flexible_array_length: Optional[int] = None) -> bool:
         """
         Unpack bytes containing packed C structure data
 
-        :param buffer: bytes or binary stream to be unpacked
+        Args:
+            buffer: bytes or binary stream to be unpacked
+            flexible_array_length: flexible array length
         """
         self.set_flexible_array_length(flexible_array_length)
         if hasattr(buffer, 'read'):
@@ -151,8 +177,10 @@ class AbstractCStruct(metaclass=CStructMeta):
         """
         Unpack bytes containing packed C structure data
 
-        :param buffer: bytes to be unpacked
-        :param offset: optional buffer offset
+        Args:
+            buffer: bytes to be unpacked
+            offset: optional buffer offset
+            flexible_array_length: flexible array length
         """
         raise NotImplementedError
 

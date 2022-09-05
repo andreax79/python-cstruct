@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
 # Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
@@ -33,25 +31,23 @@ class CStruct(AbstractCStruct):
     """
     Convert C struct definitions into Python classes.
 
-    __struct__ = definition of the struct (or union) in C syntax
-    __byte_order__ = (optional) byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
-    __is_union__ = (optional) True for union definitions, False for struct definitions (default)
-
-    The following fields are generated from the C struct definition
-    __size__ = size of the structure in bytes (flexible array member size is omitted)
-    __fields__ = list of structure fields
-    __fields_types__ = dictionary mapping field names to types
-    Every fields defined in the structure is added to the class
-
+    Attributes:
+        __struct__ (str): definition of the struct (or union) in C syntax
+        __byte_order__ (str): byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
+        __is_union__ (bool): True for union definitions, False for struct definitions
+        __size__ (int): size of the structure in bytes (flexible array member size is omitted)
+        __fields__ (list): list of structure fields
+        __fields_types__ (dict): dictionary mapping field names to types
     """
 
     def unpack_from(self, buffer: Optional[bytes], offset: int = 0, flexible_array_length: Optional[int] = None) -> bool:
         """
         Unpack bytes containing packed C structure data
 
-        :param buffer: bytes to be unpacked
-        :param offset: optional buffer offset
-        :param flexible_array_length: optional flexible array lenght (number of elements)
+        Args:
+            buffer: bytes to be unpacked
+            offset: optional buffer offset
+            flexible_array_length: optional flexible array lenght (number of elements)
         """
         self.set_flexible_array_length(flexible_array_length)
         if buffer is None:
@@ -63,6 +59,9 @@ class CStruct(AbstractCStruct):
     def pack(self) -> bytes:
         """
         Pack the structure data into bytes
+
+        Returns:
+            bytes: The packed structure
         """
         result: List[bytes] = []
         for field, field_type in self.__fields_types__.items():
