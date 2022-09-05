@@ -1,0 +1,34 @@
+site_name: Python CStruct documentation
+docs_dir:  docs
+
+theme:
+  name: readthedocs
+  highlightjs: true
+
+plugins:
+- search
+- autorefs
+- mkdocstrings:
+    watch:
+    - cstruct
+    - examples
+
+nav:
+  - CStruct Docs: index.md
+  - Examples:
+    - "fdisk.py": examples/fdisk.md
+    - "flexible_array.py": examples/flexible_array.md
+    - "who.py": examples/who.md
+  - API:
+    - "cstruct": api/module.md
+    - "cstruct.abstract": api/abstract.md
+    - "cstruct.base": api/base.md
+    - "cstruct.c_expr": api/c_expr.md
+    - "cstruct.cstruct": api/cstruct.md
+    - "cstruct.field": api/field.md
+    - "cstruct.mem_cstruct": api/mem_cstruct.md
+  - License: license.md
+
+markdown_extensions:
+  - markdown_include.include:
+      base_path: .

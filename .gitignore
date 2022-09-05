@@ -39,3 +39,4 @@ nosetests.xml
 /include
 .mypy_cache
 pyvenv.cfg
+site/

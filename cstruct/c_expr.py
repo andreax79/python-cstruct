@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
 # Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
@@ -28,6 +26,7 @@ import ast
 import operator
 from typing import Any, Callable, Dict, Union, Type, TYPE_CHECKING
 from .base import DEFINES, STRUCTS
+from .exceptions import EvalError
 
 if TYPE_CHECKING:
     from .abstract import AbstractCStruct
@@ -36,9 +35,31 @@ __all__ = ['c_eval']
 
 
 def c_eval(expr: str) -> Union[int, float]:
-    "Evaluate a C arithmetic/logic expression and return the result"
-    expr = expr.replace("!", " not ").replace("&&", " and ").replace("||", " or ")
-    return eval_node(ast.parse(expr.strip()).body[0])
+    """
+    Evaluate a C arithmetic/logic expression and return the result
+
+    Examples:
+        >>> c_eval('10 + (5 / 3)')
+        11
+        >>> c_eval('!0')
+        1
+        >>> c_eval('sizeof(x)')
+        128
+
+    Args:
+        expr: C expression
+
+    Returns:
+        result: the expression evaluation result
+
+    Raises:
+        EvalError: expression evaluation error
+    """
+    try:
+        expr = expr.replace("!", " not ").replace("&&", " and ").replace("||", " or ")
+        return eval_node(ast.parse(expr.strip()).body[0])
+    except Exception:
+        raise EvalError
 
 
 def eval_node(node: ast.stmt) -> Union[int, float]:
@@ -79,9 +100,9 @@ def eval_div(node) -> Union[int, float]:
 
 
 def eval_call(node) -> Union[int, float]:
-    if node.func.id == "sizeof":
-        from . import sizeof
+    from . import sizeof
 
+    if node.func.id == "sizeof":
         args = [eval_node(x) for x in node.args]
         return sizeof(*args)
     raise KeyError(node.func.id)

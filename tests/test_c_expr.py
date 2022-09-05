@@ -28,15 +28,19 @@
 from cstruct import parse, getdef, define
 from cstruct.c_expr import c_eval
 
+
 def test_c_expr_def():
-    parse("""
+    parse(
+        """
         #define A1  10 /* test */
         #define A2  10 + A1  /* comment */
         #define A3  30
-    """)
+    """
+    )
     assert getdef("A1") == 10
     assert getdef('A2') == 20  # TODO
     assert c_eval("A1 / 10") == 1
+
 
 def test_c_expr_binary():
     assert c_eval("6*2/( 2+1 * 2/3 +6) +8 * (8/4)") == 17
@@ -48,10 +52,12 @@ def test_c_expr_binary():
     assert c_eval("3 & 2") == 2
     assert c_eval("3 | 2") == 3
 
+
 def test_c_expr_bool():
     assert c_eval("3 && 2") == 1
     assert c_eval("3 && 2 && 1") == 1
     assert c_eval("3 || 2") == 1
+
 
 def test_c_expr_unary():
     assert c_eval("16 << 2") == 64
@@ -61,6 +67,7 @@ def test_c_expr_unary():
     assert c_eval("!0") == 1
     assert c_eval("~0") == -1
     assert c_eval("~1") == -2
+
 
 def test_c_expr_compare():
     assert c_eval("1 == 2") == 0

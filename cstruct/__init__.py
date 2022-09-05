@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
 # Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
@@ -40,7 +38,6 @@ from .base import (
     TYPEDEFS,
     C_TYPE_TO_FORMAT,
     CHAR_ZERO,
-    EMPTY_BYTES_STRING,
 )
 from .abstract import CStructMeta, AbstractCStruct
 from .cstruct import CStruct
@@ -52,7 +49,6 @@ __all__ = [
     'BIG_ENDIAN',
     'NATIVE_ORDER',
     'CHAR_ZERO',
-    'EMPTY_BYTES_STRING',
     'CStruct',
     'MemCStruct',
     'define',
@@ -68,8 +64,9 @@ def define(key: str, value: Any) -> None:
     """
     Define a constant that can be used in the C struct
 
-    :param key: identifier
-    :param value: value of the constant
+    Args:
+        key: identifier
+        value: value of the constant
     """
     DEFINES[key] = value
 
@@ -78,7 +75,8 @@ def undef(key: str) -> None:
     """
     Undefine a symbol that was previously defined with define
 
-    :param key: identifier
+    Args:
+        key: identifier
     """
     del DEFINES[key]
 
@@ -87,7 +85,8 @@ def getdef(key: str) -> Any:
     """
     Return the value for a constant
 
-    :param key: identifier
+    Args:
+        key: identifier
     """
     return DEFINES[key]
 
@@ -96,8 +95,9 @@ def typedef(type_: str, alias: str) -> None:
     """
     Define an alias name for a data type
 
-    :param type_: data type
-    :param alias: new alias name
+    Args:
+        type_: data type
+        alias: new alias name
     """
     TYPEDEFS[alias] = type_
 
@@ -106,8 +106,11 @@ def sizeof(type_: str) -> int:
     """
     Return the size of the type.
 
-    :param type_: C type, struct or union (e.g. 'short int' or 'struct ZYZ')
-    :return: size in bytes
+    Args:
+        type_: C type, struct or union (e.g. 'short int' or 'struct ZYZ')
+
+    Returns:
+        size: size in bytes
     """
     while type_ in TYPEDEFS:
         type_ = TYPEDEFS[type_]
@@ -129,18 +132,24 @@ def sizeof(type_: str) -> int:
 
 
 def parse(
-    __struct__: str, __cls__: Optional[Type[AbstractCStruct]] = None, __name__: Optional[str] = None, **kargs: Dict[str, Any]
+    __struct__: str,
+    __cls__: Optional[Type[AbstractCStruct]] = None,
+    __name__: Optional[str] = None,
+    **kargs: Dict[str, Any]
 ) -> Optional[Type[AbstractCStruct]]:
     """
     Return a new class mapping a C struct/union definition.
     If the string does not contains any definition, return None.
 
-    :param __struct__:     definition of the struct (or union) in C syntax
-    :param __cls__:        (optional) super class - CStruct(default) or MemCStruct
-    :param __name__:       (optional) name of the new class. If empty, a name based on the __struct__ hash is generated
-    :param __byte_order__: (optional) byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
-    :param __is_union__:   (optional) True for union, False for struct (default)
-    :returns:              __cls__ subclass
+    Args:
+        __struct__ (str): definition of the struct (or union) in C syntax
+        __cls__ (type): super class - CStruct(default) or MemCStruct
+        __name__ (str): name of the new class. If empty, a name based on the __struct__ hash is generated
+        __byte_order__ (str): byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
+        __is_union__ (bool): True for union, False for struct (default)
+
+    Returns:
+        cls: __cls__ subclass
     """
     if __cls__ is None:
         __cls__ = CStruct
