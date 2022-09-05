@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>who.py - Python CStruct documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "who.py";
+        var mkdocs_page_input_path = "examples/who.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Python CStruct documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">CStruct Docs</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../fdisk/">fdisk.py</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../flexible_array/">flexible_array.py</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">who.py</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/module/">cstruct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/abstract/">cstruct.abstract</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/base/">cstruct.base</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/c_expr/">cstruct.c_expr</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/cstruct/">cstruct.cstruct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/field/">cstruct.field</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/mem_cstruct/">cstruct.mem_cstruct</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../license/">License</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Python CStruct documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+          <li>Examples &raquo;</li>
+      <li>who.py</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <pre><code>#!/usr/bin/env python
+
+from cstruct import parse, getdef, typedef, MemCStruct, NATIVE_ORDER
+from pathlib import Path
+import argparse
+import sys
+import time
+
+DEFAULT_FILENAME = &quot;/var/run/utmp&quot;
+
+parse(
+    &quot;&quot;&quot;
+/* Values for ut_type field, below */
+
+#define EMPTY             0 /* Record does not contain valid info
+                              (formerly known as UT_UNKNOWN on Linux) */
+#define RUN_LVL           1 /* Change in system run-level (see
+                              init(1)) */
+#define BOOT_TIME         2 /* Time of system boot (in ut_tv) */
+#define NEW_TIME          3 /* Time after system clock change
+                              (in ut_tv) */
+#define OLD_TIME          4 /* Time before system clock change
+                              (in ut_tv) */
+#define INIT_PROCESS      5 /* Process spawned by init(1) */
+#define LOGIN_PROCESS     6 /* Session leader process for user login */
+#define USER_PROCESS      7 /* Normal process */
+#define DEAD_PROCESS      8 /* Terminated process */
+#define ACCOUNTING        9 /* Not implemented */
+
+#define UT_LINESIZE      32
+#define UT_NAMESIZE      32
+#define UT_HOSTSIZE     256
+&quot;&quot;&quot;
+)
+
+typedef(&quot;int&quot;, &quot;pid_t&quot;)
+typedef(&quot;long&quot;, &quot;time_t&quot;)
+
+
+class ExitStatus(MemCStruct):
+    __struct__ = &quot;&quot;&quot;
+        short   e_termination;      /* Process termination status.  */
+        short   e_exit;             /* Process exit status.  */
+    &quot;&quot;&quot;
+
+
+class Timeval(MemCStruct):
+    __struct__ = &quot;&quot;&quot;
+        int32_t tv_sec;             /* Seconds.  */
+        int32_t tv_usec;            /* Microseconds.  */
+    &quot;&quot;&quot;
+
+
+def str_from_c(string):
+    return string.decode().split(&quot;\0&quot;)[0]
+
+
+class Utmp(MemCStruct):
+    __byte_order__ = NATIVE_ORDER
+    __struct__ = &quot;&quot;&quot;
+        short   ut_type;              /* Type of record */
+        pid_t   ut_pid;               /* PID of login process */
+        char    ut_line[UT_LINESIZE]; /* Device name of tty - &quot;/dev/&quot; */
+        char    ut_id[4];             /* Terminal name suffix, or inittab(5) ID */
+        char    ut_user[UT_NAMESIZE]; /* Username */
+        char    ut_host[UT_HOSTSIZE]; /* Hostname for remote login, or kernel version for run-level messages */
+        struct  ExitStatus ut_exit;   /* Exit status of a process marked as DEAD_PROCESS; not used by Linux init (1 */
+        int32_t ut_session;           /* Session ID (getsid(2)), used for windowing */
+        struct {
+           int32_t tv_sec;            /* Seconds */
+           int32_t tv_usec;           /* Microseconds */
+        } ut_tv;                      /* Time entry was made */
+        int32_t ut_addr_v6[4];        /* Internet address of remote host; IPv4 address uses just ut_addr_v6[0] */
+        char __unused[20];            /* Reserved for future use */
+    &quot;&quot;&quot;
+
+    @property
+    def user(self):
+        return str_from_c(self.ut_user)
+
+    @property
+    def line(self):
+        return str_from_c(self.ut_line)
+
+    @property
+    def time(self):
+        return time.strftime(&quot;%Y-%m-%d %H:%M&quot;, time.gmtime(self.ut_tv.tv_sec))
+
+    @property
+    def host(self):
+        if str_from_c(self.ut_host):
+            host = str_from_c(self.ut_host)
+            return f&quot;({host})&quot;
+        elif self.ut_id:
+            ut_id = str_from_c(self.ut_id)
+            return f&quot;id={ut_id}&quot;
+        else:
+            return &quot;&quot;
+
+    def __str__(self):
+        return f&quot;{self.user:&lt;10s} {self.line:&lt;12s} {self.time:&lt;15s} {self.ut_pid:&gt;15} {self.host:&lt;8s}&quot;
+
+    def print_info(self, show_all):
+        if show_all or self.ut_type in (getdef('LOGIN_PROCESS'), getdef('USER_PROCESS')):
+            print(self)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=&quot;Print information about users who are currently logged in.&quot;)
+    parser.add_argument(&quot;-a&quot;, &quot;--all&quot;, action=&quot;store_true&quot;, dest=&quot;show_all&quot;, help=&quot;show all enties&quot;)
+    parser.add_argument(&quot;file&quot;, nargs=&quot;?&quot;, help=&quot;if FILE is not specified use /var/run/utmp&quot;, default=DEFAULT_FILENAME)
+    args = parser.parse_args()
+
+    utmp = Utmp()
+    try:
+        with Path(args.file).open(&quot;rb&quot;) as f:
+            while utmp.unpack(f):
+                utmp.print_info(args.show_all)
+    except (IOError, OSError) as ex:
+        print(ex)
+        sys.exit(1)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../flexible_array/" class="btn btn-neutral float-left" title="flexible_array.py"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../api/module/" class="btn btn-neutral float-right" title="cstruct">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../flexible_array/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../api/module/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

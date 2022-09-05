@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>fdisk.py - Python CStruct documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "fdisk.py";
+        var mkdocs_page_input_path = "examples/fdisk.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Python CStruct documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">CStruct Docs</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">fdisk.py</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../flexible_array/">flexible_array.py</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../who/">who.py</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/module/">cstruct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/abstract/">cstruct.abstract</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/base/">cstruct.base</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/c_expr/">cstruct.c_expr</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/cstruct/">cstruct.cstruct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/field/">cstruct.field</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/mem_cstruct/">cstruct.mem_cstruct</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../license/">License</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Python CStruct documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+          <li>Examples &raquo;</li>
+      <li>fdisk.py</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <pre><code>#!/usr/bin/env python
+
+from pathlib import Path
+import argparse
+import cstruct
+import sys
+
+UNITS = ['B', 'K', 'M', 'G', 'T']
+SECTOR_SIZE = 512
+TYPES = {
+    0x00: &quot;Empty&quot;,
+    0x01: &quot;FAT12&quot;,
+    0x05: &quot;Extended&quot;,
+    0x06: &quot;FAT16&quot;,
+    0x07: &quot;HPFS/NTFS/exFAT&quot;,
+    0x0B: &quot;W95 FAT32&quot;,
+    0x0C: &quot;W95 FAT32 (LBA)&quot;,
+    0x0E: &quot;W95 FAT16 (LBA)&quot;,
+    0x0F: &quot;W95 extended (LBA)&quot;,
+    0x11: &quot;Hidden FAT12&quot;,
+    0x14: &quot;Hidden FAT16 &lt;32M&quot;,
+    0x16: &quot;Hidden FAT16&quot;,
+    0x17: &quot;Hidden HPFS/NTFS&quot;,
+    0x1B: &quot;Hidden W95 FAT32&quot;,
+    0x1C: &quot;Hidden W95 FAT32 (LBA)&quot;,
+    0x1E: &quot;Hidden W95 FAT16 (LBA)&quot;,
+    0x27: &quot;Hidden NTFS WinRE&quot;,
+    0x81: &quot;Minix / old Linux&quot;,
+    0x82: &quot;Linux swap / Solaris&quot;,
+    0x83: &quot;Linux&quot;,
+    0x85: &quot;Linux extended&quot;,
+    0x86: &quot;NTFS volume set&quot;,
+    0x87: &quot;NTFS volume set&quot;,
+    0x88: &quot;Linux plaintext&quot;,
+    0x8E: &quot;Linux LVM&quot;,
+    0x9F: &quot;BSD/OS&quot;,
+    0xA5: &quot;FreeBSD&quot;,
+    0xA6: &quot;OpenBSD&quot;,
+    0xAF: &quot;HFS / HFS+&quot;,
+    0xEA: &quot;Linux extended boot&quot;,
+    0xEE: &quot;GPT&quot;,
+    0xEF: &quot;EFI (FAT-12/16/32)&quot;,
+    0xF2: &quot;DOS secondary&quot;,
+    0xFB: &quot;VMware VMFS&quot;,
+    0xFC: &quot;VMware VMKCORE&quot;,
+    0xFD: &quot;Linux raid autodetect&quot;,
+}
+
+
+class Position(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __struct__ = &quot;&quot;&quot;
+        unsigned char head;
+        unsigned char sector;
+        unsigned char cyl;
+    &quot;&quot;&quot;
+
+
+class Partition(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __struct__ = &quot;&quot;&quot;
+        #define ACTIVE_FLAG         0x80
+
+        unsigned char status;       /* 0x80 - active */
+        struct Position start;
+        unsigned char partition_type;
+        struct Position end;
+        unsigned int start_sect;    /* starting sector counting from 0 */
+        unsigned int sectors;       /* nr of sectors in partition */
+    &quot;&quot;&quot;
+
+    @property
+    def bootable_str(self):
+        return &quot;*&quot; if (self.status &amp; cstruct.getdef(&quot;ACTIVE_FLAG&quot;)) else &quot; &quot;
+
+    @property
+    def end_sect(self):
+        return self.start_sect + self.sectors - 1
+
+    @property
+    def part_size_str(self):
+        val = self.sectors * SECTOR_SIZE
+        for unit in UNITS:
+            if val &lt; 1000:
+                break
+            val = int(val / 1000)
+        return f&quot;{val}{unit}&quot;
+
+    @property
+    def part_type_str(self):
+        return TYPES.get(self.partition_type, &quot;&quot;)
+
+    def __str__(self):
+        return f&quot;{self.bootable_str} {self.start_sect:&gt;10} {self.end_sect:&gt;8} {self.sectors:&gt;8} {self.part_size_str:&gt;4} {self.partition_type:02x} {self.part_type_str}&quot;
+
+
+class MBR(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __struct__ = &quot;&quot;&quot;
+        #define MBR_SIZE                    512
+        #define MBR_DISK_SIGNATURE_SIZE       4
+        #define MBR_USUALY_NULLS_SIZE         2
+        #define MBR_SIGNATURE_SIZE            2
+        #define MBR_BOOT_SIGNATURE       0xaa55
+        #define MBR_PARTITIONS_NUM            4
+        #define MBR_PARTITIONS_SIZE  (sizeof(Partition) * MBR_PARTITIONS_NUM)
+        #define MBR_UNUSED_SIZE      (MBR_SIZE - MBR_DISK_SIGNATURE_SIZE - MBR_USUALY_NULLS_SIZE - MBR_PARTITIONS_SIZE - MBR_SIGNATURE_SIZE)
+
+        char unused[MBR_UNUSED_SIZE];
+        unsigned char disk_signature[MBR_DISK_SIGNATURE_SIZE];
+        unsigned char usualy_nulls[MBR_USUALY_NULLS_SIZE];
+        struct Partition partitions[MBR_PARTITIONS_NUM];
+        uint16 signature;
+    &quot;&quot;&quot;
+
+    @property
+    def disk_signature_str(self):
+        return &quot;&quot;.join(reversed([f&quot;{x:02x}&quot; for x in self.disk_signature]))
+
+    def print_info(self):
+        print(f&quot;Sector size: {cstruct.getdef('MBR_SIZE')}&quot;)
+        if self.signature != cstruct.getdef('MBR_BOOT_SIGNATURE'):
+            print(&quot;Invalid MBR signature&quot;)
+
+        print(f&quot;Disk identifier: 0x{self.disk_signature_str}&quot;)
+        print()
+        print(&quot;Device Boot   Start      End  Sectors Size Id Type&quot;)
+        for i, partition in enumerate(self.partitions):
+            if partition.sectors:
+                print(f&quot;part{i:&lt;2} {partition}&quot;)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=&quot;Display or manipulate a disk partition table.&quot;)
+    parser.add_argument(&quot;disk&quot;)
+    args = parser.parse_args()
+
+    try:
+        with Path(args.disk).open(&quot;rb&quot;) as f:
+            mbr = MBR()
+            data = f.read(len(mbr))
+            mbr.unpack(data)
+            mbr.print_info()
+    except (IOError, OSError) as ex:
+        print(ex)
+        sys.exit(1)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../.." class="btn btn-neutral float-left" title="CStruct Docs"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../flexible_array/" class="btn btn-neutral float-right" title="flexible_array.py">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../.." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../flexible_array/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
