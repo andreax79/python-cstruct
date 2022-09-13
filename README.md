@@ -20,6 +20,8 @@ is generated. The class offers the method "unpack" for deserializing
 an array of bytes into a Python object and the method "pack" for
 serializing the values into an array of bytes.
 
+[Api Documentation](https://readthedocs.org/projects/python-cstruct/badge/?version=latest)
+
 Example
 -------
 
@@ -31,53 +33,63 @@ import cstruct
 
 class Position(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __def__ = """
-        struct {
-            unsigned char head;
-            unsigned char sector;
-            unsigned char cyl;
-        }
+    __struct__ = """
+        unsigned char head;
+        unsigned char sector;
+        unsigned char cyl;
     """
+
 
 class Partition(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __def__ = """
-        struct {
-            unsigned char status;       /* 0x80 - active */
-            struct Position start;
-            unsigned char partition_type;
-            struct Position end;
-            unsigned int start_sect;    /* starting sector counting from 0 */
-            unsigned int sectors;       /* nr of sectors in partition */
-        }
+    __struct__ = """
+        #define ACTIVE_FLAG         0x80
+
+        unsigned char status;       /* 0x80 - active */
+        struct Position start;
+        unsigned char partition_type;
+        struct Position end;
+        unsigned int start_sect;    /* starting sector counting from 0 */
+        unsigned int sectors;       /* nr of sectors in partition */
     """
 
     def print_info(self):
-        print("bootable: %s" % ((self.status & 0x80) and "Y" or "N"))
-        print("partition_type: %02X" % self.partition_type)
-        print("start: head: %X sectory: %X cyl: %X" % (self.start.head, self.start.sector, self.start.cyl))
-        print("end: head: %X sectory: %X cyl: %X" % (self.end.head, self.end.sector, self.end.cyl))
-        print("starting sector: %08X" % self.start_sect)
-        print("size MB: %s" % (self.sectors / 2 / 1024))
+        print(f"bootable: {'Y' if self.status & cstruct.getdef('ACTIVE_FLAG') else 'N'}")
+        print(f"partition_type: {self.partition_type:02X}")
+        print(f"start: head: {self.start.head:X} sectory: {self.start.sector:X} cyl: {self.start.cyl:X}")
+        print(f"end: head: {self.end.head:X} sectory: {self.end.sector:X} cyl: {self.end.cyl:X}")
+        print(f"starting sector: {self.start_sect:08x}")
+        print(f"size MB: {self.sectors / 2 / 1024}")
+
 
 class MBR(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __def__ = """
-        struct {
-            char unused[440];
-            unsigned char disk_signature[4];
-            unsigned char usualy_nulls[2];
-            struct Partition partitions[4];
-            char signature[2];
-        }
+    __struct__ = """
+        #define MBR_SIZE                    512
+        #define MBR_DISK_SIGNATURE_SIZE       4
+        #define MBR_USUALY_NULLS_SIZE         2
+        #define MBR_SIGNATURE_SIZE            2
+        #define MBR_BOOT_SIGNATURE       0xaa55
+        #define MBR_PARTITIONS_NUM            4
+        #define MBR_PARTITIONS_SIZE  (sizeof(Partition) * MBR_PARTITIONS_NUM)
+        #define MBR_UNUSED_SIZE      (MBR_SIZE - MBR_DISK_SIGNATURE_SIZE - MBR_USUALY_NULLS_SIZE - MBR_PARTITIONS_SIZE - MBR_SIGNATURE_SIZE)
+
+        char unused[MBR_UNUSED_SIZE];
+        unsigned char disk_signature[MBR_DISK_SIGNATURE_SIZE];
+        unsigned char usualy_nulls[MBR_USUALY_NULLS_SIZE];
+        struct Partition partitions[MBR_PARTITIONS_NUM];
+        uint16 signature;
     """
 
+    @property
+    def disk_signature_str(self):
+        return "".join(reversed([f"{x:02x}" for x in self.disk_signature]))
+
     def print_info(self):
-        print("disk signature: %s" % "".join(["%02X" % x for x in self.disk_signature]))
-        print("usualy nulls: %s" % "".join(["%02X" % x for x in self.usualy_nulls]))
+        print(f"disk signature: {self.disk_signature_str}")
         for i, partition in enumerate(self.partitions):
             print("")
-            print("partition: %s" % i)
+            print(f"partition: {i}")
             partition.print_info()
 
 disk = "mbr"
