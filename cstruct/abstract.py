@@ -229,3 +229,23 @@ class AbstractCStruct(metaclass=CStructMeta):
 
     def __repr__(self) -> str:  # pragma: no cover
         return self.__str__()
+
+    def __getstate__(self) -> bytes:
+        """
+        This method is called and the returned object is pickled
+        as the contents for the instance, instead of the contents of
+        the instance’s dictionary
+
+        Returns:
+            bytes: The packed structure
+        """
+        return self.pack()
+
+    def __setstate__(self, state: bytes) -> bool:
+        """
+        This method it is called with the unpickled state
+
+        Args:
+            state: bytes to be unpacked
+        """
+        return self.unpack(state)
