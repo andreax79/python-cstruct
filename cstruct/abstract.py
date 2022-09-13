@@ -148,6 +148,9 @@ class AbstractCStruct(metaclass=CStructMeta):
 
         Args:
             flexible_array_length: flexible array length
+
+        Raises:
+            CStructException: If flexible array is not present in the structure
         """
         if flexible_array_length is not None:
             # Search for the flexible array
@@ -185,7 +188,12 @@ class AbstractCStruct(metaclass=CStructMeta):
         raise NotImplementedError
 
     def pack(self) -> bytes:  # pragma: no cover
-        "Pack the structure data into bytes"
+        """
+        Pack the structure data into bytes
+
+        Returns:
+            bytes: The packed structure
+        """
         raise NotImplementedError
 
     def clear(self) -> None:
