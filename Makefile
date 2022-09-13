@@ -19,7 +19,7 @@ clean:
 	-rm -rf bin lib share pyvenv.cfg
 
 coverage:
-	python3 -m coverage run --source=cstruct setup.py test && python3 -m coverage report -m
+	python3 -m coverage run setup.py test && python3 -m coverage report -m
 
 .PHONY: docs
 docs:
