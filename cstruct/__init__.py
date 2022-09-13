@@ -24,7 +24,7 @@
 
 __author__ = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
 __license__ = 'MIT'
-__version__ = '3.0'
+__version__ = '3.1'
 __date__ = '15 August 2013'
 
 import struct
@@ -132,10 +132,7 @@ def sizeof(type_: str) -> int:
 
 
 def parse(
-    __struct__: str,
-    __cls__: Optional[Type[AbstractCStruct]] = None,
-    __name__: Optional[str] = None,
-    **kargs: Dict[str, Any]
+    __struct__: str, __cls__: Optional[Type[AbstractCStruct]] = None, __name__: Optional[str] = None, **kargs: Dict[str, Any]
 ) -> Optional[Type[AbstractCStruct]]:
     """
     Return a new class mapping a C struct/union definition.

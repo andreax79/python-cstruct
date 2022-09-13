@@ -20,7 +20,7 @@ is generated. The class offers the method "unpack" for deserializing
 an array of bytes into a Python object and the method "pack" for
 serializing the values into an array of bytes.
 
-[Api Documentation](https://readthedocs.org/projects/python-cstruct/badge/?version=latest)
+[Api Documentation](https://python-cstruct.readthedocs.io/en/latest/)
 
 Example
 -------
