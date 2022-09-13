@@ -19,7 +19,7 @@ clean:
 	-rm -rf bin lib share pyvenv.cfg
 
 coverage:
-	python3 -m coverage run setup.py test && python3 -m coverage report -m
+	@pytest --cov --cov-report=term-missing
 
 .PHONY: docs
 docs:

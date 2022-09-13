@@ -28,6 +28,7 @@
 import pytest
 import cstruct
 from cstruct import define, undef, sizeof, typedef
+from cstruct.exceptions import ParserError
 
 
 class Position(cstruct.CStruct):
@@ -65,3 +66,31 @@ def test_define():
 def test_typedef():
     typedef('int', 'integer')
     assert sizeof('integer') == 4
+
+
+def test_invalid_type():
+    with pytest.raises(ParserError):
+
+        class Invalid(cstruct.CStruct):
+            __def__ = """
+                struct {
+                    unsigned xxx yyy;
+                }
+            """
+
+
+def test_invalid_define():
+    with pytest.raises(ParserError):
+        cstruct.parse("""
+            #define xxx yyy zzz
+        """)
+
+
+def test_invalid_struct():
+    with pytest.raises(ParserError):
+        cstruct.parse("""
+                struct {
+                    int a;
+                    int;
+                }
+        """)
