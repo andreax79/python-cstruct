@@ -25,7 +25,10 @@
 #
 # *****************************************************************************
 
+import sys
 from cstruct import sizeof, typedef, define, CStruct, NATIVE_ORDER
+
+IS_64BITS = sys.maxsize > 2**32
 
 define("UT_NAMESIZE", 32)
 define("UT_LINESIZE", 32)
@@ -196,21 +199,36 @@ def test_utmp_sizeof():
 
 
 def test_foo1_sizeof():
-    assert Foo1.__fields_types__['p'].padding == 0
-    assert Foo1.__fields_types__['c'].padding == 0
-    assert Foo1.__fields_types__['x'].padding == 7
-    assert sizeof("struct Foo1") == 24
-    assert Foo1().size == 24
+    if IS_64BITS:
+        assert Foo1.__fields_types__['p'].padding == 0
+        assert Foo1.__fields_types__['c'].padding == 0
+        assert Foo1.__fields_types__['x'].padding == 7
+        assert sizeof("struct Foo1") == 24
+        assert Foo1().size == 24
+    else:
+        assert Foo1.__fields_types__['p'].padding == 0
+        assert Foo1.__fields_types__['c'].padding == 0
+        assert Foo1.__fields_types__['x'].padding == 3
+        assert sizeof("struct Foo1") == 12
+        assert Foo1().size == 12
 
 
 def test_foo2_sizeof():
-    assert sizeof("struct Foo2") == 24
-    assert Foo2().size == 24
+    if IS_64BITS:
+        assert sizeof("struct Foo2") == 24
+        assert Foo2().size == 24
+    else:
+        assert sizeof("struct Foo2") == 16
+        assert Foo2().size == 16
 
 
 def test_foo3_sizeof():
-    assert sizeof("struct Foo3") == 16
-    assert Foo3().size == 16
+    if IS_64BITS:
+        assert sizeof("struct Foo3") == 16
+        assert Foo3().size == 16
+    else:
+        assert sizeof("struct Foo3") == 8
+        assert Foo3().size == 8
 
 
 def test_foo4_sizeof():
@@ -219,15 +237,28 @@ def test_foo4_sizeof():
 
 
 def test_foo5_sizeof():
-    assert Foo5.__fields_types__['c'].padding == 0
-    assert Foo5.__fields_types__['inner'].padding == 7
-    assert sizeof("struct Foo5") == 24
-    assert Foo5().size == 24
+    if IS_64BITS:
+        assert Foo5.__fields_types__['c'].padding == 0
+        assert Foo5.__fields_types__['inner'].padding == 7
+        assert sizeof("struct Foo5") == 24
+        assert Foo5().size == 24
+    else:
+        assert Foo5.__fields_types__['c'].padding == 0
+        assert Foo5.__fields_types__['inner'].padding == 3
+        assert sizeof("struct Foo5") == 12
+        assert Foo5().size == 12
 
 
 def test_foo10_sizeof():
-    assert Foo10.__fields_types__['c'].padding == 0
-    assert Foo10.__fields_types__['p'].padding == 7
-    assert Foo10.__fields_types__['s'].padding == 0
-    assert sizeof("struct Foo10") == 24
-    assert Foo10().size == 24
+    if IS_64BITS:
+        assert Foo10.__fields_types__['c'].padding == 0
+        assert Foo10.__fields_types__['p'].padding == 7
+        assert Foo10.__fields_types__['s'].padding == 0
+        assert sizeof("struct Foo10") == 24
+        assert Foo10().size == 24
+    else:
+        assert Foo10.__fields_types__['c'].padding == 0
+        assert Foo10.__fields_types__['p'].padding == 3
+        assert Foo10.__fields_types__['s'].padding == 0
+        assert sizeof("struct Foo10") == 12
+        assert Foo10().size == 12
