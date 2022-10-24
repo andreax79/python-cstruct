@@ -7,6 +7,7 @@ help:
 	@echo - make docs ------- Make docs
 	@echo - make lint ------- Run lint
 	@echo - make test ------- Run test
+	@echo - make test-32bit - Run test on 32bit architecture
 	@echo - make typecheck -- Typecheck
 	@echo - make venv ------- Create virtual environment
 
@@ -31,6 +32,9 @@ lint:
 
 test:
 	pytest
+
+test-32bit:
+	@make -C docker/i386 test
 
 typecheck:
 	mypy --strict --no-warn-unused-ignores cstruct
