@@ -25,10 +25,13 @@
 #
 # *****************************************************************************
 
+import sys
 import pytest
 import cstruct
 from cstruct import define, undef, sizeof, typedef
 from cstruct.exceptions import ParserError
+
+IS_64BITS = sys.maxsize > 2**32
 
 
 class Position(cstruct.CStruct):
@@ -45,7 +48,10 @@ class Position(cstruct.CStruct):
 def test_sizeof():
     assert sizeof('int') == 4
     define('INIT_THREAD_SIZE', 2048 * sizeof('long'))
-    assert cstruct.DEFINES['INIT_THREAD_SIZE'] == 16384
+    if IS_64BITS:
+        assert cstruct.DEFINES['INIT_THREAD_SIZE'] == 16384
+    else:
+        assert cstruct.DEFINES['INIT_THREAD_SIZE'] == 8192
     assert sizeof('struct Position') == 3
     assert sizeof('struct Position') == len(Position)
     assert sizeof(Position) == 3
