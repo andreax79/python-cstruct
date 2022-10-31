@@ -78,43 +78,47 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
     # signed/unsigned/struct
     if c_type in ['signed', 'unsigned', 'struct', 'union'] and len(tokens) > 1:
         c_type = c_type + " " + tokens.pop()
-    next_token = tokens.pop()
-    # short int, long int, or long long
-    if next_token in ['int', 'long']:
-        c_type = c_type + " " + next_token
-        next_token = tokens.pop()
-    # void *
-    if next_token.startswith("*"):
-        next_token = next_token[1:]
-        c_type = 'void *'
-    # parse length
+    
     vlen = 1
     flexible_array = False
-    if "[" in next_token:
-        t = next_token.split("[")
-        if len(t) != 2:
-            raise ParserError("Error parsing: " + next_token)
-        next_token = t[0].strip()
-        vlen_part = t[1]
-        vlen_expr = []
-        while not vlen_part.endswith("]"):
+
+    if not c_type.endswith("{"):
+        next_token = tokens.pop()
+        # short int, long int, or long long
+        if next_token in ['int', 'long']:
+            c_type = c_type + " " + next_token
+            next_token = tokens.pop()
+        # void *
+        if next_token.startswith("*"):
+            next_token = next_token[1:]
+            c_type = 'void *'
+        # parse length
+        if "[" in next_token:
+            t = next_token.split("[")
+            if len(t) != 2:
+                raise ParserError("Error parsing: " + next_token)
+            next_token = t[0].strip()
+            vlen_part = t[1]
+            vlen_expr = []
+            while not vlen_part.endswith("]"):
+                vlen_expr.append(vlen_part.split("]")[0].strip())
+                vlen_part = tokens.pop()
+            t_vlen = vlen_part.split("]")[0].strip()
             vlen_expr.append(vlen_part.split("]")[0].strip())
-            vlen_part = tokens.pop()
-        t_vlen = vlen_part.split("]")[0].strip()
-        vlen_expr.append(vlen_part.split("]")[0].strip())
-        t_vlen = " ".join(vlen_expr)
-        if not t_vlen:
-            flexible_array = True
-            vlen = 0
-        else:
-            try:
-                vlen = c_eval(t_vlen)
-            except (ValueError, TypeError):
-                vlen = int(t_vlen)
-    tokens.push(next_token)
-    # resolve typedefs
-    while c_type in TYPEDEFS:
-        c_type = TYPEDEFS[c_type]
+            t_vlen = " ".join(vlen_expr)
+            if not t_vlen:
+                flexible_array = True
+                vlen = 0
+            else:
+                try:
+                    vlen = c_eval(t_vlen)
+                except (ValueError, TypeError):
+                    vlen = int(t_vlen)
+        tokens.push(next_token)
+        # resolve typedefs
+        while c_type in TYPEDEFS:
+            c_type = TYPEDEFS[c_type]
+
     # calculate fmt
     if c_type.startswith('struct ') or c_type.startswith('union '):  # struct/union
         c_type, tail = c_type.split(' ', 1)
