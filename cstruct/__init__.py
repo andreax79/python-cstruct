@@ -43,6 +43,7 @@ from .abstract import CStructMeta, AbstractCStruct
 from .cstruct import CStruct
 from .c_parser import parse_def
 from .mem_cstruct import MemCStruct
+from .cenum import CEnum
 
 __all__ = [
     'LITTLE_ENDIAN',

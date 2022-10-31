@@ -28,8 +28,10 @@ from abc import ABCMeta
 from collections import OrderedDict
 from typing import Any, BinaryIO, List, Dict, Optional, Type, Tuple, Union
 import hashlib
+from enum import IntEnum, EnumMeta, _EnumDict
+from unicodedata import name
 from .base import STRUCTS
-from .c_parser import parse_struct, parse_def, Tokens
+from .c_parser import parse_struct, parse_def, parse_enum, Tokens
 from .field import calculate_padding, FieldType
 from .exceptions import CStructException
 
@@ -257,3 +259,75 @@ class AbstractCStruct(metaclass=CStructMeta):
             state: bytes to be unpacked
         """
         return self.unpack(state)
+
+
+class CEnumMeta(EnumMeta):
+    __size__: int = 0
+
+    class WrapperDict(_EnumDict):
+        def __setitem__(self, key: str, value: Any) -> None:
+            if key == "__enum__":
+                env = parse_enum(value, self["__qualname__"])
+                for k, v in env["__constants__"].items():
+                    super().__setitem__(k, v)
+            else:
+                return super().__setitem__(key, value)
+
+    @classmethod
+    def __prepare__(metacls, cls, bases, **kwds):
+        namespace = EnumMeta.__prepare__(cls, bases, **kwds)
+        namespace.__class__ = metacls.WrapperDict
+        return namespace
+
+    def __len__(cls) -> int:
+        "Enum size (in bytes)"
+        return cls.__size__
+
+    @property
+    def size(cls) -> int:
+        "Enum size (in bytes)"
+        return cls.__size__
+
+class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
+    """
+    Abstract C enum to Python class
+    """
+
+    @classmethod
+    def parse(
+        cls,
+        __enum__: Union[str, Tokens, Dict[str, Any]],
+        __name__: Optional[str] = None,
+        __size__: Optional[int] = None,
+        **kargs: Dict[str, Any]
+    ) -> Type["AbstractCEnum"]:
+        """
+        Return a new Python Enum class mapping a C enum definition
+
+        Args:
+            __enum__: Definition of the enum in C syntax
+            __name__: Name of the new Enum. If empty, a name based on the __enum__ hash is generated
+
+        Returns:
+            cls: A new class mapping the definition
+        """
+
+        cls_kargs: Dict[str, Any] = dict(kargs)
+        if __size__ is not None:
+            cls_kargs['__size__'] = __size__
+
+        cls_kargs['__enum__'] = __enum__
+        if isinstance(__enum__, (str, Tokens)):
+            del cls_kargs["__enum__"]
+            cls_kargs.update(parse_def(__enum__, __cls__=cls, **cls_kargs))
+            cls_kargs["__enum__"] = None
+        elif isinstance(__enum__, dict):
+            del cls_kargs["__enum__"]
+            cls_kargs.update(__enum__)
+            cls_kargs["__enum__"] = None
+        if __name__ is None:
+            __name__ = cls.__name__ + "_" + hashlib.sha1(str(__enum__).encode("utf-8")).hexdigest()
+            cls_kargs["__anonymous__"] = True
+        cls_kargs["__name__"] = __name__
+        return IntEnum(__name__, cls_kargs["__constants__"])
+        return type(__name__, (cls,), cls_kargs)
