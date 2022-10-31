@@ -31,7 +31,7 @@ from .c_expr import c_eval
 from .exceptions import CStructException, ParserError
 
 if TYPE_CHECKING:
-    from .abstract import AbstractCStruct
+    from .abstract import AbstractCStruct, AbstractCEnum
 
 __all__ = ['parse_struct', 'parse_def', 'Tokens']
 
@@ -52,7 +52,7 @@ class Tokens(object):
             else:
                 lines.append(line)
         text = " ".join(lines)
-        text = text.replace(";", " ; ").replace("{", " { ").replace("}", " } ")
+        text = text.replace(";", " ; ").replace("{", " { ").replace("}", " } ").replace(",", " , ").replace("=", " = ")
         self.tokens = text.split()
 
     def pop(self) -> str:
@@ -167,6 +167,57 @@ def parse_def(
         return parse_struct(tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__)
     else:
         raise ParserError("{} definition expected".format(vtype))
+
+def parse_enum(
+    __enum__: Union[str, Tokens],
+    __cls__: Type['AbstractCEnum'],
+    **kargs: Any
+) -> Optional[Dict[str, Any]]:
+    constants: Dict[str, int] = OrderedDict()
+
+    if isinstance(__enum__, Tokens):
+        tokens = __enum__
+    else:
+        tokens = Tokens(__enum__)
+
+    while len(tokens):
+        name = tokens.pop()
+
+        next_token = tokens.pop()
+        if next_token == ",":  # enum-constant without explicit value
+            if len(constants) == 0:
+                value = 0
+            else:
+                value = next(reversed(constants.values())) + 1
+        elif next_token == "=":
+            exp_elems = []
+            next_token = tokens.pop()
+            while not next_token.endswith(","):
+                exp_elems.append(next_token)
+                if len(tokens) > 0:
+                    next_token = tokens.pop()
+                else:
+                    break
+
+            if len(exp_elems) == 0:
+                raise ParserError(f"enum is missing value expression")
+
+            int_expr = " ".join(exp_elems)
+            try:
+                value = c_eval(int_expr)
+            except (ValueError, TypeError):
+                value = int(int_expr)
+        else:
+            raise ParserError(f"{__enum__} is not a valid enum expression")
+
+        if name in constants:
+            raise ParserError(f"duplicate enum name {name}")
+        constants[name] = value
+
+    result = {
+        '__constants__': constants
+    }
+    return result
 
 
 def parse_struct(
