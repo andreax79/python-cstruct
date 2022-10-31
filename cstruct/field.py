@@ -220,3 +220,6 @@ class FieldType(object):
     def copy(self) -> "FieldType":
         "Return a shallow copy of this FieldType"
         return copy.copy(self)
+
+    def __repr__(self) -> str:  # pragma: no cover
+        return repr(self.__dict__)
