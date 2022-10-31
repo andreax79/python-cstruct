@@ -75,10 +75,12 @@ class MBR(cstruct.CStruct):
 class Dummy(cstruct.CStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
+        struct {
             struct {
+              int i;
+            } s;
             char c;
             char vc[10];
-            int i;
             int vi[10];
             long long l;
             long vl[10];
@@ -210,6 +212,7 @@ def test_inline():
 
 def test_dummy():
     dummy = Dummy()
+
     dummy.c = b'A'
     dummy.vc = b'ABCDEFGHIJ'
     dummy.i = 123456
