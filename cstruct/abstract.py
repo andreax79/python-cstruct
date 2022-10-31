@@ -31,7 +31,7 @@ import hashlib
 from enum import IntEnum, EnumMeta, _EnumDict
 from unicodedata import name
 from .base import STRUCTS
-from .c_parser import parse_struct, parse_def, parse_enum, Tokens
+from .c_parser import parse_struct, parse_struct_def, parse_enum_def,parse_enum, Tokens
 from .field import calculate_padding, FieldType
 from .exceptions import CStructException
 
@@ -50,7 +50,7 @@ class CStructMeta(ABCMeta):
                 namespace.update(parse_struct(**namespace))
             __struct__ = True
         if '__def__' in namespace:
-            namespace.update(parse_def(**namespace))
+            namespace.update(parse_struct_def(**namespace))
             __struct__ = True
         # Create the new class
         new_class: Type[Any] = super().__new__(metacls, name, bases, namespace)
@@ -132,7 +132,7 @@ class AbstractCStruct(metaclass=CStructMeta):
         cls_kargs['__struct__'] = __struct__
         if isinstance(__struct__, (str, Tokens)):
             del cls_kargs['__struct__']
-            cls_kargs.update(parse_def(__struct__, __cls__=cls, **cls_kargs))
+            cls_kargs.update(parse_struct_def(__struct__, __cls__=cls, **cls_kargs))
             cls_kargs['__struct__'] = None
         elif isinstance(__struct__, dict):
             del cls_kargs['__struct__']
@@ -266,8 +266,13 @@ class CEnumMeta(EnumMeta):
 
     class WrapperDict(_EnumDict):
         def __setitem__(self, key: str, value: Any) -> None:
+            env = None
             if key == "__enum__":
                 env = parse_enum(value, self["__qualname__"])
+            elif key == "__def__":
+                env = parse_enum_def(value, self["__qualname__"])
+
+            if env is not None:
                 for k, v in env["__constants__"].items():
                     super().__setitem__(k, v)
             else:
@@ -319,7 +324,7 @@ class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
         cls_kargs['__enum__'] = __enum__
         if isinstance(__enum__, (str, Tokens)):
             del cls_kargs["__enum__"]
-            cls_kargs.update(parse_def(__enum__, __cls__=cls, **cls_kargs))
+            cls_kargs.update(parse_enum_def(__enum__, __cls__=cls, **cls_kargs))
             cls_kargs["__enum__"] = None
         elif isinstance(__enum__, dict):
             del cls_kargs["__enum__"]
@@ -330,4 +335,3 @@ class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
             cls_kargs["__anonymous__"] = True
         cls_kargs["__name__"] = __name__
         return IntEnum(__name__, cls_kargs["__constants__"])
-        return type(__name__, (cls,), cls_kargs)
