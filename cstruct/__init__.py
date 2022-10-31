@@ -41,7 +41,7 @@ from .base import (
 )
 from .abstract import CStructMeta, AbstractCStruct
 from .cstruct import CStruct
-from .c_parser import parse_def
+from .c_parser import parse_struct_def
 from .mem_cstruct import MemCStruct
 from .cenum import CEnum
 
@@ -151,7 +151,7 @@ def parse(
     """
     if __cls__ is None:
         __cls__ = CStruct
-    cls_def = parse_def(__struct__, __cls__=__cls__, **kargs)
+    cls_def = parse_struct_def(__struct__, __cls__=__cls__, **kargs)
     if cls_def is None:
         return None
     else:

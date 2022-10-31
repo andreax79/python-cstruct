@@ -33,7 +33,7 @@ from .exceptions import CStructException, ParserError
 if TYPE_CHECKING:
     from .abstract import AbstractCStruct, AbstractCEnum
 
-__all__ = ['parse_struct', 'parse_def', 'Tokens']
+__all__ = ['parse_struct', 'parse_struct_def', 'Tokens']
 
 
 class Tokens(object):
@@ -142,7 +142,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
     return FieldType(kind, c_type, ref, vlen, flexible_array, byte_order, offset)
 
 
-def parse_def(
+def parse_struct_def(
     __def__: Union[str, Tokens],
     __cls__: Type['AbstractCStruct'],
     __byte_order__: Optional[str] = None,
@@ -168,6 +168,33 @@ def parse_def(
     else:
         raise ParserError("{} definition expected".format(vtype))
 
+
+def parse_enum_def(
+    __def__: Union[str, Tokens],
+    __cls__: Type["AbstractCEnum"],
+    **kargs: Any
+) -> Optional[Dict[str, Any]]:
+    # naive C enum parsing
+    if isinstance(__def__, Tokens):
+        tokens = __def__
+    else:
+        tokens = Tokens(__def__)
+    if not tokens:
+        return None
+    kind = tokens.pop()
+    if kind not in ['enum']:
+        raise ParserError(f"enum expected - {kind}")
+
+    vtype = tokens.pop()
+    if tokens.get() == '{':  # named enum
+        tokens.pop()
+        return parse_enum(tokens, __cls__=__cls__)
+    elif vtype == '{':
+        return parse_enum(tokens, __cls__=__cls__)
+    else:
+        raise ParserError(f"{vtype} definition expected")
+
+
 def parse_enum(
     __enum__: Union[str, Tokens],
     __cls__: Type['AbstractCEnum'],
@@ -181,6 +208,10 @@ def parse_enum(
         tokens = Tokens(__enum__)
 
     while len(tokens):
+        if tokens.get() == '}':
+            tokens.pop()
+            break
+
         name = tokens.pop()
 
         next_token = tokens.pop()
@@ -192,7 +223,7 @@ def parse_enum(
         elif next_token == "=":
             exp_elems = []
             next_token = tokens.pop()
-            while not next_token.endswith(","):
+            while next_token not in {",", "}"}:
                 exp_elems.append(next_token)
                 if len(tokens) > 0:
                     next_token = tokens.pop()
@@ -207,6 +238,9 @@ def parse_enum(
                 value = c_eval(int_expr)
             except (ValueError, TypeError):
                 value = int(int_expr)
+
+            if next_token == "}":
+                break
         else:
             raise ParserError(f"{__enum__} is not a valid enum expression")
 
