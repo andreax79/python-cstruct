@@ -267,9 +267,9 @@ class CEnumMeta(EnumMeta):
         def __setitem__(self, key: str, value: Any) -> None:
             env = None
             if key == "__enum__":
-                env = parse_enum(value, self["__qualname__"])
+                env = parse_enum(value)
             elif key == "__def__":
-                env = parse_enum_def(value, self["__qualname__"])
+                env = parse_enum_def(value)
 
             if env is not None:
                 # register the enum constants in the object namespace,

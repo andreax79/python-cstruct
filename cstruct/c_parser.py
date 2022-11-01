@@ -171,7 +171,6 @@ def parse_struct_def(
 
 def parse_enum_def(
     __def__: Union[str, Tokens],
-    __cls__: Type["AbstractCEnum"],
     **kargs: Any
 ) -> Optional[Dict[str, Any]]:
     # naive C enum parsing
@@ -188,16 +187,15 @@ def parse_enum_def(
     vtype = tokens.pop()
     if tokens.get() == '{':  # named enum
         tokens.pop()
-        return parse_enum(tokens, __cls__=__cls__)
+        return parse_enum(tokens)
     elif vtype == '{':
-        return parse_enum(tokens, __cls__=__cls__)
+        return parse_enum(tokens)
     else:
         raise ParserError(f"{vtype} definition expected")
 
 
 def parse_enum(
     __enum__: Union[str, Tokens],
-    __cls__: Type['AbstractCEnum'],
     **kargs: Any
 ) -> Optional[Dict[str, Any]]:
     constants: Dict[str, int] = OrderedDict()
