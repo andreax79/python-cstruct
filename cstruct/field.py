@@ -26,7 +26,7 @@ import copy
 import struct
 from enum import Enum
 from typing import Optional, Any, List, Type, TYPE_CHECKING
-from .base import NATIVE_ORDER, C_TYPE_TO_FORMAT
+from .base import NATIVE_ORDER, C_TYPE_TO_FORMAT, ENUM_SIZE_TO_C_TYPE
 from .exceptions import ParserError
 
 if TYPE_CHECKING:
@@ -58,6 +58,8 @@ class Kind(Enum):
     "Struct type"
     UNION = 2
     "Union type"
+    ENUM = 3
+    "Enum type"
 
 
 class FieldType(object):
@@ -115,8 +117,12 @@ class FieldType(object):
         Returns:
             data: The unpacked data
         """
-        if self.is_native:
+        if self.is_native or self.is_enum:
             result = struct.unpack_from(self.fmt, buffer, self.offset + offset)
+
+            if self.is_enum:
+                result = tuple(map(self.ref, result))
+
             if self.is_array:
                 return list(result)
             else:
@@ -163,6 +169,11 @@ class FieldType(object):
         return self.kind == Kind.NATIVE
 
     @property
+    def is_enum(self) -> bool:
+        "True if the field is an enum"
+        return self.kind == Kind.ENUM
+
+    @property
     def is_struct(self) -> bool:
         "True if the field is a struct"
         return self.kind == Kind.STRUCT
@@ -180,13 +191,18 @@ class FieldType(object):
                 return C_TYPE_TO_FORMAT[self.c_type]
             except KeyError:
                 raise ParserError("Unknow type {}".format(self.c_type))
+        elif self.is_enum:
+            try:
+                return C_TYPE_TO_FORMAT[ENUM_SIZE_TO_C_TYPE[len(self.ref)]]
+            except KeyError:
+                raise ParserError(f"Enum has invalid size. Needs to be in {ENUM_SIZE_TO_C_TYPE.keys()}")
         else:
             return 'c'
 
     @property
     def fmt(self) -> str:
         "Field format prefixed by byte order (struct library format)"
-        if self.is_native:
+        if self.is_native or self.is_enum:
             fmt = (str(self.vlen) if self.vlen > 1 or self.flexible_array else '') + self.native_format
         else:  # Struct/Union
             fmt = str(self.vlen * self.ref.sizeof()) + self.native_format
@@ -203,7 +219,7 @@ class FieldType(object):
     @property
     def alignment(self) -> int:
         "Alignment"
-        if self.is_native:
+        if self.is_native or self.is_enum:
             if self.byte_order is not None:
                 return struct.calcsize(self.byte_order + self.native_format)
             else:
