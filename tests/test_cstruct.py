@@ -25,11 +25,13 @@
 #
 # *****************************************************************************
 
+import pytest
 import cstruct
 from cstruct import sizeof, typedef
 import io
 import os
 from pathlib import Path
+from cstruct.exceptions import ParserError
 
 MBR_DATA = (Path(__file__).parent.parent / 'mbr').read_bytes()
 
@@ -255,3 +257,11 @@ def test_null_compare():
     c = Dummy()
     assert c is not None
     assert c != None
+
+
+def test_invalid_inline():
+    with pytest.raises(ParserError):
+        cstruct.MemCStruct.parse(
+            'struct { unsigned char head; unsigned char head; }', __byte_order__=cstruct.LITTLE_ENDIAN
+        )
+        assert False

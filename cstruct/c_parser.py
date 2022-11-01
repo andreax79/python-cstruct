@@ -78,7 +78,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
     # signed/unsigned/struct
     if c_type in ['signed', 'unsigned', 'struct', 'union'] and len(tokens) > 1:
         c_type = c_type + " " + tokens.pop()
-    
+
     vlen = 1
     flexible_array = False
 
@@ -195,6 +195,8 @@ def parse_struct(
             raise CStructException("Flexible array member must be the last member of such a struct")
         field_type = parse_type(tokens, __cls__, __byte_order__, offset)
         vname = tokens.pop()
+        if vname in fields_types:
+            raise ParserError("Duplicate member '{}'".format(vname))
         fields_types[vname] = field_type
         # calculate the max field size (for the alignment)
         max_alignment = max(max_alignment, field_type.alignment)
@@ -204,7 +206,7 @@ def parse_struct(
             offset = field_type.offset + field_type.vsize
         t = tokens.pop()
         if t != ';':
-            raise ParserError("; expected but %s found" % t)
+            raise ParserError("; expected but {} found".format(t))
 
     if __is_union__:  # C union
         # Calculate the sizeof union as size of its largest element
