@@ -286,7 +286,7 @@ class CEnumMeta(EnumMeta):
         namespace.__class__ = metacls.WrapperDict
         return namespace
 
-    def __new__(metacls: type["CEnumMeta"], cls: str, bases: tuple[type, ...], classdict: _EnumDict, **kwds: Any) -> "CEnumMeta":
+    def __new__(metacls: Type["CEnumMeta"], cls: str, bases: Tuple[Type, ...], classdict: _EnumDict, **kwds: Any) -> "CEnumMeta":
         inst = super().__new__(metacls, cls, bases, classdict, **kwds)
 
         if len(inst) > 0:
