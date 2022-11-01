@@ -94,10 +94,10 @@ C_TYPE_TO_FORMAT: Dict[str, str] = {
 }
 
 ENUM_SIZE_TO_C_TYPE: Dict[int, str] = {
-    1: 'uint8',
-    2: 'uint16',
-    4: 'uint32',
-    8: 'uint64'
+    1: 'int8',
+    2: 'int16',
+    4: 'int32',
+    8: 'int64'
 }
 
 CHAR_ZERO = bytes('\0', 'ascii')
