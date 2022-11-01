@@ -163,3 +163,15 @@
 ### Fix
 
 - Fix padding tests on 32bit architectures
+
+### 4.0
+
+2022-11-01
+
+### Added
+
+- Add support for nameless inline struct
+
+### Improved
+
+- Python 3.11 support
