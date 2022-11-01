@@ -31,9 +31,9 @@ from .c_expr import c_eval
 from .exceptions import CStructException, ParserError
 
 if TYPE_CHECKING:
-    from .abstract import AbstractCStruct, AbstractCEnum
+    from .abstract import AbstractCStruct
 
-__all__ = ['parse_struct', 'parse_struct_def', 'Tokens']
+__all__ = ['parse_struct', 'parse_struct_def', 'parse_enum_def', 'Tokens']
 
 
 class Tokens(object):
@@ -48,7 +48,7 @@ class Tokens(object):
                     _, name, value = line.strip().split(maxsplit=2)
                     DEFINES[name] = c_eval(value)
                 except Exception:
-                    raise ParserError("Parsing line {}".format(line))
+                    raise ParserError(f"Parsing line {line}")
             else:
                 lines.append(line)
         text = " ".join(lines)
@@ -135,9 +135,8 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
             try:
                 ref = STRUCTS[tail]
             except KeyError:
-                raise ParserError("Unknow {} {}".format(c_type, tail))
+                raise ParserError(f"Unknown '{c_type}' '{tail}'")
     elif c_type.startswith('enum'):
-        # from .abstract import AbstractCEnum
         from .cenum import CEnum
 
         c_type, tail = c_type.split(' ', 1)
@@ -175,8 +174,10 @@ def parse_struct_def(
     if not tokens:
         return None
     kind = tokens.pop()
+    if kind == 'enum':
+        return parse_enum_def(__def__, **kargs)
     if kind not in ['struct', 'union']:
-        raise ParserError("struct or union expected - {}".format(kind))
+        raise ParserError("struct, union, or enum expected - {kind}")
     __is_union__ = kind == 'union'
     vtype = tokens.pop()
     if tokens.get() == '{':  # Named nested struct
@@ -185,7 +186,7 @@ def parse_struct_def(
     elif vtype == '{':  # Unnamed nested struct
         return parse_struct(tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__)
     else:
-        raise ParserError("{} definition expected".format(vtype))
+        raise ParserError(f"{vtype} definition expected")
 
 
 def parse_enum_def(__def__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[str, Any]]:
@@ -242,7 +243,7 @@ def parse_enum(__enum__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[str,
                     break
 
             if len(exp_elems) == 0:
-                raise ParserError(f"enum is missing value expression")
+                raise ParserError("enum is missing value expression")
 
             int_expr = " ".join(exp_elems)
             try:
@@ -259,7 +260,12 @@ def parse_enum(__enum__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[str,
         if next_token == "}":
             break
 
-    result = {'__constants__': constants}
+    result = {
+        '__constants__': constants,
+        '__is_struct__': False,
+        '__is_union__': False,
+        '__is_enum__': True,
+    }
     return result
 
 
@@ -325,7 +331,9 @@ def parse_struct(
         '__fields__': list(fields_types.keys()),
         '__fields_types__': fields_types,
         '__size__': size,
+        '__is_struct__': not __is_union__,
         '__is_union__': __is_union__,
+        '__is_enum__': False,
         '__byte_order__': __byte_order__,
         '__alignment__': max_alignment,
     }

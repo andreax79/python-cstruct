@@ -28,7 +28,7 @@ __version__ = '4.0'
 __date__ = '15 August 2013'
 
 import struct
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional, Type, Union
 from .base import (
     LITTLE_ENDIAN,
     BIG_ENDIAN,
@@ -39,7 +39,7 @@ from .base import (
     C_TYPE_TO_FORMAT,
     CHAR_ZERO,
 )
-from .abstract import CStructMeta, AbstractCStruct
+from .abstract import CStructMeta, AbstractCStruct, AbstractCEnum
 from .cstruct import CStruct
 from .c_parser import parse_struct_def
 from .mem_cstruct import MemCStruct
@@ -52,6 +52,7 @@ __all__ = [
     'CHAR_ZERO',
     'CStruct',
     'MemCStruct',
+    'CEnum',
     'define',
     'undef',
     'getdef',
@@ -134,13 +135,13 @@ def sizeof(type_: str) -> int:
 
 def parse(
     __struct__: str, __cls__: Optional[Type[AbstractCStruct]] = None, __name__: Optional[str] = None, **kargs: Dict[str, Any]
-) -> Optional[Type[AbstractCStruct]]:
+) -> Union[Type[AbstractCStruct], Type[AbstractCEnum], None]:
     """
-    Return a new class mapping a C struct/union definition.
+    Return a new class mapping a C struct/union/enum definition.
     If the string does not contains any definition, return None.
 
     Args:
-        __struct__ (str): definition of the struct (or union) in C syntax
+        __struct__ (str): definition of the struct (or union/enum) in C syntax
         __cls__ (type): super class - CStruct(default) or MemCStruct
         __name__ (str): name of the new class. If empty, a name based on the __struct__ hash is generated
         __byte_order__ (str): byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
@@ -154,5 +155,7 @@ def parse(
     cls_def = parse_struct_def(__struct__, __cls__=__cls__, **kargs)
     if cls_def is None:
         return None
+    elif cls_def['__is_enum__']:
+        return AbstractCEnum.parse(cls_def, __name__, **kargs)
     else:
         return __cls__.parse(cls_def, __name__, **kargs)
