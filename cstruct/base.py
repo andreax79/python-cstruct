@@ -25,7 +25,7 @@
 from typing import Any, Dict, Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .abstract import AbstractCStruct
+    from .abstract import AbstractCStruct, AbstractCEnum
 
 __all__ = [
     'LITTLE_ENDIAN',
@@ -47,6 +47,8 @@ NATIVE_ORDER = '@'
 "Native order, size & alignment"
 
 STRUCTS: Dict[str, Type["AbstractCStruct"]] = {}
+
+ENUMS: Dict[str, Type["AbstractCEnum"]] = {}
 
 DEFINES: Dict[str, Any] = {}
 

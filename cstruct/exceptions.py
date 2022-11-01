@@ -23,11 +23,14 @@
 #
 
 __all__ = [
+    "CEnumException",
     "CStructException",
     "ParserError",
     "EvalError",
 ]
 
+class CEnumException(Exception):
+    pass
 
 class CStructException(Exception):
     pass
