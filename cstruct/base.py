@@ -101,3 +101,4 @@ ENUM_SIZE_TO_C_TYPE: Dict[int, str] = {
 }
 
 CHAR_ZERO = bytes('\0', 'ascii')
+DEFAULT_ENUM_SIZE = 4
