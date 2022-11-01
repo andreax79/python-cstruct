@@ -137,12 +137,24 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
             except KeyError:
                 raise ParserError("Unknow {} {}".format(c_type, tail))
     elif c_type.startswith('enum'):
+        #from .abstract import AbstractCEnum
+        from .cenum import CEnum
+
         c_type, tail = c_type.split(' ', 1)
         kind = Kind.ENUM
-        try:
-            ref = ENUMS[tail]
-        except KeyError:
-            raise ParserError(f"Unknown '{c_type}' '{tail}'")
+        if tokens.get() == '{':  # Named nested struct
+            tokens.push(tail)
+            tokens.push(c_type)
+            ref = CEnum.parse(tokens, __name__=tail)
+        elif tail == '{':  # unnamed nested struct
+            tokens.push(tail)
+            tokens.push(c_type)
+            ref = CEnum.parse(tokens)
+        else:
+            try:
+                ref = ENUMS[tail]
+            except KeyError:
+                raise ParserError(f"Unknown '{c_type}' '{tail}'")
     else:  # other types
         kind = Kind.NATIVE
         ref = None
@@ -253,6 +265,9 @@ def parse_enum(
         if name in constants:
             raise ParserError(f"duplicate enum name {name}")
         constants[name] = value
+
+        if next_token == "}":
+            break
 
     result = {
         '__constants__': constants
