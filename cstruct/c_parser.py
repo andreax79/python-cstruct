@@ -220,7 +220,8 @@ def parse_enum(
         name = tokens.pop()
 
         next_token = tokens.pop()
-        if next_token == ",":  # enum-constant without explicit value
+        print(name, next_token)
+        if next_token in {",", "}"}:  # enum-constant without explicit value
             if len(constants) == 0:
                 value = 0
             else:
