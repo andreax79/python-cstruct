@@ -31,12 +31,12 @@ import hashlib
 import sys
 from enum import IntEnum, EnumMeta, _EnumDict
 from unicodedata import name
-from .base import STRUCTS, ENUMS
+from .base import STRUCTS, ENUMS, DEFAULT_ENUM_SIZE
 from .c_parser import parse_struct, parse_struct_def, parse_enum_def,parse_enum, Tokens
 from .field import calculate_padding, FieldType
 from .exceptions import CStructException, CEnumException
 
-__all__ = ['CStructMeta', 'AbstractCStruct']
+__all__ = ['CStructMeta', 'AbstractCStruct', "CEnumMeta", 'AbstractCEnum']
 
 
 class CStructMeta(ABCMeta):
@@ -277,8 +277,6 @@ class CEnumMeta(EnumMeta):
                 # heavy lifting
                 for k, v in env["__constants__"].items():
                     super().__setitem__(k, v)
-
-                super().__setitem__("__enum__", True)
             else:
                 return super().__setitem__(key, value)
 
@@ -291,15 +289,12 @@ class CEnumMeta(EnumMeta):
     def __new__(metacls: type["CEnumMeta"], cls: str, bases: tuple[type, ...], classdict: _EnumDict, **kwds: Any) -> "CEnumMeta":
         inst = super().__new__(metacls, cls, bases, classdict, **kwds)
 
-        if classdict.get("__enum__", False):
+        if len(inst) > 0:
             if "__size__" not in classdict:
                 raise CEnumException("__size__ not specified. Cannot derive size as it is architecture dependent")
-            ENUMS[cls] = inst
+            if not classdict.get("__anonymous__", False):
+                ENUMS[cls] = inst
         return inst
-
-    def __len__(cls) -> int:
-        "Enum size (in bytes)"
-        return cls.__size__
 
     @property
     def size(cls) -> int:
@@ -331,20 +326,16 @@ class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
         """
 
         cls_kargs: Dict[str, Any] = dict(kargs)
-        if __size__ is not None:
-            cls_kargs['__size__'] = __size__
+        cls_kargs['__size__'] = DEFAULT_ENUM_SIZE if __size__ is None else __size__
 
-        cls_kargs['__enum__'] = __enum__
         if isinstance(__enum__, (str, Tokens)):
-            del cls_kargs["__enum__"]
             cls_kargs.update(parse_enum_def(__enum__, __cls__=cls, **cls_kargs))
-            cls_kargs["__enum__"] = None
         elif isinstance(__enum__, dict):
-            del cls_kargs["__enum__"]
             cls_kargs.update(__enum__)
-            cls_kargs["__enum__"] = None
+
         if __name__ is None:
             __name__ = cls.__name__ + "_" + hashlib.sha1(str(__enum__).encode("utf-8")).hexdigest()
             cls_kargs["__anonymous__"] = True
-        cls_kargs["__name__"] = __name__
-        return IntEnum(__name__, cls_kargs["__constants__"])
+
+        cls_kargs.update(cls_kargs["__constants__"])
+        return cls(__name__, cls_kargs)

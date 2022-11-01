@@ -193,7 +193,7 @@ class FieldType(object):
                 raise ParserError("Unknow type {}".format(self.c_type))
         elif self.is_enum:
             try:
-                return C_TYPE_TO_FORMAT[ENUM_SIZE_TO_C_TYPE[len(self.ref)]]
+                return C_TYPE_TO_FORMAT[ENUM_SIZE_TO_C_TYPE[self.ref.size]]
             except KeyError:
                 raise ParserError(f"Enum has invalid size. Needs to be in {ENUM_SIZE_TO_C_TYPE.keys()}")
         else:
