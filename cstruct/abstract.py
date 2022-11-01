@@ -291,7 +291,8 @@ class CEnumMeta(EnumMeta):
 
         if len(inst) > 0:
             if "__size__" not in classdict:
-                raise CEnumException("__size__ not specified. Cannot derive size as it is architecture dependent")
+                inst.__size__ = DEFAULT_ENUM_SIZE
+                print(f"Warning: __size__ not specified for enum {cls}. Will default to {DEFAULT_ENUM_SIZE} bytes")
             if not classdict.get("__anonymous__", False):
                 ENUMS[cls] = inst
         return inst
@@ -320,13 +321,15 @@ class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
         Args:
             __enum__: Definition of the enum in C syntax
             __name__: Name of the new Enum. If empty, a name based on the __enum__ hash is generated
+            __size__: Number of bytes that the enum should be read as
 
         Returns:
             cls: A new class mapping the definition
         """
 
         cls_kargs: Dict[str, Any] = dict(kargs)
-        cls_kargs['__size__'] = DEFAULT_ENUM_SIZE if __size__ is None else __size__
+        if __size__ is not None:
+            cls_kargs['__size__'] = __size__
 
         if isinstance(__enum__, (str, Tokens)):
             cls_kargs.update(parse_enum_def(__enum__, __cls__=cls, **cls_kargs))
