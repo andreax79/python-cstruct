@@ -28,12 +28,13 @@ from abc import ABCMeta
 from collections import OrderedDict
 from typing import Any, BinaryIO, List, Dict, Optional, Type, Tuple, Union
 import hashlib
+import sys
 from enum import IntEnum, EnumMeta, _EnumDict
 from unicodedata import name
-from .base import STRUCTS
+from .base import STRUCTS, ENUMS
 from .c_parser import parse_struct, parse_struct_def, parse_enum_def,parse_enum, Tokens
 from .field import calculate_padding, FieldType
-from .exceptions import CStructException
+from .exceptions import CStructException, CEnumException
 
 __all__ = ['CStructMeta', 'AbstractCStruct']
 
@@ -262,8 +263,6 @@ class AbstractCStruct(metaclass=CStructMeta):
 
 
 class CEnumMeta(EnumMeta):
-    __size__: int = 0
-
     class WrapperDict(_EnumDict):
         def __setitem__(self, key: str, value: Any) -> None:
             env = None
@@ -273,8 +272,13 @@ class CEnumMeta(EnumMeta):
                 env = parse_enum_def(value, self["__qualname__"])
 
             if env is not None:
+                # register the enum constants in the object namespace,
+                # using the Python Enum class Namespace dict that does the
+                # heavy lifting
                 for k, v in env["__constants__"].items():
                     super().__setitem__(k, v)
+
+                super().__setitem__("__enum__", True)
             else:
                 return super().__setitem__(key, value)
 
@@ -283,6 +287,15 @@ class CEnumMeta(EnumMeta):
         namespace = EnumMeta.__prepare__(cls, bases, **kwds)
         namespace.__class__ = metacls.WrapperDict
         return namespace
+
+    def __new__(metacls: type["CEnumMeta"], cls: str, bases: tuple[type, ...], classdict: _EnumDict, **kwds: Any) -> "CEnumMeta":
+        inst = super().__new__(metacls, cls, bases, classdict, **kwds)
+
+        if classdict.get("__enum__", False):
+            if "__size__" not in classdict:
+                raise CEnumException("__size__ not specified. Cannot derive size as it is architecture dependent")
+            ENUMS[cls] = inst
+        return inst
 
     def __len__(cls) -> int:
         "Enum size (in bytes)"
