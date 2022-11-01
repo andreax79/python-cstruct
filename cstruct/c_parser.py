@@ -232,13 +232,12 @@ def parse_enum(
         name = tokens.pop()
 
         next_token = tokens.pop()
-        print(name, next_token)
         if next_token in {",", "}"}:  # enum-constant without explicit value
             if len(constants) == 0:
                 value = 0
             else:
                 value = next(reversed(constants.values())) + 1
-        elif next_token == "=":
+        elif next_token == "=":  # enum-constant with explicit value
             exp_elems = []
             next_token = tokens.pop()
             while next_token not in {",", "}"}:
@@ -256,9 +255,6 @@ def parse_enum(
                 value = c_eval(int_expr)
             except (ValueError, TypeError):
                 value = int(int_expr)
-
-            if next_token == "}":
-                break
         else:
             raise ParserError(f"{__enum__} is not a valid enum expression")
 
