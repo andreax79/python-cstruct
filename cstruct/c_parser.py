@@ -182,6 +182,7 @@ def parse_struct(
     flexible_array: bool = False
     offset: int = 0
     max_alignment: int = 0
+    anonymous: int = 0
     if isinstance(__struct__, Tokens):
         tokens = __struct__
     else:
@@ -197,6 +198,16 @@ def parse_struct(
         vname = tokens.pop()
         if vname in fields_types:
             raise ParserError("Duplicate member '{}'".format(vname))
+        # anonymous nested union
+        if vname == ';' and field_type.ref is not None and (__is_union__ or field_type.ref.__is_union__):
+            # add the anonymous struct fields to the parent
+            for nested_field_name, nested_field_type in field_type.ref.__fields_types__.items():
+                if nested_field_name in fields_types:
+                    raise ParserError("Duplicate member '{}'".format(nested_field_name))
+                fields_types[nested_field_name] = nested_field_type
+            vname = "__anonymous{}".format(anonymous)
+            anonymous += 1
+            tokens.push(';')
         fields_types[vname] = field_type
         # calculate the max field size (for the alignment)
         max_alignment = max(max_alignment, field_type.alignment)
