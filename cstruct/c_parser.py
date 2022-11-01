@@ -25,7 +25,7 @@
 import re
 from collections import OrderedDict
 from typing import Union, Optional, Any, Dict, Type, TYPE_CHECKING
-from .base import DEFINES, TYPEDEFS, STRUCTS
+from .base import DEFINES, ENUMS, TYPEDEFS, STRUCTS
 from .field import calculate_padding, Kind, FieldType
 from .c_expr import c_eval
 from .exceptions import CStructException, ParserError
@@ -76,7 +76,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
         raise ParserError("Parsing error")
     c_type = tokens.pop()
     # signed/unsigned/struct
-    if c_type in ['signed', 'unsigned', 'struct', 'union'] and len(tokens) > 1:
+    if c_type in ['signed', 'unsigned', 'struct', 'union', 'enum'] and len(tokens) > 1:
         c_type = c_type + " " + tokens.pop()
 
     vlen = 1
@@ -136,6 +136,13 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
                 ref = STRUCTS[tail]
             except KeyError:
                 raise ParserError("Unknow {} {}".format(c_type, tail))
+    elif c_type.startswith('enum'):
+        c_type, tail = c_type.split(' ', 1)
+        kind = Kind.ENUM
+        try:
+            ref = ENUMS[tail]
+        except KeyError:
+            raise ParserError(f"Unknown '{c_type}' '{tail}'")
     else:  # other types
         kind = Kind.NATIVE
         ref = None
