@@ -32,7 +32,7 @@ import sys
 from enum import IntEnum, EnumMeta, _EnumDict
 from unicodedata import name
 from .base import STRUCTS, ENUMS, DEFAULT_ENUM_SIZE
-from .c_parser import parse_struct, parse_struct_def, parse_enum_def,parse_enum, Tokens
+from .c_parser import parse_struct, parse_struct_def, parse_enum_def, parse_enum, Tokens
 from .field import calculate_padding, FieldType
 from .exceptions import CStructException, CEnumException
 
@@ -111,7 +111,7 @@ class AbstractCStruct(metaclass=CStructMeta):
         __name__: Optional[str] = None,
         __byte_order__: Optional[str] = None,
         __is_union__: Optional[bool] = False,
-        **kargs: Dict[str, Any]
+        **kargs: Dict[str, Any],
     ) -> Type["AbstractCStruct"]:
         """
         Return a new class mapping a C struct/union definition.
@@ -302,6 +302,7 @@ class CEnumMeta(EnumMeta):
         "Enum size (in bytes)"
         return cls.__size__
 
+
 class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
     """
     Abstract C enum to Python class
@@ -313,7 +314,7 @@ class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
         __enum__: Union[str, Tokens, Dict[str, Any]],
         __name__: Optional[str] = None,
         __size__: Optional[int] = None,
-        **kargs: Dict[str, Any]
+        **kargs: Dict[str, Any],
     ) -> Type["AbstractCEnum"]:
         """
         Return a new Python Enum class mapping a C enum definition

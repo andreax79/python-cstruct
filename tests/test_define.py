@@ -87,16 +87,20 @@ def test_invalid_type():
 
 def test_invalid_define():
     with pytest.raises(ParserError):
-        cstruct.parse("""
+        cstruct.parse(
+            """
             #define xxx yyy zzz
-        """)
+        """
+        )
 
 
 def test_invalid_struct():
     with pytest.raises(ParserError):
-        cstruct.parse("""
+        cstruct.parse(
+            """
                 struct {
                     int a;
                     int;
                 }
-        """)
+        """
+        )

@@ -29,8 +29,10 @@ __all__ = [
     "EvalError",
 ]
 
+
 class CEnumException(Exception):
     pass
+
 
 class CStructException(Exception):
     pass

@@ -261,7 +261,5 @@ def test_null_compare():
 
 def test_invalid_inline():
     with pytest.raises(ParserError):
-        cstruct.MemCStruct.parse(
-            'struct { unsigned char head; unsigned char head; }', __byte_order__=cstruct.LITTLE_ENDIAN
-        )
+        cstruct.MemCStruct.parse('struct { unsigned char head; unsigned char head; }', __byte_order__=cstruct.LITTLE_ENDIAN)
         assert False

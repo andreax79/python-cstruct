@@ -137,7 +137,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
             except KeyError:
                 raise ParserError("Unknow {} {}".format(c_type, tail))
     elif c_type.startswith('enum'):
-        #from .abstract import AbstractCEnum
+        # from .abstract import AbstractCEnum
         from .cenum import CEnum
 
         c_type, tail = c_type.split(' ', 1)
@@ -165,7 +165,7 @@ def parse_struct_def(
     __def__: Union[str, Tokens],
     __cls__: Type['AbstractCStruct'],
     __byte_order__: Optional[str] = None,
-    **kargs: Any  # Type['AbstractCStruct'],
+    **kargs: Any,  # Type['AbstractCStruct'],
 ) -> Optional[Dict[str, Any]]:
     # naive C struct parsing
     if isinstance(__def__, Tokens):
@@ -188,10 +188,7 @@ def parse_struct_def(
         raise ParserError("{} definition expected".format(vtype))
 
 
-def parse_enum_def(
-    __def__: Union[str, Tokens],
-    **kargs: Any
-) -> Optional[Dict[str, Any]]:
+def parse_enum_def(__def__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[str, Any]]:
     # naive C enum parsing
     if isinstance(__def__, Tokens):
         tokens = __def__
@@ -213,10 +210,7 @@ def parse_enum_def(
         raise ParserError(f"{vtype} definition expected")
 
 
-def parse_enum(
-    __enum__: Union[str, Tokens],
-    **kargs: Any
-) -> Optional[Dict[str, Any]]:
+def parse_enum(__enum__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[str, Any]]:
     constants: Dict[str, int] = OrderedDict()
 
     if isinstance(__enum__, Tokens):
@@ -265,9 +259,7 @@ def parse_enum(
         if next_token == "}":
             break
 
-    result = {
-        '__constants__': constants
-    }
+    result = {'__constants__': constants}
     return result
 
 
@@ -276,7 +268,7 @@ def parse_struct(
     __cls__: Type['AbstractCStruct'],
     __is_union__: bool = False,
     __byte_order__: Optional[str] = None,
-    **kargs: Any
+    **kargs: Any,
 ) -> Dict[str, Any]:
     # naive C struct parsing
     __is_union__ = bool(__is_union__)
