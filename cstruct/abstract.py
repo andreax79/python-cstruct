@@ -28,14 +28,12 @@ from abc import ABCMeta
 from collections import OrderedDict
 from typing import Any, BinaryIO, List, Dict, Optional, Type, Tuple, Union
 import hashlib
-import sys
 from io import StringIO
 from enum import IntEnum, EnumMeta, _EnumDict
-from unicodedata import name
 from .base import STRUCTS, ENUMS, DEFAULT_ENUM_SIZE
 from .c_parser import parse_struct, parse_struct_def, parse_enum_def, parse_enum, Tokens
 from .field import calculate_padding, FieldType
-from .exceptions import CStructException, CEnumException
+from .exceptions import CStructException
 
 __all__ = ['CStructMeta', 'AbstractCStruct', "CEnumMeta", 'AbstractCEnum']
 
