@@ -13,7 +13,7 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Python-CStruct";
+        var mkdocs_page_name = "CStruct Docs";
         var mkdocs_page_input_path = "index.md";
         var mkdocs_page_url = null;
       </script>
@@ -41,8 +41,34 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-                <li class="toctree-l1"><a class="" href="README.md">CStruct Docs</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">CStruct Docs</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#install">Install</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#features">Features</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#structs">Structs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#unions">Unions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#enums">Enums</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#nested-structures-namedanonymous">Nested structures (named/anonymous)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#byte-order-size-and-padding">Byte Order, Size, and Padding</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#flexible-array-member">Flexible Array Member</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pack-and-unpack">Pack and Unpack</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#define-sizeof-and-eval">Define, Sizeof, and Eval</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#example">Example</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">Examples</span></p>
@@ -89,7 +115,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-      <li>Python-CStruct</li>
+      <li>CStruct Docs</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -99,6 +125,322 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="python-cstruct">Python-CStruct</h1>
+<p>C-style structs for Python</p>
+<p><a href="https://github.com/andreax79/python-cstruct/actions"><img alt="Build Status" src="https://github.com/andreax79/python-cstruct/workflows/Tests/badge.svg" /></a>
+<a href="https://badge.fury.io/py/cstruct"><img alt="PyPI version" src="https://badge.fury.io/py/cstruct.svg" /></a>
+<a href="https://pypi.org/project/cstruct"><img alt="PyPI" src="https://img.shields.io/pypi/pyversions/cstruct.svg" /></a>
+<a href="https://pepy.tech/project/cstruct"><img alt="Downloads" src="https://pepy.tech/badge/cstruct/month" /></a>
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
+<a href="https://snyk.io/test/github/andreax79/python-cstruct"><img alt="Known Vulnerabilities" src="https://snyk.io/test/github/andreax79/python-cstruct/badge.svg" /></a>
+<a href="https://python-cstruct.readthedocs.io/en/latest/"><img alt="Documentation" src="https://readthedocs.org/projects/python-cstruct/badge/?version=latest" /></a></p>
+<p>Convert C struct/union definitions into Python classes with methods for
+serializing/deserializing.</p>
+<p>The usage is very simple: create a class subclassing cstruct.MemCStruct
+and add a C struct/union definition as a string in the <code>__def__</code> field.</p>
+<p>The C struct/union definition is parsed at runtime and the struct format string
+is generated. The class offers the method <code>unpack</code> for deserializing
+an array of bytes into a Python object and the method <code>pack</code> for
+serializing the values into an array of bytes.</p>
+<p><a href="https://python-cstruct.readthedocs.io/en/latest/">Api Documentation</a></p>
+<h2 id="install">Install</h2>
+<pre><code>pip install cstruct
+</code></pre>
+<h2 id="features">Features</h2>
+<h3 id="structs">Structs</h3>
+<p>Struct definition subclassing <code>cstruct.MemCStruct</code></p>
+<pre><code class="language-python">class Position(cstruct.MemCStruct):
+    __def__ = &quot;&quot;&quot;
+        struct {
+            unsigned char head;
+            unsigned char sector;
+            unsigned char cyl;
+        }
+    &quot;&quot;&quot;
+
+pos = Position(head=10, sector=20, cyl=30)
+print(f&quot;head: {pos.head} sector: {pos.sector} cyl: {pos.cyl}&quot;)
+</code></pre>
+<p>Struct definition using <code>cstruct.parse</code></p>
+<pre><code class="language-python">Partition = cstruct.parse(&quot;&quot;&quot;
+    struct {
+        #define ACTIVE_FLAG         0x80
+
+        unsigned char status;       /* 0x80 - active */
+        struct Position start;
+        unsigned char partition_type;
+        struct Position end;
+        unsigned int start_sect;    /* starting sector counting from 0 */
+        unsigned int sectors;       /* nr of sectors in partition */
+    }
+&quot;&quot;&quot;)
+
+part = Partition()
+part.status = cstruct.getdef('ACTIVE_FLAG')
+</code></pre>
+<h3 id="unions">Unions</h3>
+<p>Union definition subclassing <code>cstruct.MemCStruct</code></p>
+<pre><code class="language-python">class Data(cstruct.MemCStruct):
+    __def__ = &quot;&quot;&quot;
+        union {
+            int integer;
+            float real;
+        }
+    &quot;&quot;&quot;
+
+data = Data()
+data.integer = 2
+data.real = 3
+assert data.integer != 2
+</code></pre>
+<h3 id="enums">Enums</h3>
+<p>Enum definition subclassing <code>cstruct.CEnum</code></p>
+<pre><code class="language-python">class HtmlFont(cstruct.CEnum):
+    __size__ = 2
+    __def__ = &quot;&quot;&quot;
+        #define NONE         0
+
+        enum htmlfont {
+            HTMLFONT_NONE = NONE,
+            HTMLFONT_BOLD,
+            HTMLFONT_ITALIC
+        }
+    &quot;&quot;&quot;
+
+assert HtmlFont.HTMLFONT_NONE == 0
+assert HtmlFont.HTMLFONT_BOLD == 1
+assert HtmlFont.HTMLFONT_ITALIC == 2
+</code></pre>
+<p>Different supported <code>__def__</code> styles:</p>
+<pre><code class="language-c">enum Type_A a;  // externally defined using CEnum
+enum Type_B {A, B, C} b;
+enum {A, B, C} c;
+</code></pre>
+<pre><code class="language-python">class Type_A(cstruct.CEnum):
+  __size__ = 2
+  __enum__ = &quot;&quot;&quot;
+    #define SOME_DEFINE 7
+
+    A,
+    B,
+    C = 5,
+    D,
+    E = 7 + SOME_DEFINE
+  &quot;&quot;&quot;
+
+# this is a nice gimmick that works, but wasn't really planned to be supported
+class Type_C(cstruct.CEnum):
+  A = 0,
+  B = 1,
+  C = 2,
+  D = 3
+</code></pre>
+<h3 id="nested-structures-namedanonymous">Nested structures (named/anonymous)</h3>
+<pre><code class="language-python">class Packet(cstruct.MemCStruct):
+    __def__ = &quot;&quot;&quot;
+        struct Packet {
+            uint8_t packetLength;
+            union {
+                struct {
+                    uint16_t field1;
+                    uint16_t field2;
+                    uint16_t field3;
+                } format1;
+                struct {
+                    double value1;
+                    double value2;
+                } format2;
+            };
+        };
+    &quot;&quot;&quot;
+</code></pre>
+<h3 id="byte-order-size-and-padding">Byte Order, Size, and Padding</h3>
+<p>Suported byte orders:</p>
+<ul>
+<li><code>cstruct.LITTLE_ENDIAN</code> - Little endian byte order, standard size, no padding</li>
+<li><code>cstruct.BIG_ENDIAN</code> - Big endian byte order, standard size, no padding</li>
+<li><code>cstruct.NATIVE_ORDER</code> - Native byte order, native size, padding</li>
+</ul>
+<pre><code class="language-python">class Native(cstruct.MemCStruct):
+    __byte_order__ = cstruct.NATIVE_ORDER
+    __def__ = &quot;&quot;&quot;
+        struct {
+            long p;
+            char c;
+            long x;
+        }
+    &quot;&quot;&quot;
+</code></pre>
+<h3 id="flexible-array-member">Flexible Array Member</h3>
+<pre><code class="language-python">class Pkg(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = &quot;&quot;&quot;
+        struct {
+            uint16_t cmd;
+            uint16_t length;
+            uint8_t data[];
+        }
+    &quot;&quot;&quot;
+
+pkg = Pkg()
+pkg.length = 4
+pkg.data = [10, 20, 30, 40]
+</code></pre>
+<h3 id="pack-and-unpack">Pack and Unpack</h3>
+<pre><code class="language-python">class StructWithEnum(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = &quot;&quot;&quot;
+        struct StructWithEnum {
+            enum HtmlFont font;
+            unsigned int font_size;
+        }
+    &quot;&quot;&quot;
+
+# Pack
+s.font = HtmlFont.HTMLFONT_NONE
+s.font_size = 20
+assert s.font == HtmlFont.HTMLFONT_NONE
+assert s.font_size == 20
+packed = s.pack()
+
+# Unpack
+s1 = StructWithEnum()
+s1.unpack(packed)
+assert s1.font == HtmlFont.HTMLFONT_NONE
+assert s1.font_size == 20
+</code></pre>
+<h3 id="define-sizeof-and-eval">Define, Sizeof, and Eval</h3>
+<p>Definitions in Struct declaration:</p>
+<pre><code class="language-python">class Packet(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = &quot;&quot;&quot;
+        #define MaxPacket 20
+
+        struct Packet {
+            uint8_t bytes[MaxPacket];
+        }
+    &quot;&quot;&quot;
+</code></pre>
+<p>Parse C definitions:</p>
+<pre><code class="language-python">cstruct.parse(&quot;&quot;&quot;
+    #define A1  10
+    #define A2  10 + A1
+    #define A3  30
+&quot;&quot;&quot;)
+assert cstruct.getdef(&quot;A1&quot;) == 10
+assert cstruct.getdef('A2') == 20
+</code></pre>
+<p>Get structure size:</p>
+<pre><code class="language-python">cstruct.sizeof(Partition)
+</code></pre>
+<p>Evaluate C expression:</p>
+<pre><code class="language-python">cstruct.c_eval(&quot;A1 / 10&quot;)
+cstruct.c_eval(&quot;((A10 &lt; 6) || (A10&gt;10))&quot;)
+</code></pre>
+<p>C expressions are automatically evaluated during structure definitions:</p>
+<pre><code class="language-python">class MBR(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = &quot;&quot;&quot;
+        #define MBR_SIZE                    512
+        #define MBR_DISK_SIGNATURE_SIZE       4
+        #define MBR_USUALY_NULLS_SIZE         2
+        #define MBR_SIGNATURE_SIZE            2
+        #define MBR_BOOT_SIGNATURE       0xaa55
+        #define MBR_PARTITIONS_NUM            4
+        #define MBR_PARTITIONS_SIZE  (sizeof(Partition) * MBR_PARTITIONS_NUM)
+        #define MBR_UNUSED_SIZE      (MBR_SIZE - MBR_DISK_SIGNATURE_SIZE - MBR_USUALY_NULLS_SIZE - MBR_PARTITIONS_SIZE - MBR_SIGNATURE_SIZE)
+
+        struct {
+            char unused[MBR_UNUSED_SIZE];
+            unsigned char disk_signature[MBR_DISK_SIGNATURE_SIZE];
+            unsigned char usualy_nulls[MBR_USUALY_NULLS_SIZE];
+            struct Partition partitions[MBR_PARTITIONS_NUM];
+            uint16 signature;
+        }
+    &quot;&quot;&quot;
+</code></pre>
+<h2 id="example">Example</h2>
+<p>The following program reads the DOS partition information from a disk.</p>
+<pre><code class="language-python">#!/usr/bin/env python
+import cstruct
+
+class Position(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = &quot;&quot;&quot;
+        struct {
+            unsigned char head;
+            unsigned char sector;
+            unsigned char cyl;
+        }
+    &quot;&quot;&quot;
+
+
+class Partition(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = &quot;&quot;&quot;
+        #define ACTIVE_FLAG         0x80
+
+        typedef struct Position Position;
+
+        struct {
+            unsigned char status;       /* 0x80 - active */
+            Position start;
+            unsigned char partition_type;
+            Position end;
+            unsigned int start_sect;    /* starting sector counting from 0 */
+            unsigned int sectors;       /* nr of sectors in partition */
+        }
+    &quot;&quot;&quot;
+
+    def print_info(self):
+        print(f&quot;bootable: {'Y' if self.status &amp; cstruct.getdef('ACTIVE_FLAG') else 'N'}&quot;)
+        print(f&quot;partition_type: {self.partition_type:02X}&quot;)
+        print(f&quot;start: head: {self.start.head:X} sectory: {self.start.sector:X} cyl: {self.start.cyl:X}&quot;)
+        print(f&quot;end: head: {self.end.head:X} sectory: {self.end.sector:X} cyl: {self.end.cyl:X}&quot;)
+        print(f&quot;starting sector: {self.start_sect:08x}&quot;)
+        print(f&quot;size MB: {self.sectors / 2 / 1024}&quot;)
+
+
+class MBR(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = &quot;&quot;&quot;
+        #define MBR_SIZE                    512
+        #define MBR_DISK_SIGNATURE_SIZE       4
+        #define MBR_USUALY_NULLS_SIZE         2
+        #define MBR_SIGNATURE_SIZE            2
+        #define MBR_BOOT_SIGNATURE       0xaa55
+        #define MBR_PARTITIONS_NUM            4
+        #define MBR_PARTITIONS_SIZE  (sizeof(Partition) * MBR_PARTITIONS_NUM)
+        #define MBR_UNUSED_SIZE      (MBR_SIZE - MBR_DISK_SIGNATURE_SIZE - MBR_USUALY_NULLS_SIZE - MBR_PARTITIONS_SIZE - MBR_SIGNATURE_SIZE)
+
+        typedef struct Partition Partition;
+
+        struct {
+            char unused[MBR_UNUSED_SIZE];
+            unsigned char disk_signature[MBR_DISK_SIGNATURE_SIZE];
+            unsigned char usualy_nulls[MBR_USUALY_NULLS_SIZE];
+            Partition partitions[MBR_PARTITIONS_NUM];
+            uint16 signature;
+        }
+    &quot;&quot;&quot;
+
+    @property
+    def disk_signature_str(self):
+        return &quot;&quot;.join(reversed([f&quot;{x:02x}&quot; for x in self.disk_signature]))
+
+    def print_info(self):
+        print(f&quot;disk signature: {self.disk_signature_str}&quot;)
+        for i, partition in enumerate(self.partitions):
+            print(&quot;&quot;)
+            print(f&quot;partition: {i}&quot;)
+            partition.print_info()
+
+disk = &quot;mbr&quot;
+with open(disk, &quot;rb&quot;) as f:
+    mbr = MBR()
+    mbr.unpack(f)
+    mbr.print_info()
+</code></pre>
+<h1 id="python-cstruct_1">Python-CStruct</h1>
 <p>Convert C struct/union definitions into Python classes with methods for
 serializing/deserializing.</p>
 <p>The usage is very simple: create a class subclassing cstruct.MemCStruct
@@ -110,6 +452,9 @@ serializing the values into an array of bytes.</p>
               
             </div>
           </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="examples/fdisk/" class="btn btn-neutral float-right" title="fdisk.py">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
 
   <hr/>
 
@@ -132,6 +477,8 @@ serializing the values into an array of bytes.</p>
     
     
     
+      <span><a href="examples/fdisk/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
   </span>
 </div>
     <script>var base_url = '.';</script>
@@ -149,5 +496,5 @@ serializing the values into an array of bytes.</p>
 
 <!--
 MkDocs version : 1.3.1
-Build Date UTC : 2022-11-02 11:10:03.390323+00:00
+Build Date UTC : 2022-11-02 11:11:27.136673+00:00
 -->
