@@ -160,6 +160,22 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
     return FieldType(kind, c_type, ref, vlen, flexible_array, byte_order, offset)
 
 
+def parse_typedef(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Optional[str]) -> None:
+    field_type = parse_type(tokens, __cls__, byte_order, 0)
+    vname = tokens.pop()
+    if field_type.ref is None:
+        TYPEDEFS[vname] = field_type.c_type
+    elif field_type.ref.__is_enum__:
+        TYPEDEFS[vname] = f"enum {field_type.ref.__name__}"
+    elif field_type.ref.__is_union__:
+        TYPEDEFS[vname] = f"union {field_type.ref.__name__}"
+    else:
+        TYPEDEFS[vname] = f"struct {field_type.ref.__name__}"
+    t = tokens.pop()
+    if t != ';':
+        raise ParserError(f"; expected but {t} found")
+
+
 def parse_struct_def(
     __def__: Union[str, Tokens],
     __cls__: Type['AbstractCStruct'],
@@ -174,10 +190,13 @@ def parse_struct_def(
     if not tokens:
         return None
     kind = tokens.pop()
+    if kind == 'typedef':
+        parse_typedef(tokens, __cls__, __byte_order__)
+        return parse_struct_def(tokens, __cls__, __byte_order__, **kargs)
     if kind == 'enum':
         return parse_enum_def(__def__, **kargs)
     if kind not in ['struct', 'union']:
-        raise ParserError("struct, union, or enum expected - {kind}")
+        raise ParserError(f"struct, union, or enum expected - {kind}")
     __is_union__ = kind == 'union'
     vtype = tokens.pop()
     if tokens.get() == '{':  # Named nested struct
