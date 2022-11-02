@@ -29,7 +29,7 @@ Convert C struct definitions into Python classes with methods for serializing/de
     author_email='andrea.bonomi@gmail.com',
     url='http://github.com/andreax79/python-cstruct',
     license='MIT',
-    packages=find_packages(exclude=['ez_setup', 'examples']),
+    packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
     zip_safe=True,
     install_requires=[
