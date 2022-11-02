@@ -49,24 +49,29 @@ TYPES = {
 
 class Position(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
-        unsigned char head;
-        unsigned char sector;
-        unsigned char cyl;
+    __def__ = """
+        struct {
+            unsigned char head;
+            unsigned char sector;
+            unsigned char cyl;
+        }
     """
 
 
 class Partition(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
+    __def__ = """
         #define ACTIVE_FLAG         0x80
+        typedef struct Position Position;
 
-        unsigned char status;       /* 0x80 - active */
-        struct Position start;
-        unsigned char partition_type;
-        struct Position end;
-        unsigned int start_sect;    /* starting sector counting from 0 */
-        unsigned int sectors;       /* nr of sectors in partition */
+        struct {
+            unsigned char status;       /* 0x80 - active */
+            Position start;
+            unsigned char partition_type;
+            Position end;
+            unsigned int start_sect;    /* starting sector counting from 0 */
+            unsigned int sectors;       /* nr of sectors in partition */
+        }
     """
 
     @property
@@ -96,7 +101,7 @@ class Partition(cstruct.MemCStruct):
 
 class MBR(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
-    __struct__ = """
+    __def__ = """
         #define MBR_SIZE                    512
         #define MBR_DISK_SIGNATURE_SIZE       4
         #define MBR_USUALY_NULLS_SIZE         2
@@ -106,11 +111,15 @@ class MBR(cstruct.MemCStruct):
         #define MBR_PARTITIONS_SIZE  (sizeof(Partition) * MBR_PARTITIONS_NUM)
         #define MBR_UNUSED_SIZE      (MBR_SIZE - MBR_DISK_SIGNATURE_SIZE - MBR_USUALY_NULLS_SIZE - MBR_PARTITIONS_SIZE - MBR_SIGNATURE_SIZE)
 
-        char unused[MBR_UNUSED_SIZE];
-        unsigned char disk_signature[MBR_DISK_SIGNATURE_SIZE];
-        unsigned char usualy_nulls[MBR_USUALY_NULLS_SIZE];
-        struct Partition partitions[MBR_PARTITIONS_NUM];
-        uint16 signature;
+        typedef struct Partition Partition;
+
+        struct {
+            char unused[MBR_UNUSED_SIZE];
+            unsigned char disk_signature[MBR_DISK_SIGNATURE_SIZE];
+            unsigned char usualy_nulls[MBR_USUALY_NULLS_SIZE];
+            Partition partitions[MBR_PARTITIONS_NUM];
+            uint16 signature;
+        }
     """
 
     @property

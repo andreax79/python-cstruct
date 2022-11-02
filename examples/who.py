@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from cstruct import parse, getdef, typedef, MemCStruct, NATIVE_ORDER
+from cstruct import parse, getdef, MemCStruct, NATIVE_ORDER
 from pathlib import Path
 import argparse
 import sys
@@ -30,24 +30,28 @@ parse(
 #define UT_LINESIZE      32
 #define UT_NAMESIZE      32
 #define UT_HOSTSIZE     256
+
+typedef int pid_t;
+typedef long time_t;
 """
 )
 
-typedef("int", "pid_t")
-typedef("long", "time_t")
-
 
 class ExitStatus(MemCStruct):
-    __struct__ = """
-        short   e_termination;      /* Process termination status.  */
-        short   e_exit;             /* Process exit status.  */
+    __def__ = """
+        struct ExitStatus {
+            short   e_termination;      /* Process termination status.  */
+            short   e_exit;             /* Process exit status.  */
+        }
     """
 
 
 class Timeval(MemCStruct):
-    __struct__ = """
-        int32_t tv_sec;             /* Seconds.  */
-        int32_t tv_usec;            /* Microseconds.  */
+    __def__ = """
+        struct {
+            int32_t tv_sec;             /* Seconds.  */
+            int32_t tv_usec;            /* Microseconds.  */
+        }
     """
 
 
@@ -57,21 +61,25 @@ def str_from_c(string):
 
 class Utmp(MemCStruct):
     __byte_order__ = NATIVE_ORDER
-    __struct__ = """
-        short   ut_type;              /* Type of record */
-        pid_t   ut_pid;               /* PID of login process */
-        char    ut_line[UT_LINESIZE]; /* Device name of tty - "/dev/" */
-        char    ut_id[4];             /* Terminal name suffix, or inittab(5) ID */
-        char    ut_user[UT_NAMESIZE]; /* Username */
-        char    ut_host[UT_HOSTSIZE]; /* Hostname for remote login, or kernel version for run-level messages */
-        struct  ExitStatus ut_exit;   /* Exit status of a process marked as DEAD_PROCESS; not used by Linux init (1 */
-        int32_t ut_session;           /* Session ID (getsid(2)), used for windowing */
+    __def__ = """
+        typedef struct ExitStatus ExitStatus;
+
         struct {
-           int32_t tv_sec;            /* Seconds */
-           int32_t tv_usec;           /* Microseconds */
-        } ut_tv;                      /* Time entry was made */
-        int32_t ut_addr_v6[4];        /* Internet address of remote host; IPv4 address uses just ut_addr_v6[0] */
-        char __unused[20];            /* Reserved for future use */
+            short   ut_type;              /* Type of record */
+            pid_t   ut_pid;               /* PID of login process */
+            char    ut_line[UT_LINESIZE]; /* Device name of tty - "/dev/" */
+            char    ut_id[4];             /* Terminal name suffix, or inittab(5) ID */
+            char    ut_user[UT_NAMESIZE]; /* Username */
+            char    ut_host[UT_HOSTSIZE]; /* Hostname for remote login, or kernel version for run-level messages */
+            ExitStatus ut_exit;           /* Exit status of a process marked as DEAD_PROCESS; not used by Linux init (1 */
+            int32_t ut_session;           /* Session ID (getsid(2)), used for windowing */
+            struct {
+               int32_t tv_sec;            /* Seconds */
+               int32_t tv_usec;           /* Microseconds */
+            } ut_tv;                      /* Time entry was made */
+            int32_t ut_addr_v6[4];        /* Internet address of remote host; IPv4 address uses just ut_addr_v6[0] */
+            char __unused[20];            /* Reserved for future use */
+        }
     """
 
     @property
