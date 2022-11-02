@@ -440,15 +440,6 @@ with open(disk, &quot;rb&quot;) as f:
     mbr.unpack(f)
     mbr.print_info()
 </code></pre>
-<h1 id="python-cstruct_1">Python-CStruct</h1>
-<p>Convert C struct/union definitions into Python classes with methods for
-serializing/deserializing.</p>
-<p>The usage is very simple: create a class subclassing cstruct.MemCStruct
-and add a C struct/union definition as a string in the <code>__struct__</code> field.</p>
-<p>The C struct/union definition is parsed at runtime and the struct format string
-is generated. The class offers the method <code>unpack</code> for deserializing
-an array of bytes into a Python object and the method <code>pack</code> for
-serializing the values into an array of bytes.</p>
               
             </div>
           </div><footer>
@@ -496,5 +487,5 @@ serializing the values into an array of bytes.</p>
 
 <!--
 MkDocs version : 1.3.1
-Build Date UTC : 2022-11-02 11:11:27.136673+00:00
+Build Date UTC : 2022-11-02 11:12:54.474984+00:00
 -->
