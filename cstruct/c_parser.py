@@ -316,15 +316,17 @@ def parse_struct(
         field_type = parse_type(tokens, __cls__, __byte_order__, offset)
         vname = tokens.pop()
         if vname in fields_types:
-            raise ParserError("Duplicate member '{}'".format(vname))
+            raise ParserError(f"Duplicate member '{vname}'")
+        if vname in dir(__cls__):
+            raise ParserError(f"Invalid reserved member name '{vname}'")
         # anonymous nested union
         if vname == ';' and field_type.ref is not None and (__is_union__ or field_type.ref.__is_union__):
             # add the anonymous struct fields to the parent
             for nested_field_name, nested_field_type in field_type.ref.__fields_types__.items():
                 if nested_field_name in fields_types:
-                    raise ParserError("Duplicate member '{}'".format(nested_field_name))
+                    raise ParserError(f"Duplicate member '{nested_field_name}'")
                 fields_types[nested_field_name] = nested_field_type
-            vname = "__anonymous{}".format(anonymous)
+            vname = f"__anonymous{anonymous}"
             anonymous += 1
             tokens.push(';')
         fields_types[vname] = field_type
@@ -336,7 +338,7 @@ def parse_struct(
             offset = field_type.offset + field_type.vsize
         t = tokens.pop()
         if t != ';':
-            raise ParserError("; expected but {} found".format(t))
+            raise ParserError(f"; expected but {t} found")
 
     if __is_union__:  # C union
         # Calculate the sizeof union as size of its largest element
