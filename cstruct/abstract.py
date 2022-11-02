@@ -29,6 +29,7 @@ from collections import OrderedDict
 from typing import Any, BinaryIO, List, Dict, Optional, Type, Tuple, Union
 import hashlib
 import sys
+from io import StringIO
 from enum import IntEnum, EnumMeta, _EnumDict
 from unicodedata import name
 from .base import STRUCTS, ENUMS, DEFAULT_ENUM_SIZE
@@ -225,6 +226,33 @@ class AbstractCStruct(metaclass=CStructMeta):
     def sizeof(cls) -> int:
         "Structure size in bytes (flexible array member size is omitted)"
         return cls.__size__
+
+    def inspect(self, start_addr: Optional[int] = None, end_addr: Optional[int] = None) -> str:
+        """
+        Return memory content in hexadecimal
+
+        Args:
+            start_addr: start address
+            end_addr: end address
+        """
+        buffer = StringIO()
+        if hasattr(self, '__mem__'):
+            mem = self.__mem__
+        else:
+            mem = self.pack()
+        for i in range(start_addr or 0, end_addr or self.size, 16):
+            row = mem[i : i + 16]
+            buffer.write(f"{i:08x} ")
+            for j, c in enumerate(row):
+                separator = ' ' if j == 7 else ''
+                buffer.write(f" {c:02x}{separator}")
+            buffer.write("  |")
+            for c in row:
+                buffer.write(chr(c) if c >= 32 and c < 127 else '.')
+            buffer.write("|")
+            buffer.write("\n")
+        buffer.seek(0, 0)
+        return buffer.read()
 
     def __eq__(self, other: Any) -> bool:
         return other is not None and isinstance(other, self.__class__) and self.__dict__ == other.__dict__
