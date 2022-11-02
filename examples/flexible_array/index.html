@@ -107,10 +107,12 @@ from pathlib import Path
 
 
 class FlexArray(MemCStruct):
-    __struct__ = &quot;&quot;&quot;
-      int length;
-      uint32 checksum;
-      long data[];
+    __def__ = &quot;&quot;&quot;
+        struct {
+            int length;
+            uint32 checksum;
+            long data[];
+        }
     &quot;&quot;&quot;
 
     def set_length(self, length):
