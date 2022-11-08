@@ -31,7 +31,7 @@ from .c_expr import c_eval
 from .exceptions import CStructException, ParserError
 
 if TYPE_CHECKING:
-    from .abstract import AbstractCStruct
+    from .abstract import AbstractCStruct, AbstractCEnum
 
 __all__ = ['parse_struct', 'parse_struct_def', 'parse_enum_def', 'Tokens']
 
@@ -126,7 +126,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
         if tokens.get() == '{':  # Named nested struct
             tokens.push(tail)
             tokens.push(c_type)
-            ref = __cls__.parse(tokens, __name__=tail, __byte_order__=byte_order)
+            ref: Union[Type[AbstractCEnum], Type[AbstractCStruct]] = __cls__.parse(tokens, __name__=tail, __byte_order__=byte_order)
         elif tail == '{':  # Unnamed nested struct
             tokens.push(tail)
             tokens.push(c_type)
@@ -231,6 +231,15 @@ def parse_enum_def(__def__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[s
 
 
 def parse_enum(__enum__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[str, Any]]:
+    """
+    Parser for C-like enum syntax.
+
+    Args:
+        __enum__:       definition of the enum in C syntax
+
+    Returns:
+        dict: the parsed definition
+    """
     constants: Dict[str, int] = OrderedDict()
 
     if isinstance(__enum__, Tokens):
@@ -295,6 +304,18 @@ def parse_struct(
     __byte_order__: Optional[str] = None,
     **kargs: Any,
 ) -> Dict[str, Any]:
+    """
+    Parser for C-like struct syntax.
+
+    Args:
+        __struct__:     definition of the struct/union in C syntax
+        __cls__:        base class (MemCStruct or CStruct)
+        __is_union__:   True for union, False for struct
+        __byte_order__: byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
+
+    Returns:
+        dict: the parsed definition
+    """
     # naive C struct parsing
     __is_union__ = bool(__is_union__)
     fields_types: Dict[str, FieldType] = OrderedDict()

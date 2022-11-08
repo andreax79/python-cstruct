@@ -14,7 +14,11 @@ plugins:
     - examples
 
 nav:
-  - CStruct Docs: index.md
+  - Introduction: index.md
+  - Changelog: changelog.md
+  - License: license.md
+  - Code of Conduct: CODE_OF_CONDUCT.md
+  - Source Code Repository: "https://github.com/andreax79/python-cstruct"
   - Examples:
     - "fdisk.py": examples/fdisk.md
     - "flexible_array.py": examples/flexible_array.md
@@ -24,10 +28,10 @@ nav:
     - "cstruct.abstract": api/abstract.md
     - "cstruct.base": api/base.md
     - "cstruct.c_expr": api/c_expr.md
+    - "cstruct.c_parser": api/c_parser.md
     - "cstruct.cstruct": api/cstruct.md
     - "cstruct.field": api/field.md
     - "cstruct.mem_cstruct": api/mem_cstruct.md
-  - License: license.md
 
 markdown_extensions:
   - markdown_include.include:
