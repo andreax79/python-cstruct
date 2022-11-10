@@ -180,6 +180,7 @@ def parse_struct_def(
     __def__: Union[str, Tokens],
     __cls__: Type['AbstractCStruct'],
     __byte_order__: Optional[str] = None,
+    process_muliple_definition: bool = False,
     **kargs: Any,  # Type['AbstractCStruct'],
 ) -> Optional[Dict[str, Any]]:
     # naive C struct parsing
@@ -187,25 +188,47 @@ def parse_struct_def(
         tokens = __def__
     else:
         tokens = Tokens(__def__)
-    if not tokens:
-        return None
-    kind = tokens.pop()
-    if kind == 'typedef':
-        parse_typedef(tokens, __cls__, __byte_order__)
-        return parse_struct_def(tokens, __cls__, __byte_order__, **kargs)
-    if kind == 'enum':
-        return parse_enum_def(__def__, **kargs)
-    if kind not in ['struct', 'union']:
-        raise ParserError(f"struct, union, or enum expected - {kind}")
-    __is_union__ = kind == 'union'
-    vtype = tokens.pop()
-    if tokens.get() == '{':  # Named nested struct
-        tokens.pop()
-        return parse_struct(tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__)
-    elif vtype == '{':  # Unnamed nested struct
-        return parse_struct(tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__)
-    else:
-        raise ParserError(f"{vtype} definition expected")
+    result = None
+    while tokens and (process_muliple_definition or not result):
+        kind = tokens.pop()
+        if kind == ';':
+            pass
+
+        elif kind == 'typedef':
+            if result:
+                result['__cls__'].parse(result, **kargs)
+            parse_typedef(tokens, __cls__, __byte_order__)
+
+        elif kind == 'enum':
+            if result:
+                result['__cls__'].parse(result, **kargs)
+            name = tokens.pop()
+            if tokens.get() == '{':  # named enum
+                tokens.pop()  # pop "{"
+                result = parse_enum(tokens, __name__=name)
+            elif name == '{':  # unnamed enum
+                result = parse_enum(tokens)
+            else:
+                raise ParserError(f"{name} definition expected")
+
+        elif kind in ['struct', 'union']:
+            if result:
+                result['__cls__'].parse(result, **kargs)
+            __is_union__ = kind == 'union'
+            name = tokens.pop()
+            if name == '{':  # unnamed nested struct
+                result = parse_struct(tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__)
+            elif tokens.get() == '{':  # Named nested struct
+                tokens.pop()  # pop "{"
+                result = parse_struct(
+                    tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__, __name__=name
+                )
+            else:
+                raise ParserError(f"{name} definition expected")
+
+        else:
+            raise ParserError(f"struct, union, or enum expected - {kind}")
+    return result
 
 
 def parse_enum_def(__def__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[str, Any]]:
@@ -220,26 +243,33 @@ def parse_enum_def(__def__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[s
     if kind not in ['enum']:
         raise ParserError(f"enum expected - {kind}")
 
-    vtype = tokens.pop()
+    name = tokens.pop()
     if tokens.get() == '{':  # named enum
-        tokens.pop()
-        return parse_enum(tokens)
-    elif vtype == '{':
+        tokens.pop()  # pop "{"
+        return parse_enum(tokens, __name__=name)
+    elif name == '{':  # unnamed enum
         return parse_enum(tokens)
     else:
-        raise ParserError(f"{vtype} definition expected")
+        raise ParserError(f"{name} definition expected")
 
 
-def parse_enum(__enum__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[str, Any]]:
+def parse_enum(
+    __enum__: Union[str, Tokens],
+    __name__: Optional[str] = None,
+    **kargs: Any,
+) -> Optional[Dict[str, Any]]:
     """
     Parser for C-like enum syntax.
 
     Args:
         __enum__:       definition of the enum in C syntax
+        __name__:       enum name
 
     Returns:
         dict: the parsed definition
     """
+    from .cenum import CEnum
+
     constants: Dict[str, int] = OrderedDict()
 
     if isinstance(__enum__, Tokens):
@@ -293,6 +323,8 @@ def parse_enum(__enum__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[str,
         '__is_struct__': False,
         '__is_union__': False,
         '__is_enum__': True,
+        '__name__': __name__,
+        '__cls__': CEnum,
     }
     return result
 
@@ -302,6 +334,7 @@ def parse_struct(
     __cls__: Type['AbstractCStruct'],
     __is_union__: bool = False,
     __byte_order__: Optional[str] = None,
+    __name__: Optional[str] = None,
     **kargs: Any,
 ) -> Dict[str, Any]:
     """
@@ -312,11 +345,17 @@ def parse_struct(
         __cls__:        base class (MemCStruct or CStruct)
         __is_union__:   True for union, False for struct
         __byte_order__: byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER
+        __name__:       struct/union name
 
     Returns:
         dict: the parsed definition
     """
     # naive C struct parsing
+    from .abstract import AbstractCStruct
+    from .mem_cstruct import MemCStruct
+
+    if __cls__ is None or __cls__ == AbstractCStruct:
+        __cls__ = MemCStruct
     __is_union__ = bool(__is_union__)
     fields_types: Dict[str, FieldType] = OrderedDict()
     flexible_array: bool = False
@@ -378,5 +417,7 @@ def parse_struct(
         '__is_enum__': False,
         '__byte_order__': __byte_order__,
         '__alignment__': max_alignment,
+        '__name__': __name__,
+        '__cls__': __cls__,
     }
     return result

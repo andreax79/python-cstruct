@@ -35,7 +35,7 @@ from .c_parser import parse_struct, parse_struct_def, parse_enum_def, parse_enum
 from .field import calculate_padding, FieldType
 from .exceptions import CStructException
 
-__all__ = ['CStructMeta', 'AbstractCStruct', "CEnumMeta", 'AbstractCEnum']
+__all__ = ['CStructMeta', 'AbstractCStruct', 'CEnumMeta', 'AbstractCEnum']
 
 
 class CStructMeta(ABCMeta):
@@ -138,6 +138,7 @@ class AbstractCStruct(metaclass=CStructMeta):
             del cls_kargs['__struct__']
             cls_kargs.update(__struct__)
             cls_kargs['__struct__'] = None
+        __name__ = cls_kargs.get('__name__') or __name__
         if __name__ is None:  # Anonymous struct
             __name__ = cls.__name__ + '_' + hashlib.sha1(str(__struct__).encode('utf-8')).hexdigest()
             cls_kargs['__anonymous__'] = True
@@ -363,6 +364,7 @@ class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
         elif isinstance(__enum__, dict):
             cls_kargs.update(__enum__)
 
+        __name__ = cls_kargs.get('__name__') or __name__
         if __name__ is None:
             __name__ = cls.__name__ + "_" + hashlib.sha1(str(__enum__).encode("utf-8")).hexdigest()
             cls_kargs["__anonymous__"] = True
