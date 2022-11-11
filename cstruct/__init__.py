@@ -27,16 +27,15 @@ __license__ = 'MIT'
 __version__ = '4.0'
 __date__ = '15 August 2013'
 
-import struct
 from typing import Any, Dict, Optional, Type, Union
 from .base import (
     LITTLE_ENDIAN,
     BIG_ENDIAN,
     NATIVE_ORDER,
     STRUCTS,
+    ENUMS,
     DEFINES,
     TYPEDEFS,
-    C_TYPE_TO_FORMAT,
     CHAR_ZERO,
 )
 from .abstract import CStructMeta, AbstractCStruct, AbstractCEnum
@@ -44,6 +43,7 @@ from .cstruct import CStruct
 from .c_parser import parse_struct_def
 from .mem_cstruct import MemCStruct
 from .cenum import CEnum
+from .native_types import get_native_type
 
 __all__ = [
     'LITTLE_ENDIAN',
@@ -57,6 +57,7 @@ __all__ = [
     'undef',
     'getdef',
     'typedef',
+    'get_type',
     'sizeof',
     'parse',
 ]
@@ -104,33 +105,62 @@ def typedef(type_: str, alias: str) -> None:
     TYPEDEFS[alias] = type_
 
 
+def get_type(type_: str) -> Any:
+    """
+    Get a data type (struct, union, enum) by name
+
+    Examples:
+        >>> get_type("struct Position")
+        <class 'abc.Position'>
+        >>> get_type("enum htmlfont")
+        <enum 'htmlfont'>
+
+    Args:
+        type_: C type, struct or union (e.g. 'short int' or 'struct ZYZ'), enum or native type
+
+    Returns:
+        class: data type class
+    """
+    while type_ in TYPEDEFS:
+        type_ = TYPEDEFS[type_]
+    if isinstance(type_, CStructMeta):
+        return type_
+    elif type_.startswith('struct ') or type_.startswith('union '):
+        kind, type_ = type_.split(' ', 1)
+        try:
+            return STRUCTS[type_]
+        except KeyError:
+            raise KeyError(f"Unknown {kind} `{type_}`")
+    elif type_.startswith('enum '):
+        kind, type_ = type_.split(' ', 1)
+        try:
+            return ENUMS[type_]
+        except KeyError:
+            raise KeyError(f"Unknown {kind} `{type_}`")
+    else:
+        return get_native_type(type_)
+
+
 def sizeof(type_: str) -> int:
     """
     Return the size of the type.
 
+    Examples:
+        >>> sizeof("struct Position")
+        16
+        >>> sizeof("int")
+        4
+
     Args:
-        type_: C type, struct or union (e.g. 'short int' or 'struct ZYZ')
+        type_: C type, struct or union (e.g. 'short int' or 'struct ZYZ'), enum or native type
 
     Returns:
         size: size in bytes
     """
     while type_ in TYPEDEFS:
         type_ = TYPEDEFS[type_]
-    if isinstance(type_, CStructMeta):
-        return len(type_)
-    elif type_.startswith('struct ') or type_.startswith('union '):
-        kind, type_ = type_.split(' ', 1)
-        t = STRUCTS.get(type_, None)
-        if t is None:
-            raise KeyError("Unknow %s \"%s\"" % (kind, type_))
-        else:
-            return t.sizeof()
-    else:
-        ttype = C_TYPE_TO_FORMAT.get(type_, None)
-        if ttype is None:
-            raise KeyError("Unknow type \"" + type_ + "\"")
-        else:
-            return struct.calcsize(ttype)
+    data_type = get_type(type_)
+    return data_type.sizeof()
 
 
 def parse(

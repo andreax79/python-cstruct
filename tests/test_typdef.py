@@ -28,6 +28,7 @@
 from cstruct import MemCStruct, NATIVE_ORDER
 from cstruct.base import TYPEDEFS
 
+
 class ExitStatus(MemCStruct):
     __def__ = """
         struct ExitStatus {
@@ -35,6 +36,7 @@ class ExitStatus(MemCStruct):
             short   e_exit;             /* Process exit status.  */
         }
     """
+
 
 class Utmp(MemCStruct):
     __byte_order__ = NATIVE_ORDER
@@ -65,6 +67,7 @@ class Utmp(MemCStruct):
             char __unused[20];            /* Reserved for future use */
         }
     """
+
 
 def test_typedef():
     assert TYPEDEFS['pid_t'] == 'int'

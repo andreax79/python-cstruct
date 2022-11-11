@@ -35,8 +35,8 @@ __all__ = [
     'STRUCTS',
     'DEFINES',
     'TYPEDEFS',
-    'C_TYPE_TO_FORMAT',
     'CHAR_ZERO',
+    'DEFAULT_ENUM_SIZE',
 ]
 
 LITTLE_ENDIAN = '<'
@@ -68,32 +68,8 @@ TYPEDEFS: Dict[str, str] = {
     'uint64_t': 'uint64',
 }
 
-C_TYPE_TO_FORMAT: Dict[str, str] = {
-    'char': 's',
-    'signed char': 'b',
-    'unsigned char': 'B',
-    'short': 'h',
-    'unsigned short': 'H',
-    'int': 'i',
-    'unsigned int': 'I',
-    'long': 'l',
-    'unsigned long': 'L',
-    'long long': 'q',
-    'unsigned long long': 'Q',
-    'float': 'f',
-    'double': 'd',
-    'void *': 'P',
-    'int8': 'b',
-    'uint8': 'B',
-    'int16': 'h',
-    'uint16': 'H',
-    'int32': 'i',
-    'uint32': 'I',
-    'int64': 'q',
-    'uint64': 'Q',
-}
-
 ENUM_SIZE_TO_C_TYPE: Dict[int, str] = {1: 'int8', 2: 'int16', 4: 'int32', 8: 'int64'}
 
 CHAR_ZERO = bytes('\0', 'ascii')
+
 DEFAULT_ENUM_SIZE = 4

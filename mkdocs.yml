@@ -32,6 +32,7 @@ nav:
     - "cstruct.cstruct": api/cstruct.md
     - "cstruct.field": api/field.md
     - "cstruct.mem_cstruct": api/mem_cstruct.md
+    - "cstruct.native_types": api/native_types.md
 
 markdown_extensions:
   - markdown_include.include:

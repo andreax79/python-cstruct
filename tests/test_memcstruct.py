@@ -257,6 +257,7 @@ def test_invalid_inline():
     with pytest.raises(ParserError):
         cstruct.MemCStruct.parse('struct { unsigned char head; unsigned char head; }', __byte_order__=cstruct.LITTLE_ENDIAN)
 
+
 def test_invalid_inline_reserved():
     with pytest.raises(ParserError):
         cstruct.MemCStruct.parse('struct { int size; }')

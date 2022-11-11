@@ -26,7 +26,8 @@ import copy
 import struct
 from enum import Enum
 from typing import Optional, Any, List, Type, TYPE_CHECKING
-from .base import NATIVE_ORDER, C_TYPE_TO_FORMAT, ENUM_SIZE_TO_C_TYPE
+from .base import NATIVE_ORDER, ENUM_SIZE_TO_C_TYPE
+from .native_types import get_native_type
 from .exceptions import ParserError
 
 if TYPE_CHECKING:
@@ -188,12 +189,12 @@ class FieldType(object):
         "Field format (struct library format)"
         if self.is_native:
             try:
-                return C_TYPE_TO_FORMAT[self.c_type]
+                return get_native_type(self.c_type).native_format
             except KeyError:
-                raise ParserError("Unknow type {}".format(self.c_type))
+                raise ParserError(f"Unknow type `{self.c_type}`")
         elif self.is_enum:
             try:
-                return C_TYPE_TO_FORMAT[ENUM_SIZE_TO_C_TYPE[self.ref.size]]
+                return get_native_type(ENUM_SIZE_TO_C_TYPE[self.ref.size]).native_format
             except KeyError:
                 raise ParserError(f"Enum has invalid size. Needs to be in {ENUM_SIZE_TO_C_TYPE.keys()}")
         else:
