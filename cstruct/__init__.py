@@ -182,6 +182,7 @@ def parse(
     if __cls__ is None:
         __cls__ = MemCStruct
     cls_def = parse_struct_def(__struct__, __cls__=__cls__, process_muliple_definition=True, **kargs)
+    print('!!!!!', cls_def, kargs)
     if cls_def is None:
         return None
     return cls_def['__cls__'].parse(cls_def, **kargs)

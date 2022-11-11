@@ -30,10 +30,12 @@ from typing import Any, BinaryIO, List, Dict, Optional, Type, Tuple, Union
 import hashlib
 from io import StringIO
 from enum import IntEnum, EnumMeta, _EnumDict
-from .base import STRUCTS, ENUMS, DEFAULT_ENUM_SIZE
+import struct
+from .base import STRUCTS, ENUMS, DEFAULT_ENUM_SIZE, ENUM_SIZE_TO_C_TYPE
 from .c_parser import parse_struct, parse_struct_def, parse_enum_def, parse_enum, Tokens
 from .field import calculate_padding, FieldType
-from .exceptions import CStructException
+from .native_types import get_native_type
+from .exceptions import CStructException, ParserError
 
 __all__ = ['CStructMeta', 'AbstractCStruct', 'CEnumMeta', 'AbstractCEnum']
 
@@ -315,11 +317,19 @@ class CEnumMeta(EnumMeta):
 
     def __new__(metacls: Type["CEnumMeta"], cls: str, bases: Tuple[Type, ...], classdict: _EnumDict, **kwds: Any) -> "CEnumMeta":
         inst = super().__new__(metacls, cls, bases, classdict, **kwds)
-
         if len(inst) > 0:
-            if "__size__" not in classdict:
+            if classdict.get("__native_format__"):  # data type specified
+                inst.__size__ = struct.calcsize(classdict["__native_format__"])
+            elif "__size__" in classdict:  # size specified
+                try:
+                    inst.__native_format__ = get_native_type(ENUM_SIZE_TO_C_TYPE[inst.__size__]).native_format
+                except KeyError:
+                    raise ParserError(f"Enum has invalid size. Needs to be in {ENUM_SIZE_TO_C_TYPE.keys()}")
+            else:  # default
                 inst.__size__ = DEFAULT_ENUM_SIZE
+                inst.__native_format__ = get_native_type(ENUM_SIZE_TO_C_TYPE[inst.__size__]).native_format
                 print(f"Warning: __size__ not specified for enum {cls}. Will default to {DEFAULT_ENUM_SIZE} bytes")
+
             if not classdict.get("__anonymous__", False):
                 ENUMS[cls] = inst
         return inst
@@ -341,6 +351,7 @@ class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
         __enum__: Union[str, Tokens, Dict[str, Any]],
         __name__: Optional[str] = None,
         __size__: Optional[int] = None,
+        __native_format__: Optional[str] = None,
         **kargs: Dict[str, Any],
     ) -> Type["AbstractCEnum"]:
         """
@@ -350,14 +361,16 @@ class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
             __enum__: Definition of the enum in C syntax
             __name__: Name of the new Enum. If empty, a name based on the __enum__ hash is generated
             __size__: Number of bytes that the enum should be read as
+            __native_format__: struct module format
 
         Returns:
             cls: A new class mapping the definition
         """
-
         cls_kargs: Dict[str, Any] = dict(kargs)
         if __size__ is not None:
             cls_kargs['__size__'] = __size__
+        if __native_format__ is not None:
+            cls_kargs['__native_format__'] = __native_format__
 
         if isinstance(__enum__, (str, Tokens)):
             cls_kargs.update(parse_enum_def(__enum__, __cls__=cls, **cls_kargs))

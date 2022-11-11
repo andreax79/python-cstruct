@@ -26,7 +26,7 @@ import copy
 import struct
 from enum import Enum
 from typing import Optional, Any, List, Type, TYPE_CHECKING
-from .base import NATIVE_ORDER, ENUM_SIZE_TO_C_TYPE
+from .base import NATIVE_ORDER
 from .native_types import get_native_type
 from .exceptions import ParserError
 
@@ -193,10 +193,7 @@ class FieldType(object):
             except KeyError:
                 raise ParserError(f"Unknow type `{self.c_type}`")
         elif self.is_enum:
-            try:
-                return get_native_type(ENUM_SIZE_TO_C_TYPE[self.ref.size]).native_format
-            except KeyError:
-                raise ParserError(f"Enum has invalid size. Needs to be in {ENUM_SIZE_TO_C_TYPE.keys()}")
+            return self.ref.__native_format__
         else:
             return 'c'
 

@@ -29,6 +29,7 @@ from .base import DEFINES, ENUMS, TYPEDEFS, STRUCTS
 from .field import calculate_padding, Kind, FieldType
 from .c_expr import c_eval
 from .exceptions import CStructException, ParserError
+from .native_types import get_native_type
 
 if TYPE_CHECKING:
     from .abstract import AbstractCStruct, AbstractCEnum
@@ -57,6 +58,16 @@ class Tokens(object):
 
     def pop(self) -> str:
         return self.tokens.pop(0)
+
+    def pop_c_type(self) -> str:
+        c_type = self.pop()
+        if c_type in ['signed', 'unsigned'] and len(self) > 1:
+            # short int, long int, or long long
+            c_type = c_type + " " + self.pop()
+        elif c_type in ['short', 'long'] and len(self) > 1 and self.get() in ['int', 'long']:
+            # short int, long int, or long long
+            c_type = c_type + " " + self.pop()
+        return c_type
 
     def get(self) -> str:
         return self.tokens[0]
@@ -203,11 +214,16 @@ def parse_struct_def(
             if result:
                 result['__cls__'].parse(result, **kargs)
             name = tokens.pop()
+            native_format = None
+            if tokens.get() == ':':  # enumeration type declaration
+                tokens.pop()  # pop ":"
+                type_ = get_native_type(tokens.pop_c_type())
+                native_format = type_.native_format
             if tokens.get() == '{':  # named enum
                 tokens.pop()  # pop "{"
-                result = parse_enum(tokens, __name__=name)
+                result = parse_enum(tokens, __name__=name, native_format=native_format)
             elif name == '{':  # unnamed enum
-                result = parse_enum(tokens)
+                result = parse_enum(tokens, native_format=native_format)
             else:
                 raise ParserError(f"{name} definition expected")
 
@@ -244,9 +260,14 @@ def parse_enum_def(__def__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[s
         raise ParserError(f"enum expected - {kind}")
 
     name = tokens.pop()
+    native_format = None
+    if tokens.get() == ':':  # enumeration type declaration
+        tokens.pop()  # pop ":"
+        type_ = get_native_type(tokens.pop_c_type())
+        native_format = type_.native_format
     if tokens.get() == '{':  # named enum
         tokens.pop()  # pop "{"
-        return parse_enum(tokens, __name__=name)
+        return parse_enum(tokens, __name__=name, native_format=native_format)
     elif name == '{':  # unnamed enum
         return parse_enum(tokens)
     else:
@@ -256,6 +277,7 @@ def parse_enum_def(__def__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[s
 def parse_enum(
     __enum__: Union[str, Tokens],
     __name__: Optional[str] = None,
+    native_format: Optional[str] = None,
     **kargs: Any,
 ) -> Optional[Dict[str, Any]]:
     """
@@ -264,6 +286,7 @@ def parse_enum(
     Args:
         __enum__:       definition of the enum in C syntax
         __name__:       enum name
+        native_format:  struct module format
 
     Returns:
         dict: the parsed definition
@@ -283,7 +306,6 @@ def parse_enum(
             break
 
         name = tokens.pop()
-
         next_token = tokens.pop()
         if next_token in {",", "}"}:  # enum-constant without explicit value
             if len(constants) == 0:
@@ -324,6 +346,7 @@ def parse_enum(
         '__is_union__': False,
         '__is_enum__': True,
         '__name__': __name__,
+        '__native_format__': native_format,
         '__cls__': CEnum,
     }
     return result

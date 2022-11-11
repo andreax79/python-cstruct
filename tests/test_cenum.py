@@ -29,6 +29,12 @@ class HtmlFont(CEnum):
     """
 
 
+class EnumWithType(CEnum):
+    __def__ = """
+        enum EnumWithType : int { a, b, c, d};
+    """
+
+
 class StructWithEnum(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
@@ -94,7 +100,7 @@ def test_sizeof():
     assert cstruct.sizeof("enum HtmlFont") == 2
 
 
-# def test_type():
-#     color = cstruct.parse("enum Color : short { red, green, blue };")
-#     assert color.__size__ == 2
-#     assert cstruct.sizeof("enum Color") == 2
+def test_type():
+    color = cstruct.parse("enum Color : unsigned short { red, green, blue };")
+    assert color.__size__ == 2
+    assert cstruct.sizeof("enum Color") == 2
