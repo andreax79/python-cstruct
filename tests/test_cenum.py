@@ -21,7 +21,7 @@ class HtmlFont(CEnum):
     __def__ = """
         #define NONE         0
 
-        enum htmlfont {
+        enum HtmlFont {
             HTMLFONT_NONE = NONE,
             HTMLFONT_BOLD,
             HTMLFONT_ITALIC,
@@ -87,4 +87,14 @@ def test_struct_with_enum():
     s1 = StructWithEnum()
     s1.unpack(packed)
     assert s1.font == HtmlFont.HTMLFONT_NONE
-    assert s1.font_size == 20
+
+
+def test_sizeof():
+    assert cstruct.sizeof("enum Dummy") == 4
+    assert cstruct.sizeof("enum HtmlFont") == 2
+
+
+# def test_type():
+#     color = cstruct.parse("enum Color : short { red, green, blue };")
+#     assert color.__size__ == 2
+#     assert cstruct.sizeof("enum Color") == 2
