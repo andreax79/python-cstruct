@@ -24,7 +24,7 @@
 
 import re
 from collections import OrderedDict
-from typing import Union, Optional, Any, Dict, Type, TYPE_CHECKING
+from typing import Union, Optional, Any, Dict, List, Type, TYPE_CHECKING
 from .base import DEFINES, ENUMS, TYPEDEFS, STRUCTS
 from .field import calculate_padding, Kind, FieldType
 from .c_expr import c_eval
@@ -36,6 +36,8 @@ if TYPE_CHECKING:
 
 __all__ = ['parse_struct', 'parse_struct_def', 'parse_enum_def', 'Tokens']
 
+SEPARATORS = [" ", "\t", "\n", ";", "{", "}", ":", ",", "="]
+SPACES = [" ", "\t", "\n"]
 
 class Tokens(object):
     def __init__(self, text: str) -> None:
@@ -52,9 +54,24 @@ class Tokens(object):
                     raise ParserError(f"Parsing line {line}")
             else:
                 lines.append(line)
-        text = " ".join(lines)
-        text = text.replace(";", " ; ").replace("{", " { ").replace("}", " } ").replace(",", " , ").replace("=", " = ")
-        self.tokens = text.split()
+        text = "\n".join(lines)
+        self.tokens = self.tokenize(text)
+
+    def tokenize(self, text) -> List[str]:
+        tokens: List[str] = []
+        t: List[str] = []
+        for c in text:
+            if c in SEPARATORS:
+                if t:
+                    tokens.append("".join(t))
+                    t.clear()
+                if c not in SPACES:
+                    tokens.append(c)
+            else:
+                t.append(c)
+        if t:
+            tokens.append(t.getvalue())
+        return tokens
 
     def pop(self) -> str:
         return self.tokens.pop(0)
