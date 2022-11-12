@@ -61,7 +61,7 @@ jobs:
           python -m pip install -r requirements-dev.txt
 
       - name: Build package
-        run:  python setup.py bdist_wheel sdist
+        run:  python -m build
 
       - name: Check package
         run:  twine check dist/*
