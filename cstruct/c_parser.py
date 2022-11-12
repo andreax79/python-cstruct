@@ -34,10 +34,11 @@ from .native_types import get_native_type
 if TYPE_CHECKING:
     from .abstract import AbstractCStruct, AbstractCEnum
 
-__all__ = ['parse_struct', 'parse_struct_def', 'parse_enum_def', 'Tokens']
+__all__ = ["parse_struct", "parse_struct_def", "parse_enum_def", "Tokens"]
 
 SEPARATORS = [" ", "\t", "\n", ";", "{", "}", ":", ",", "="]
 SPACES = [" ", "\t", "\n"]
+
 
 class Tokens(object):
     def __init__(self, text: str) -> None:
@@ -78,10 +79,10 @@ class Tokens(object):
 
     def pop_c_type(self) -> str:
         c_type = self.pop()
-        if c_type in ['signed', 'unsigned'] and len(self) > 1:
+        if c_type in ["signed", "unsigned"] and len(self) > 1:
             # short int, long int, or long long
             c_type = c_type + " " + self.pop()
-        elif c_type in ['short', 'long'] and len(self) > 1 and self.get() in ['int', 'long']:
+        elif c_type in ["short", "long"] and len(self) > 1 and self.get() in ["int", "long"]:
             # short int, long int, or long long
             c_type = c_type + " " + self.pop()
         return c_type
@@ -99,12 +100,12 @@ class Tokens(object):
         return str(self.tokens)
 
 
-def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Optional[str], offset: int) -> "FieldType":
+def parse_type(tokens: Tokens, __cls__: Type["AbstractCStruct"], byte_order: Optional[str], offset: int) -> "FieldType":
     if len(tokens) < 2:
         raise ParserError("Parsing error")
     c_type = tokens.pop()
     # signed/unsigned/struct
-    if c_type in ['signed', 'unsigned', 'struct', 'union', 'enum'] and len(tokens) > 1:
+    if c_type in ["signed", "unsigned", "struct", "union", "enum"] and len(tokens) > 1:
         c_type = c_type + " " + tokens.pop()
 
     vlen = 1
@@ -113,13 +114,13 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
     if not c_type.endswith("{"):
         next_token = tokens.pop()
         # short int, long int, or long long
-        if next_token in ['int', 'long']:
+        if next_token in ["int", "long"]:
             c_type = c_type + " " + next_token
             next_token = tokens.pop()
         # void *
         if next_token.startswith("*"):
             next_token = next_token[1:]
-            c_type = 'void *'
+            c_type = "void *"
         # parse length
         if "[" in next_token:
             t = next_token.split("[")
@@ -148,14 +149,14 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
             c_type = TYPEDEFS[c_type]
 
     # calculate fmt
-    if c_type.startswith('struct ') or c_type.startswith('union '):  # struct/union
-        c_type, tail = c_type.split(' ', 1)
-        kind = Kind.STRUCT if c_type == 'struct' else Kind.UNION
-        if tokens.get() == '{':  # Named nested struct
+    if c_type.startswith("struct ") or c_type.startswith("union "):  # struct/union
+        c_type, tail = c_type.split(" ", 1)
+        kind = Kind.STRUCT if c_type == "struct" else Kind.UNION
+        if tokens.get() == "{":  # Named nested struct
             tokens.push(tail)
             tokens.push(c_type)
             ref: Union[Type[AbstractCEnum], Type[AbstractCStruct]] = __cls__.parse(tokens, __name__=tail, __byte_order__=byte_order)
-        elif tail == '{':  # Unnamed nested struct
+        elif tail == "{":  # Unnamed nested struct
             tokens.push(tail)
             tokens.push(c_type)
             ref = __cls__.parse(tokens, __byte_order__=byte_order)
@@ -164,16 +165,16 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
                 ref = STRUCTS[tail]
             except KeyError:
                 raise ParserError(f"Unknown `{c_type} {tail}`")
-    elif c_type.startswith('enum'):
+    elif c_type.startswith("enum"):
         from .cenum import CEnum
 
-        c_type, tail = c_type.split(' ', 1)
+        c_type, tail = c_type.split(" ", 1)
         kind = Kind.ENUM
-        if tokens.get() == '{':  # Named nested struct
+        if tokens.get() == "{":  # Named nested struct
             tokens.push(tail)
             tokens.push(c_type)
             ref = CEnum.parse(tokens, __name__=tail)
-        elif tail == '{':  # unnamed nested struct
+        elif tail == "{":  # unnamed nested struct
             tokens.push(tail)
             tokens.push(c_type)
             ref = CEnum.parse(tokens)
@@ -188,7 +189,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
     return FieldType(kind, c_type, ref, vlen, flexible_array, byte_order, offset)
 
 
-def parse_typedef(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Optional[str]) -> None:
+def parse_typedef(tokens: Tokens, __cls__: Type["AbstractCStruct"], byte_order: Optional[str]) -> None:
     field_type = parse_type(tokens, __cls__, byte_order, 0)
     vname = tokens.pop()
     if field_type.ref is None:
@@ -200,13 +201,13 @@ def parse_typedef(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: 
     else:
         TYPEDEFS[vname] = f"struct {field_type.ref.__name__}"
     t = tokens.pop()
-    if t != ';':
+    if t != ";":
         raise ParserError(f"`;` expected but `{t}` found")
 
 
 def parse_struct_def(
     __def__: Union[str, Tokens],
-    __cls__: Type['AbstractCStruct'],
+    __cls__: Type["AbstractCStruct"],
     __byte_order__: Optional[str] = None,
     process_muliple_definition: bool = False,
     **kargs: Any,  # Type['AbstractCStruct'],
@@ -219,39 +220,39 @@ def parse_struct_def(
     result = None
     while tokens and (process_muliple_definition or not result):
         kind = tokens.pop()
-        if kind == ';':
+        if kind == ";":
             pass
 
-        elif kind == 'typedef':
+        elif kind == "typedef":
             if result:
-                result['__cls__'].parse(result, **kargs)
+                result["__cls__"].parse(result, **kargs)
             parse_typedef(tokens, __cls__, __byte_order__)
 
-        elif kind == 'enum':
+        elif kind == "enum":
             if result:
-                result['__cls__'].parse(result, **kargs)
+                result["__cls__"].parse(result, **kargs)
             name = tokens.pop()
             native_format = None
-            if tokens.get() == ':':  # enumeration type declaration
+            if tokens.get() == ":":  # enumeration type declaration
                 tokens.pop()  # pop ":"
                 type_ = get_native_type(tokens.pop_c_type())
                 native_format = type_.native_format
-            if tokens.get() == '{':  # named enum
+            if tokens.get() == "{":  # named enum
                 tokens.pop()  # pop "{"
                 result = parse_enum(tokens, __name__=name, native_format=native_format)
-            elif name == '{':  # unnamed enum
+            elif name == "{":  # unnamed enum
                 result = parse_enum(tokens, native_format=native_format)
             else:
                 raise ParserError(f"`{name}` definition expected")
 
-        elif kind in ['struct', 'union']:
+        elif kind in ["struct", "union"]:
             if result:
-                result['__cls__'].parse(result, **kargs)
-            __is_union__ = kind == 'union'
+                result["__cls__"].parse(result, **kargs)
+            __is_union__ = kind == "union"
             name = tokens.pop()
-            if name == '{':  # unnamed nested struct
+            if name == "{":  # unnamed nested struct
                 result = parse_struct(tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__)
-            elif tokens.get() == '{':  # Named nested struct
+            elif tokens.get() == "{":  # Named nested struct
                 tokens.pop()  # pop "{"
                 result = parse_struct(
                     tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__, __name__=name
@@ -273,19 +274,19 @@ def parse_enum_def(__def__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[s
     if not tokens:
         return None
     kind = tokens.pop()
-    if kind not in ['enum']:
+    if kind not in ["enum"]:
         raise ParserError(f"enum expected - `{kind}` found")
 
     name = tokens.pop()
     native_format = None
-    if tokens.get() == ':':  # enumeration type declaration
+    if tokens.get() == ":":  # enumeration type declaration
         tokens.pop()  # pop ":"
         type_ = get_native_type(tokens.pop_c_type())
         native_format = type_.native_format
-    if tokens.get() == '{':  # named enum
+    if tokens.get() == "{":  # named enum
         tokens.pop()  # pop "{"
         return parse_enum(tokens, __name__=name, native_format=native_format)
-    elif name == '{':  # unnamed enum
+    elif name == "{":  # unnamed enum
         return parse_enum(tokens)
     else:
         raise ParserError(f"`{name}` definition expected")
@@ -318,7 +319,7 @@ def parse_enum(
         tokens = Tokens(__enum__)
 
     while len(tokens):
-        if tokens.get() == '}':
+        if tokens.get() == "}":
             tokens.pop()
             break
 
@@ -358,20 +359,20 @@ def parse_enum(
             break
 
     result = {
-        '__constants__': constants,
-        '__is_struct__': False,
-        '__is_union__': False,
-        '__is_enum__': True,
-        '__name__': __name__,
-        '__native_format__': native_format,
-        '__cls__': CEnum,
+        "__constants__": constants,
+        "__is_struct__": False,
+        "__is_union__": False,
+        "__is_enum__": True,
+        "__name__": __name__,
+        "__native_format__": native_format,
+        "__cls__": CEnum,
     }
     return result
 
 
 def parse_struct(
     __struct__: Union[str, Tokens],
-    __cls__: Type['AbstractCStruct'],
+    __cls__: Type["AbstractCStruct"],
     __is_union__: bool = False,
     __byte_order__: Optional[str] = None,
     __name__: Optional[str] = None,
@@ -407,7 +408,7 @@ def parse_struct(
     else:
         tokens = Tokens(__struct__)
     while len(tokens):
-        if tokens.get() == '}':
+        if tokens.get() == "}":
             tokens.pop()
             break
         # flexible array member must be the last member of such a struct
@@ -420,7 +421,7 @@ def parse_struct(
         if vname in dir(__cls__):
             raise ParserError(f"Invalid reserved member name `{vname}`")
         # anonymous nested union
-        if vname == ';' and field_type.ref is not None and (__is_union__ or field_type.ref.__is_union__):
+        if vname == ";" and field_type.ref is not None and (__is_union__ or field_type.ref.__is_union__):
             # add the anonymous struct fields to the parent
             for nested_field_name, nested_field_type in field_type.ref.__fields_types__.items():
                 if nested_field_name in fields_types:
@@ -428,7 +429,7 @@ def parse_struct(
                 fields_types[nested_field_name] = nested_field_type
             vname = f"__anonymous{anonymous}"
             anonymous += 1
-            tokens.push(';')
+            tokens.push(";")
         fields_types[vname] = field_type
         # calculate the max field size (for the alignment)
         max_alignment = max(max_alignment, field_type.alignment)
@@ -437,7 +438,7 @@ def parse_struct(
             field_type.align_filed_offset()
             offset = field_type.offset + field_type.vsize
         t = tokens.pop()
-        if t != ';':
+        if t != ";":
             raise ParserError(f"`;` expected but `{t}` found")
 
     if __is_union__:  # C union
@@ -449,15 +450,15 @@ def parse_struct(
 
     # Prepare the result
     result = {
-        '__fields__': list(fields_types.keys()),
-        '__fields_types__': fields_types,
-        '__size__': size,
-        '__is_struct__': not __is_union__,
-        '__is_union__': __is_union__,
-        '__is_enum__': False,
-        '__byte_order__': __byte_order__,
-        '__alignment__': max_alignment,
-        '__name__': __name__,
-        '__cls__': __cls__,
+        "__fields__": list(fields_types.keys()),
+        "__fields_types__": fields_types,
+        "__size__": size,
+        "__is_struct__": not __is_union__,
+        "__is_union__": __is_union__,
+        "__is_enum__": False,
+        "__byte_order__": __byte_order__,
+        "__alignment__": max_alignment,
+        "__name__": __name__,
+        "__cls__": __cls__,
     }
     return result

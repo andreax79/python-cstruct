@@ -113,7 +113,7 @@ def test_invalid_anonymous():
 
 
 def test_sizeof_nested_struct():
-    assert sizeof('struct NestedStruct') == 16
+    assert sizeof("struct NestedStruct") == 16
     o = NestedStruct()
     assert len(o) == 16
 
@@ -135,7 +135,7 @@ def test_pack_unpack_nested_struct():
 
 
 def test_sizeof_nested_union():
-    assert sizeof('struct NestedUnion') == 8
+    assert sizeof("struct NestedUnion") == 8
     o = NestedUnion()
     assert len(o) == 8
 
@@ -165,7 +165,7 @@ def test_pack_unpack_nested_union():
 
 
 def test_sizeof_nested_anonymous_union():
-    assert sizeof('struct NestedAnonymousUnion') == 8
+    assert sizeof("struct NestedAnonymousUnion") == 8
     o = NestedAnonymousUnion()
     assert len(o) == 8
 

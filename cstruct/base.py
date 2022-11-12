@@ -28,22 +28,22 @@ if TYPE_CHECKING:
     from .abstract import AbstractCStruct, AbstractCEnum
 
 __all__ = [
-    'LITTLE_ENDIAN',
-    'BIG_ENDIAN',
-    'NATIVE_ORDER',
-    'CHAR_ZERO',
-    'STRUCTS',
-    'DEFINES',
-    'TYPEDEFS',
-    'CHAR_ZERO',
-    'DEFAULT_ENUM_SIZE',
+    "LITTLE_ENDIAN",
+    "BIG_ENDIAN",
+    "NATIVE_ORDER",
+    "CHAR_ZERO",
+    "STRUCTS",
+    "DEFINES",
+    "TYPEDEFS",
+    "CHAR_ZERO",
+    "DEFAULT_ENUM_SIZE",
 ]
 
-LITTLE_ENDIAN = '<'
+LITTLE_ENDIAN = "<"
 "Little-endian, std. size & alignment"
-BIG_ENDIAN = '>'
+BIG_ENDIAN = ">"
 "Big-endian, std. size & alignment"
-NATIVE_ORDER = '@'
+NATIVE_ORDER = "@"
 "Native order, size & alignment"
 
 STRUCTS: Dict[str, Type["AbstractCStruct"]] = {}
@@ -53,23 +53,23 @@ ENUMS: Dict[str, Type["AbstractCEnum"]] = {}
 DEFINES: Dict[str, Any] = {}
 
 TYPEDEFS: Dict[str, str] = {
-    'short int': 'short',
-    'unsigned short int': 'unsigned short',
-    'ushort': 'unsigned short',
-    'long int': 'long',
-    'unsigned long int': 'unsigned long',
-    'int8_t': 'int8',
-    'uint8_t': 'uint8',
-    'int16_t': 'int16',
-    'uint16_t': 'uint16',
-    'int32_t': 'int32',
-    'uint32_t': 'uint32',
-    'int64_t': 'int64',
-    'uint64_t': 'uint64',
+    "short int": "short",
+    "unsigned short int": "unsigned short",
+    "ushort": "unsigned short",
+    "long int": "long",
+    "unsigned long int": "unsigned long",
+    "int8_t": "int8",
+    "uint8_t": "uint8",
+    "int16_t": "int16",
+    "uint16_t": "uint16",
+    "int32_t": "int32",
+    "uint32_t": "uint32",
+    "int64_t": "int64",
+    "uint64_t": "uint64",
 }
 
-ENUM_SIZE_TO_C_TYPE: Dict[int, str] = {1: 'int8', 2: 'int16', 4: 'int32', 8: 'int64'}
+ENUM_SIZE_TO_C_TYPE: Dict[int, str] = {1: "int8", 2: "int16", 4: "int32", 8: "int64"}
 
-CHAR_ZERO = bytes('\0', 'ascii')
+CHAR_ZERO = bytes("\0", "ascii")
 
 DEFAULT_ENUM_SIZE = 4

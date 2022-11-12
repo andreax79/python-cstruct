@@ -22,10 +22,10 @@
 # IN THE SOFTWARE.
 #
 
-__author__ = 'Andrea Bonomi <andrea.bonomi@gmail.com>'
-__license__ = 'MIT'
-__version__ = '4.0'
-__date__ = '15 August 2013'
+__author__ = "Andrea Bonomi <andrea.bonomi@gmail.com>"
+__license__ = "MIT"
+__version__ = "4.0"
+__date__ = "15 August 2013"
 
 from typing import Any, Dict, Optional, Type, Union
 from .base import (
@@ -46,20 +46,20 @@ from .cenum import CEnum
 from .native_types import get_native_type
 
 __all__ = [
-    'LITTLE_ENDIAN',
-    'BIG_ENDIAN',
-    'NATIVE_ORDER',
-    'CHAR_ZERO',
-    'CStruct',
-    'MemCStruct',
-    'CEnum',
-    'define',
-    'undef',
-    'getdef',
-    'typedef',
-    'get_type',
-    'sizeof',
-    'parse',
+    "LITTLE_ENDIAN",
+    "BIG_ENDIAN",
+    "NATIVE_ORDER",
+    "CHAR_ZERO",
+    "CStruct",
+    "MemCStruct",
+    "CEnum",
+    "define",
+    "undef",
+    "getdef",
+    "typedef",
+    "get_type",
+    "sizeof",
+    "parse",
 ]
 
 
@@ -150,14 +150,14 @@ def get_type(type_: str) -> Any:
         type_ = TYPEDEFS[type_]
     if isinstance(type_, CStructMeta):
         return type_
-    elif type_.startswith('struct ') or type_.startswith('union '):
-        kind, type_ = type_.split(' ', 1)
+    elif type_.startswith("struct ") or type_.startswith("union "):
+        kind, type_ = type_.split(" ", 1)
         try:
             return STRUCTS[type_]
         except KeyError:
             raise KeyError(f"Unknown {kind} `{type_}`")
-    elif type_.startswith('enum '):
-        kind, type_ = type_.split(' ', 1)
+    elif type_.startswith("enum "):
+        kind, type_ = type_.split(" ", 1)
         try:
             return ENUMS[type_]
         except KeyError:
@@ -222,4 +222,4 @@ def parse(
     cls_def = parse_struct_def(__struct__, __cls__=__cls__, process_muliple_definition=True, **kargs)
     if cls_def is None:
         return None
-    return cls_def['__cls__'].parse(cls_def, **kargs)
+    return cls_def["__cls__"].parse(cls_def, **kargs)

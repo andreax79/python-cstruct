@@ -37,27 +37,27 @@ from .field import calculate_padding, FieldType
 from .native_types import get_native_type
 from .exceptions import CStructException, ParserError
 
-__all__ = ['CStructMeta', 'AbstractCStruct', 'CEnumMeta', 'AbstractCEnum']
+__all__ = ["CStructMeta", "AbstractCStruct", "CEnumMeta", "AbstractCEnum"]
 
 
 class CStructMeta(ABCMeta):
     __size__: int = 0
 
     def __new__(metacls: Type[type], name: str, bases: Tuple[str], namespace: Dict[str, Any]) -> Type[Any]:
-        __struct__ = namespace.get('__struct__', None)
-        namespace['__cls__'] = bases[0] if bases else None
+        __struct__ = namespace.get("__struct__", None)
+        namespace["__cls__"] = bases[0] if bases else None
         # Parse the struct
-        if '__struct__' in namespace:
-            if isinstance(namespace['__struct__'], (str, Tokens)):
+        if "__struct__" in namespace:
+            if isinstance(namespace["__struct__"], (str, Tokens)):
                 namespace.update(parse_struct(**namespace))
             __struct__ = True
-        if '__def__' in namespace:
+        if "__def__" in namespace:
             namespace.update(parse_struct_def(**namespace))
             __struct__ = True
         # Create the new class
         new_class: Type[Any] = super().__new__(metacls, name, bases, namespace)
         # Register the class
-        if __struct__ is not None and not namespace.get('__anonymous__'):
+        if __struct__ is not None and not namespace.get("__anonymous__"):
             STRUCTS[name] = new_class
         return new_class
 
@@ -128,23 +128,23 @@ class AbstractCStruct(metaclass=CStructMeta):
         """
         cls_kargs: Dict[str, Any] = dict(kargs)
         if __byte_order__ is not None:
-            cls_kargs['__byte_order__'] = __byte_order__
+            cls_kargs["__byte_order__"] = __byte_order__
         if __is_union__ is not None:
-            cls_kargs['__is_union__'] = __is_union__
-        cls_kargs['__struct__'] = __struct__
+            cls_kargs["__is_union__"] = __is_union__
+        cls_kargs["__struct__"] = __struct__
         if isinstance(__struct__, (str, Tokens)):
-            del cls_kargs['__struct__']
+            del cls_kargs["__struct__"]
             cls_kargs.update(parse_struct_def(__struct__, __cls__=cls, **cls_kargs))
-            cls_kargs['__struct__'] = None
+            cls_kargs["__struct__"] = None
         elif isinstance(__struct__, dict):
-            del cls_kargs['__struct__']
+            del cls_kargs["__struct__"]
             cls_kargs.update(__struct__)
-            cls_kargs['__struct__'] = None
-        __name__ = cls_kargs.get('__name__') or __name__
+            cls_kargs["__struct__"] = None
+        __name__ = cls_kargs.get("__name__") or __name__
         if __name__ is None:  # Anonymous struct
-            __name__ = cls.__name__ + '_' + hashlib.sha1(str(__struct__).encode('utf-8')).hexdigest()
-            cls_kargs['__anonymous__'] = True
-        cls_kargs['__name__'] = __name__
+            __name__ = cls.__name__ + "_" + hashlib.sha1(str(__struct__).encode("utf-8")).hexdigest()
+            cls_kargs["__anonymous__"] = True
+        cls_kargs["__name__"] = __name__
         return type(__name__, (cls,), cls_kargs)
 
     def set_flexible_array_length(self, flexible_array_length: Optional[int]) -> None:
@@ -173,7 +173,7 @@ class AbstractCStruct(metaclass=CStructMeta):
             flexible_array_length: flexible array length
         """
         self.set_flexible_array_length(flexible_array_length)
-        if hasattr(buffer, 'read'):
+        if hasattr(buffer, "read"):
             buffer = buffer.read(self.size)  # type: ignore
             if not buffer:
                 return False
@@ -237,7 +237,7 @@ class AbstractCStruct(metaclass=CStructMeta):
             end_addr: end address
         """
         buffer = StringIO()
-        if hasattr(self, '__mem__'):
+        if hasattr(self, "__mem__"):
             mem = self.__mem__
         else:
             mem = self.pack()
@@ -245,11 +245,11 @@ class AbstractCStruct(metaclass=CStructMeta):
             row = mem[i : i + 16]
             buffer.write(f"{i:08x} ")
             for j, c in enumerate(row):
-                separator = ' ' if j == 7 else ''
+                separator = " " if j == 7 else ""
                 buffer.write(f" {c:02x}{separator}")
             buffer.write("  |")
             for c in row:
-                buffer.write(chr(c) if c >= 32 and c < 127 else '.')
+                buffer.write(chr(c) if c >= 32 and c < 127 else ".")
             buffer.write("|")
             buffer.write("\n")
         buffer.seek(0, 0)
@@ -368,16 +368,16 @@ class AbstractCEnum(IntEnum, metaclass=CEnumMeta):
         """
         cls_kargs: Dict[str, Any] = dict(kargs)
         if __size__ is not None:
-            cls_kargs['__size__'] = __size__
+            cls_kargs["__size__"] = __size__
         if __native_format__ is not None:
-            cls_kargs['__native_format__'] = __native_format__
+            cls_kargs["__native_format__"] = __native_format__
 
         if isinstance(__enum__, (str, Tokens)):
             cls_kargs.update(parse_enum_def(__enum__, __cls__=cls, **cls_kargs))
         elif isinstance(__enum__, dict):
             cls_kargs.update(__enum__)
 
-        __name__ = cls_kargs.get('__name__') or __name__
+        __name__ = cls_kargs.get("__name__") or __name__
         if __name__ is None:
             __name__ = cls.__name__ + "_" + hashlib.sha1(str(__enum__).encode("utf-8")).hexdigest()
             cls_kargs["__anonymous__"] = True

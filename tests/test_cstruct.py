@@ -33,7 +33,7 @@ import os
 from pathlib import Path
 from cstruct.exceptions import ParserError
 
-MBR_DATA = (Path(__file__).parent.parent / 'mbr').read_bytes()
+MBR_DATA = (Path(__file__).parent.parent / "mbr").read_bytes()
 
 
 class Position(cstruct.CStruct):
@@ -92,9 +92,9 @@ class Dummy(cstruct.CStruct):
     """
 
 
-typedef('char', 'BYTE')
-typedef('short', 'WORD')
-typedef('int', 'DWORD')
+typedef("char", "BYTE")
+typedef("short", "WORD")
+typedef("int", "DWORD")
 
 
 class PartitionFlat(cstruct.CStruct):
@@ -140,7 +140,7 @@ def test_len():
 
 
 def test_pack_len():
-    buffer = b'\x00' * 512
+    buffer = b"\x00" * 512
     mbr = MBR(buffer)
     d = mbr.pack()
     assert len(d) == 512
@@ -204,7 +204,7 @@ def test_clear():
 
 def test_inline():
     StructT1 = cstruct.parse(
-        'struct StructT1 { unsigned char head; unsigned char sector; unsigned char cyl; }',
+        "struct StructT1 { unsigned char head; unsigned char sector; unsigned char cyl; }",
         __byte_order__=cstruct.LITTLE_ENDIAN,
     )
     s = StructT1(head=254, sector=63, cyl=134)
@@ -215,8 +215,8 @@ def test_inline():
 def test_dummy():
     dummy = Dummy()
 
-    dummy.c = b'A'
-    dummy.vc = b'ABCDEFGHIJ'
+    dummy.c = b"A"
+    dummy.vc = b"ABCDEFGHIJ"
     dummy.i = 123456
     for i in range(0, 10):
         dummy.vi[i] = i * 10
@@ -261,9 +261,9 @@ def test_null_compare():
 
 def test_invalid_inline():
     with pytest.raises(ParserError):
-        cstruct.MemCStruct.parse('struct { unsigned char head; unsigned char head; }', __byte_order__=cstruct.LITTLE_ENDIAN)
+        cstruct.MemCStruct.parse("struct { unsigned char head; unsigned char head; }", __byte_order__=cstruct.LITTLE_ENDIAN)
 
 
 def test_invalid_inline_reserved():
     with pytest.raises(ParserError):
-        cstruct.CStruct.parse('struct { int size; }')
+        cstruct.CStruct.parse("struct { int size; }")

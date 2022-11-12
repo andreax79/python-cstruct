@@ -31,7 +31,7 @@ from .exceptions import EvalError
 if TYPE_CHECKING:
     from .abstract import AbstractCStruct
 
-__all__ = ['c_eval']
+__all__ = ["c_eval"]
 
 
 def c_eval(expr: str) -> Union[int, float]:

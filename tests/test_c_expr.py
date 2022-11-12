@@ -38,7 +38,7 @@ def test_c_expr_def():
     """
     )
     assert getdef("A1") == 10
-    assert getdef('A2') == 20  # TODO
+    assert getdef("A2") == 20  # TODO
     assert c_eval("A1 / 10") == 1
 
 
@@ -76,5 +76,5 @@ def test_c_expr_compare():
     assert c_eval("3 > 2 > 1") == 1
     assert c_eval("3 >= 30") == 0
     assert c_eval("3 <= 30") == 1
-    define('A10', 10)
+    define("A10", 10)
     assert c_eval("((A10 < 6) || (A10>10))") == 0

@@ -85,16 +85,16 @@ class NativeTypeMeta(ABCMeta):
     " Type format "
 
     def __new__(metacls: Type[type], name: str, bases: Tuple[str], namespace: Dict[str, Any]) -> Type[Any]:
-        if namespace.get('native_format'):
-            native_format = namespace['native_format']
-            namespace['__size__'] = struct.calcsize(native_format)
+        if namespace.get("native_format"):
+            native_format = namespace["native_format"]
+            namespace["__size__"] = struct.calcsize(native_format)
         else:
             native_format = None
-            namespace['native_format'] = None
-            namespace['__size__'] = None
+            namespace["native_format"] = None
+            namespace["__size__"] = None
         new_class: Type[Any] = super().__new__(metacls, name, bases, namespace)
-        if namespace.get('type_name'):
-            NATIVE_TYPES[namespace['type_name']] = new_class
+        if namespace.get("type_name"):
+            NATIVE_TYPES[namespace["type_name"]] = new_class
         return new_class
 
     def __len__(cls) -> int:

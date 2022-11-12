@@ -46,32 +46,32 @@ class Position(cstruct.CStruct):
 
 
 def test_sizeof():
-    assert sizeof('int') == 4
-    define('INIT_THREAD_SIZE', 2048 * sizeof('long'))
+    assert sizeof("int") == 4
+    define("INIT_THREAD_SIZE", 2048 * sizeof("long"))
     if IS_64BITS:
-        assert cstruct.DEFINES['INIT_THREAD_SIZE'] == 16384
+        assert cstruct.DEFINES["INIT_THREAD_SIZE"] == 16384
     else:
-        assert cstruct.DEFINES['INIT_THREAD_SIZE'] == 8192
-    assert sizeof('struct Position') == 3
-    assert sizeof('struct Position') == len(Position)
+        assert cstruct.DEFINES["INIT_THREAD_SIZE"] == 8192
+    assert sizeof("struct Position") == 3
+    assert sizeof("struct Position") == len(Position)
     assert sizeof(Position) == 3
     with pytest.raises(KeyError):
-        sizeof('bla')
+        sizeof("bla")
     with pytest.raises(KeyError):
-        sizeof('struct Bla')
+        sizeof("struct Bla")
 
 
 def test_define():
-    define('A', 10)
-    assert cstruct.DEFINES['A'] == 10
-    undef('A')
+    define("A", 10)
+    assert cstruct.DEFINES["A"] == 10
+    undef("A")
     with pytest.raises(KeyError):
-        cstruct.DEFINES['A']
+        cstruct.DEFINES["A"]
 
 
 def test_typedef():
-    typedef('int', 'integer')
-    assert sizeof('integer') == 4
+    typedef("int", "integer")
+    assert sizeof("integer") == 4
 
 
 def test_invalid_type():

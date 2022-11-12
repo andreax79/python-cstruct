@@ -53,26 +53,26 @@ class MemPkg(cstruct.MemCStruct):
 
 def test_len():
     pkg = Pkg()
-    assert len(pkg) == sizeof('uint16_t') * 2
+    assert len(pkg) == sizeof("uint16_t") * 2
     assert len(pkg.pack())
-    assert len(pkg) == sizeof('uint16_t') * 2
-    assert pkg.sizeof() == sizeof('uint16_t') * 2
-    assert pkg.__size__ == sizeof('uint16_t') * 2
+    assert len(pkg) == sizeof("uint16_t") * 2
+    assert pkg.sizeof() == sizeof("uint16_t") * 2
+    assert pkg.__size__ == sizeof("uint16_t") * 2
 
     pkg.length = 10
     pkg.data = list(range(pkg.length))
-    assert len(pkg.pack()) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg.length)
-    assert len(pkg) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg.length)
-    assert pkg.sizeof() == sizeof('uint16_t') * 2
-    assert pkg.__size__ == sizeof('uint16_t') * 2
+    assert len(pkg.pack()) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg.length)
+    assert len(pkg) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg.length)
+    assert pkg.sizeof() == sizeof("uint16_t") * 2
+    assert pkg.__size__ == sizeof("uint16_t") * 2
 
     pkg2 = Pkg()
     pkg2.length = 20
     pkg2.data = list(range(pkg2.length))
-    assert len(pkg2.pack()) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg2.length)
-    assert len(pkg2) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg2.length)
-    assert pkg2.sizeof() == sizeof('uint16_t') * 2
-    assert pkg2.__size__ == sizeof('uint16_t') * 2
+    assert len(pkg2.pack()) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg2.length)
+    assert len(pkg2) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg2.length)
+    assert pkg2.sizeof() == sizeof("uint16_t") * 2
+    assert pkg2.__size__ == sizeof("uint16_t") * 2
     assert len(pkg) != len(pkg2)
 
 
@@ -80,20 +80,20 @@ def test_pack_unpack():
     pkg = Pkg()
     pkg.cmd = 5
     pkg.length = 10
-    assert pkg.__fields_types__['data'].vlen == 0
-    assert pkg.__fields_types__['data'].vsize == 0
-    assert len(pkg) == sizeof('uint16_t') * 2
+    assert pkg.__fields_types__["data"].vlen == 0
+    assert pkg.__fields_types__["data"].vsize == 0
+    assert len(pkg) == sizeof("uint16_t") * 2
     pkg.data = list(range(pkg.length))
-    assert len(pkg.pack()) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg.length)
-    assert pkg.__fields_types__['data'].vlen == pkg.length
-    assert pkg.__fields_types__['data'].vsize == (sizeof('uint8_t') * pkg.length)
+    assert len(pkg.pack()) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg.length)
+    assert pkg.__fields_types__["data"].vlen == pkg.length
+    assert pkg.__fields_types__["data"].vsize == (sizeof("uint8_t") * pkg.length)
     assert len(pkg.data) == pkg.length
     data = pkg.pack()
 
     pkg2 = Pkg()
-    assert pkg2.__fields_types__['data'].vlen == 0
+    assert pkg2.__fields_types__["data"].vlen == 0
     pkg2.unpack(data, flexible_array_length=pkg.length)
-    assert pkg2.__fields_types__['data'].vlen == pkg2.length
+    assert pkg2.__fields_types__["data"].vlen == pkg2.length
     assert pkg2.cmd == pkg.cmd
     assert pkg2.length == pkg.length
     assert pkg2.data == pkg.data
@@ -108,33 +108,33 @@ def test_pack_unpack():
 
 def test_mem_len():
     pkg = MemPkg()
-    assert len(pkg) == sizeof('uint16_t') * 2
+    assert len(pkg) == sizeof("uint16_t") * 2
     assert len(pkg.pack())
-    assert len(pkg) == sizeof('uint16_t') * 2
-    assert pkg.sizeof() == sizeof('uint16_t') * 2
-    assert pkg.__size__ == sizeof('uint16_t') * 2
+    assert len(pkg) == sizeof("uint16_t") * 2
+    assert pkg.sizeof() == sizeof("uint16_t") * 2
+    assert pkg.__size__ == sizeof("uint16_t") * 2
 
     pkg.length = 10
     pkg.data = list(range(pkg.length))
-    assert len(pkg.pack()) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg.length)
-    assert len(pkg) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg.length)
-    assert pkg.sizeof() == sizeof('uint16_t') * 2
-    assert pkg.__size__ == sizeof('uint16_t') * 2
+    assert len(pkg.pack()) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg.length)
+    assert len(pkg) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg.length)
+    assert pkg.sizeof() == sizeof("uint16_t") * 2
+    assert pkg.__size__ == sizeof("uint16_t") * 2
 
     pkg.length = 5
     pkg.data = list(range(pkg.length))
-    assert len(pkg.pack()) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg.length)
-    assert len(pkg) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg.length)
-    assert pkg.sizeof() == sizeof('uint16_t') * 2
-    assert pkg.__size__ == sizeof('uint16_t') * 2
+    assert len(pkg.pack()) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg.length)
+    assert len(pkg) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg.length)
+    assert pkg.sizeof() == sizeof("uint16_t") * 2
+    assert pkg.__size__ == sizeof("uint16_t") * 2
 
     pkg2 = MemPkg()
     pkg2.length = 20
     pkg2.data = list(range(pkg2.length))
-    assert len(pkg2.pack()) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg2.length)
-    assert len(pkg2) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg2.length)
-    assert pkg2.sizeof() == sizeof('uint16_t') * 2
-    assert pkg2.__size__ == sizeof('uint16_t') * 2
+    assert len(pkg2.pack()) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg2.length)
+    assert len(pkg2) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg2.length)
+    assert pkg2.sizeof() == sizeof("uint16_t") * 2
+    assert pkg2.__size__ == sizeof("uint16_t") * 2
     assert len(pkg) != len(pkg2)
 
 
@@ -142,20 +142,20 @@ def test_mem_pack_unpack():
     pkg = MemPkg()
     pkg.cmd = 5
     pkg.length = 10
-    assert pkg.__fields_types__['data'].vlen == 0
-    assert pkg.__fields_types__['data'].vsize == 0
-    assert len(pkg) == sizeof('uint16_t') * 2
+    assert pkg.__fields_types__["data"].vlen == 0
+    assert pkg.__fields_types__["data"].vsize == 0
+    assert len(pkg) == sizeof("uint16_t") * 2
     pkg.data = list(range(pkg.length))
-    assert len(pkg.pack()) == (sizeof('uint16_t') * 2) + (sizeof('uint8_t') * pkg.length)
-    assert pkg.__fields_types__['data'].vlen == pkg.length
-    assert pkg.__fields_types__['data'].vsize == (sizeof('uint8_t') * pkg.length)
+    assert len(pkg.pack()) == (sizeof("uint16_t") * 2) + (sizeof("uint8_t") * pkg.length)
+    assert pkg.__fields_types__["data"].vlen == pkg.length
+    assert pkg.__fields_types__["data"].vsize == (sizeof("uint8_t") * pkg.length)
     assert len(pkg.data) == pkg.length
     data = pkg.pack()
 
     pkg2 = MemPkg()
-    assert pkg2.__fields_types__['data'].vlen == 0
+    assert pkg2.__fields_types__["data"].vlen == 0
     pkg2.unpack(data, flexible_array_length=pkg.length)
-    assert pkg2.__fields_types__['data'].vlen == pkg2.length
+    assert pkg2.__fields_types__["data"].vlen == pkg2.length
     assert pkg2.cmd == pkg.cmd
     assert pkg2.length == pkg.length
     assert pkg2.data == pkg.data

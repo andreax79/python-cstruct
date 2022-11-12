@@ -70,7 +70,7 @@ class Utmp(MemCStruct):
 
 
 def test_typedef():
-    assert TYPEDEFS['pid_t'] == 'int'
-    assert TYPEDEFS['time_t'] == 'long'
-    assert TYPEDEFS['ulong'] == 'unsigned long'
-    assert TYPEDEFS['ExitStatus'] == 'struct ExitStatus'
+    assert TYPEDEFS["pid_t"] == "int"
+    assert TYPEDEFS["time_t"] == "long"
+    assert TYPEDEFS["ulong"] == "unsigned long"
+    assert TYPEDEFS["ExitStatus"] == "struct ExitStatus"

@@ -70,7 +70,7 @@ class UnionT1(cstruct.MemCStruct):
 
 
 def test_sizeof():
-    assert sizeof('struct UnionT1') == 64
+    assert sizeof("struct UnionT1") == 64
     s = UnionT1()
     assert len(s) == 64
 
@@ -82,12 +82,12 @@ def test_union_unpack():
     assert union.a1 == 0
     assert union.b == 0
     assert union.c == 0
-    union.unpack(struct.pack('b', 10) + cstruct.CHAR_ZERO * union.size)
+    union.unpack(struct.pack("b", 10) + cstruct.CHAR_ZERO * union.size)
     assert union.a == 10
     assert union.a1 == 10
     assert union.b == 10
     assert union.c == 10
-    union.unpack(struct.pack('h', 1979) + cstruct.CHAR_ZERO * union.size)
+    union.unpack(struct.pack("h", 1979) + cstruct.CHAR_ZERO * union.size)
     assert union.a == 187
     assert union.a1 == 187
     assert union.b == 1979

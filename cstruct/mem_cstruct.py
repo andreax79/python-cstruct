@@ -29,7 +29,7 @@ from .abstract import AbstractCStruct
 
 
 class CStructList(List[Any]):
-    def __init__(self, values: List[Any], name: str, parent: Optional['MemCStruct'] = None) -> None:
+    def __init__(self, values: List[Any], name: str, parent: Optional["MemCStruct"] = None) -> None:
         super().__init__(values)
         self.name = name
         self.parent = parent

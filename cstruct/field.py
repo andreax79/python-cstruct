@@ -33,7 +33,7 @@ from .exceptions import ParserError
 if TYPE_CHECKING:
     from .abstract import AbstractCStruct
 
-__all__ = ['align', 'calculate_padding', 'Kind', 'FieldType']
+__all__ = ["align", "calculate_padding", "Kind", "FieldType"]
 
 
 def align(byte_order: Optional[str]) -> bool:
@@ -162,7 +162,7 @@ class FieldType(object):
     @property
     def is_array(self) -> bool:
         "True if field is an array/flexible array"
-        return self.flexible_array or (not (self.vlen == 1 or self.c_type == 'char'))
+        return self.flexible_array or (not (self.vlen == 1 or self.c_type == "char"))
 
     @property
     def is_native(self) -> bool:
@@ -195,13 +195,13 @@ class FieldType(object):
         elif self.is_enum:
             return self.ref.__native_format__
         else:
-            return 'c'
+            return "c"
 
     @property
     def fmt(self) -> str:
         "Field format prefixed by byte order (struct library format)"
         if self.is_native or self.is_enum:
-            fmt = (str(self.vlen) if self.vlen > 1 or self.flexible_array else '') + self.native_format
+            fmt = (str(self.vlen) if self.vlen > 1 or self.flexible_array else "") + self.native_format
         else:  # Struct/Union
             fmt = str(self.vlen * self.ref.sizeof()) + self.native_format
         if self.byte_order:
@@ -227,7 +227,7 @@ class FieldType(object):
 
     def align_filed_offset(self) -> None:
         "If the byte order is native, align the field"
-        if align(self.byte_order) and self.c_type != 'char':
+        if align(self.byte_order) and self.c_type != "char":
             self.padding = calculate_padding(self.byte_order, self.alignment, self.base_offset)
             self.offset = self.base_offset + self.padding
 
