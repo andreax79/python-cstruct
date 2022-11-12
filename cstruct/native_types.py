@@ -66,6 +66,9 @@ def get_native_type(type_: str) -> "AbstractNativeType":
 
     Returns:
         class: data type class
+
+    Raises:
+        KeyError: If type is not defined
     """
     try:
         return NATIVE_TYPES[type_]

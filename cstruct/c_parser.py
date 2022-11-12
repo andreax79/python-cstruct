@@ -51,7 +51,7 @@ class Tokens(object):
                     _, name, value = line.strip().split(maxsplit=2)
                     DEFINES[name] = c_eval(value)
                 except Exception:
-                    raise ParserError(f"Parsing line {line}")
+                    raise ParserError(f"Parsing line `{line}`")
             else:
                 lines.append(line)
         text = "\n".join(lines)
@@ -124,7 +124,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
         if "[" in next_token:
             t = next_token.split("[")
             if len(t) != 2:
-                raise ParserError("Error parsing: " + next_token)
+                raise ParserError(f"Error parsing: `{next_token}`")
             next_token = t[0].strip()
             vlen_part = t[1]
             vlen_expr = []
@@ -163,7 +163,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
             try:
                 ref = STRUCTS[tail]
             except KeyError:
-                raise ParserError(f"Unknown '{c_type}' '{tail}'")
+                raise ParserError(f"Unknown `{c_type} {tail}`")
     elif c_type.startswith('enum'):
         from .cenum import CEnum
 
@@ -181,7 +181,7 @@ def parse_type(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: Opt
             try:
                 ref = ENUMS[tail]
             except KeyError:
-                raise ParserError(f"Unknown '{c_type}' '{tail}'")
+                raise ParserError(f"Unknown `{c_type} {tail}`")
     else:  # other types
         kind = Kind.NATIVE
         ref = None
@@ -201,7 +201,7 @@ def parse_typedef(tokens: Tokens, __cls__: Type['AbstractCStruct'], byte_order: 
         TYPEDEFS[vname] = f"struct {field_type.ref.__name__}"
     t = tokens.pop()
     if t != ';':
-        raise ParserError(f"; expected but {t} found")
+        raise ParserError(f"`;` expected but `{t}` found")
 
 
 def parse_struct_def(
@@ -242,7 +242,7 @@ def parse_struct_def(
             elif name == '{':  # unnamed enum
                 result = parse_enum(tokens, native_format=native_format)
             else:
-                raise ParserError(f"{name} definition expected")
+                raise ParserError(f"`{name}` definition expected")
 
         elif kind in ['struct', 'union']:
             if result:
@@ -257,10 +257,10 @@ def parse_struct_def(
                     tokens, __cls__=__cls__, __is_union__=__is_union__, __byte_order__=__byte_order__, __name__=name
                 )
             else:
-                raise ParserError(f"{name} definition expected")
+                raise ParserError(f"`{name}` definition expected")
 
         else:
-            raise ParserError(f"struct, union, or enum expected - {kind}")
+            raise ParserError(f"struct, union, or enum expected - `{kind}` found")
     return result
 
 
@@ -274,7 +274,7 @@ def parse_enum_def(__def__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[s
         return None
     kind = tokens.pop()
     if kind not in ['enum']:
-        raise ParserError(f"enum expected - {kind}")
+        raise ParserError(f"enum expected - `{kind}` found")
 
     name = tokens.pop()
     native_format = None
@@ -288,7 +288,7 @@ def parse_enum_def(__def__: Union[str, Tokens], **kargs: Any) -> Optional[Dict[s
     elif name == '{':  # unnamed enum
         return parse_enum(tokens)
     else:
-        raise ParserError(f"{name} definition expected")
+        raise ParserError(f"`{name}` definition expected")
 
 
 def parse_enum(
@@ -348,10 +348,10 @@ def parse_enum(
             except (ValueError, TypeError):
                 value = int(int_expr)
         else:
-            raise ParserError(f"{__enum__} is not a valid enum expression")
+            raise ParserError(f"`{__enum__}` is not a valid enum expression")
 
         if name in constants:
-            raise ParserError(f"duplicate enum name {name}")
+            raise ParserError(f"duplicate enum name `{name}`")
         constants[name] = value
 
         if next_token == "}":
@@ -416,15 +416,15 @@ def parse_struct(
         field_type = parse_type(tokens, __cls__, __byte_order__, offset)
         vname = tokens.pop()
         if vname in fields_types:
-            raise ParserError(f"Duplicate member '{vname}'")
+            raise ParserError(f"Duplicate member `{vname}`")
         if vname in dir(__cls__):
-            raise ParserError(f"Invalid reserved member name '{vname}'")
+            raise ParserError(f"Invalid reserved member name `{vname}`")
         # anonymous nested union
         if vname == ';' and field_type.ref is not None and (__is_union__ or field_type.ref.__is_union__):
             # add the anonymous struct fields to the parent
             for nested_field_name, nested_field_type in field_type.ref.__fields_types__.items():
                 if nested_field_name in fields_types:
-                    raise ParserError(f"Duplicate member '{nested_field_name}'")
+                    raise ParserError(f"Duplicate member `{nested_field_name}`")
                 fields_types[nested_field_name] = nested_field_type
             vname = f"__anonymous{anonymous}"
             anonymous += 1
@@ -438,7 +438,7 @@ def parse_struct(
             offset = field_type.offset + field_type.vsize
         t = tokens.pop()
         if t != ';':
-            raise ParserError(f"; expected but {t} found")
+            raise ParserError(f"`;` expected but `{t}` found")
 
     if __is_union__:  # C union
         # Calculate the sizeof union as size of its largest element

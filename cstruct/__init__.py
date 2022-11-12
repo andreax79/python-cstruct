@@ -67,6 +67,9 @@ def define(key: str, value: Any) -> None:
     """
     Define a constant that can be used in the C struct
 
+    Examples:
+        >>> define("INIT_THREAD_SIZE", 16384)
+
     Args:
         key: identifier
         value: value of the constant
@@ -78,8 +81,15 @@ def undef(key: str) -> None:
     """
     Undefine a symbol that was previously defined with define
 
+    Examples:
+        >>> define("INIT_THREAD_SIZE", 16384)
+        >>> undef("INIT_THREAD_SIZE")
+
     Args:
         key: identifier
+
+    Raises:
+        KeyError: If key is not defined
     """
     del DEFINES[key]
 
@@ -88,8 +98,15 @@ def getdef(key: str) -> Any:
     """
     Return the value for a constant
 
+    Examples:
+        >>> define("INIT_THREAD_SIZE", 16384)
+        >>> getdef("INIT_THREAD_SIZE")
+
     Args:
         key: identifier
+
+    Raises:
+        KeyError: If key is not defined
     """
     return DEFINES[key]
 
@@ -97,6 +114,11 @@ def getdef(key: str) -> Any:
 def typedef(type_: str, alias: str) -> None:
     """
     Define an alias name for a data type
+
+    Examples:
+        >>> typedef("int", "status")
+        >>> sizeof("status")
+        4
 
     Args:
         type_: data type
@@ -120,6 +142,9 @@ def get_type(type_: str) -> Any:
 
     Returns:
         class: data type class
+
+    Raises:
+        KeyError: If type is not defined
     """
     while type_ in TYPEDEFS:
         type_ = TYPEDEFS[type_]
@@ -148,6 +173,8 @@ def sizeof(type_: str) -> int:
     Examples:
         >>> sizeof("struct Position")
         16
+        >>> sizeof('enum htmlfont')
+        4
         >>> sizeof("int")
         4
 
@@ -156,6 +183,9 @@ def sizeof(type_: str) -> int:
 
     Returns:
         size: size in bytes
+
+    Raises:
+        KeyError: If type is not defined
     """
     while type_ in TYPEDEFS:
         type_ = TYPEDEFS[type_]
@@ -169,7 +199,11 @@ def parse(
     """
     Return a new class mapping a C struct/union/enum definition.
     If the string does not contains any definition, return None.
+    If the string contains multiple struct/union/enum definitions, returns the last definition.
 
+    Examples:
+        >>> cstruct.parse('struct Pair { unsigned char a; unsigned char b; };')
+        <class 'abc.Pair'>
 
     Args:
         __struct__ (str): definition of the struct (or union/enum) in C syntax
@@ -178,11 +212,14 @@ def parse(
 
     Returns:
         cls: __cls__ subclass
+
+    Raises:
+        cstruct.exceptions.ParserError: Parsing exception
+
     """
     if __cls__ is None:
         __cls__ = MemCStruct
     cls_def = parse_struct_def(__struct__, __cls__=__cls__, process_muliple_definition=True, **kargs)
-    print('!!!!!', cls_def, kargs)
     if cls_def is None:
         return None
     return cls_def['__cls__'].parse(cls_def, **kargs)
