@@ -175,3 +175,18 @@
 ### Improved
 
 - Python 3.11 support
+
+## 5.0
+
+2022-11-12
+
+### Added
+
+- Add support for enums
+- Add support for multiple definition to cstruct.parse
+- Add inspect method
+
+### Improved
+
+- Documentation and examples
+- Restructure setup
