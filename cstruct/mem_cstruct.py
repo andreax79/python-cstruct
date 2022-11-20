@@ -73,6 +73,9 @@ class MemCStruct(AbstractCStruct):
             self.__mem__ = ctypes.create_string_buffer(self.size + 1)
         elif isinstance(buffer, ctypes.Array):
             self.__mem__ = buffer
+        elif isinstance(buffer, int):
+            # buffer is a pointer
+            self.__mem__ = ctypes.cast(buffer, ctypes.POINTER(ctypes.c_char * self.size)).contents
         else:
             self.__mem__ = ctypes.create_string_buffer(buffer)
         for field, field_type in self.__fields_types__.items():
