@@ -78,3 +78,8 @@ def test_c_expr_compare():
     assert c_eval("3 <= 30") == 1
     define("A10", 10)
     assert c_eval("((A10 < 6) || (A10>10))") == 0
+
+
+def test_c_expr_char():
+    assert c_eval("'A'") == 65
+    assert c_eval("'B'") == 66

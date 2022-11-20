@@ -58,6 +58,8 @@ def c_eval(expr: str) -> Union[int, float]:
     try:
         expr = expr.replace("!", " not ").replace("&&", " and ").replace("||", " or ")
         return eval_node(ast.parse(expr.strip()).body[0])
+    except EvalError:
+        raise
     except Exception:
         raise EvalError
 
@@ -67,6 +69,11 @@ def eval_node(node: ast.stmt) -> Union[int, float]:
     result = handler(node)
     if isinstance(result, bool):  # convert bool to int
         return 1 if result else 0
+    elif isinstance(result, str):  # convert char to int
+        if len(result) != 1:
+            raise EvalError("Multi-character constant")
+        else:
+            return ord(result)
     return result
 
 

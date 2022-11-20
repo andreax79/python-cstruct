@@ -104,3 +104,9 @@ def test_type():
     color = cstruct.parse("enum Color : unsigned short { red, green, blue };")
     assert color.__size__ == 2
     assert cstruct.sizeof("enum Color") == 2
+
+
+def test_char():
+    direction = cstruct.parse("enum Direction { left = 'l', right = 'r' };")
+    assert direction.__size__ == 4
+    assert cstruct.sizeof("enum Direction") == 4

@@ -129,6 +129,8 @@ Different enum styles are supported in struct/union definitions.
 enum Type_A a;  // externally defined using CEnum
 enum Type_B {A, B, C} b;
 enum {A, B, C} c;
+enum Type_D : short {A, B, C} d; // specify the underlying type
+enum Direction { left = 'l', right = 'r' };
 ```
 
 ### Nested structs/unions
@@ -334,3 +336,6 @@ Output example:
 000001f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 55 aa  |..............U.|
 ```
 
+Links
+-----
+* [C/C++ reference](https://en.cppreference.com/)
