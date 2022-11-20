@@ -126,6 +126,7 @@ OPS: Dict[Type[ast.AST], Callable[[Any], Any]] = {
     ast.Name: eval_get,
     ast.Call: eval_call,
     Constant: lambda node: node.value,
+    ast.Str: lambda node: node.s,  # python < 3.8
     # and/or
     ast.BoolOp: lambda node: OPS[type(node.op)](node),  # and/or operator
     ast.And: lambda node: all(eval_node(x) for x in node.values),  # && operator
