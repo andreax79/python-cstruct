@@ -70,6 +70,8 @@
     </li>
         </ul>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#links">Links</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -91,6 +93,8 @@
               </ul>
               <p class="caption"><span class="caption-text">Examples</span></p>
               <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="examples/dir/">dir.py</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="examples/fdisk/">fdisk.py</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="examples/flexible_array/">flexible_array.py</a>
@@ -168,6 +172,7 @@ serializing the values into an array of bytes.</p>
 <li><a href="https://python-cstruct.readthedocs.io/en/latest/examples/fdisk/">Read the DOS-type (MBR) partition table</a></li>
 <li><a href="https://python-cstruct.readthedocs.io/en/latest/examples/who/">Print information about logged uses</a></li>
 <li><a href="https://python-cstruct.readthedocs.io/en/latest/examples/flexible_array/">Flexible Array Member (FAM)</a></li>
+<li><a href="https://python-cstruct.readthedocs.io/en/latest/examples/dir/">libc integration (using ctypes)</a></li>
 </ul>
 <h2 id="features">Features</h2>
 <h3 id="structs">Structs</h3>
@@ -241,6 +246,8 @@ assert HtmlFont.HTMLFONT_ITALIC == 2
 <pre><code class="language-c">enum Type_A a;  // externally defined using CEnum
 enum Type_B {A, B, C} b;
 enum {A, B, C} c;
+enum Type_D : short {A, B, C} d; // specify the underlying type
+enum Direction { left = 'l', right = 'r' };
 </code></pre>
 <h3 id="nested-structsunions">Nested structs/unions</h3>
 <p>Nested stucts and unions are supported, both named and anonymous.</p>
@@ -406,6 +413,10 @@ cstruct.c_eval(&quot;((A10 &lt; 6) || (A10&gt;10))&quot;)
 000001e0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
 000001f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 55 aa  |..............U.|
 </code></pre>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://en.cppreference.com/">C/C++ reference</a></li>
+</ul>
               
             </div>
           </div><footer>
@@ -453,5 +464,5 @@ cstruct.c_eval(&quot;((A10 &lt; 6) || (A10&gt;10))&quot;)
 
 <!--
 MkDocs version : 1.3.1
-Build Date UTC : 2022-11-12 08:04:36.789722+00:00
+Build Date UTC : 2022-11-20 16:38:03.642786+00:00
 -->

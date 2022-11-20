@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>who.py - Python CStruct documentation</title>
+    <title>dir.py - Python CStruct documentation</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
@@ -13,8 +13,8 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "who.py";
-        var mkdocs_page_input_path = "examples/who.md";
+        var mkdocs_page_name = "dir.py";
+        var mkdocs_page_input_path = "examples/dir.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -63,13 +63,13 @@
               </ul>
               <p class="caption"><span class="caption-text">Examples</span></p>
               <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../dir/">dir.py</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">dir.py</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../fdisk/">fdisk.py</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../flexible_array/">flexible_array.py</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="./">who.py</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../who/">who.py</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">API</span></p>
@@ -108,7 +108,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
           <li>Examples &raquo;</li>
-      <li>who.py</li>
+      <li>dir.py</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -117,136 +117,98 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <p>The following program prints information about users who are currently logged in.</p>
+                <p>The following program prints the names of the files in a directory,
+calling the libc functions <code>getcwd</code>, <code>opendir</code>, <code>readdir</code>, and <code>closedir</code>:</p>
 <pre><code>#!/usr/bin/env python
-
-from cstruct import parse, getdef, MemCStruct, NATIVE_ORDER
-from pathlib import Path
-import argparse
+import cstruct
+import ctypes
 import sys
-import time
 
-DEFAULT_FILENAME = &quot;/var/run/utmp&quot;
-
-parse(
-    &quot;&quot;&quot;
-/* Values for ut_type field, below */
-
-#define EMPTY             0 /* Record does not contain valid info
-                              (formerly known as UT_UNKNOWN on Linux) */
-#define RUN_LVL           1 /* Change in system run-level (see
-                              init(1)) */
-#define BOOT_TIME         2 /* Time of system boot (in ut_tv) */
-#define NEW_TIME          3 /* Time after system clock change
-                              (in ut_tv) */
-#define OLD_TIME          4 /* Time before system clock change
-                              (in ut_tv) */
-#define INIT_PROCESS      5 /* Process spawned by init(1) */
-#define LOGIN_PROCESS     6 /* Session leader process for user login */
-#define USER_PROCESS      7 /* Normal process */
-#define DEAD_PROCESS      8 /* Terminated process */
-#define ACCOUNTING        9 /* Not implemented */
-
-#define UT_LINESIZE      32
-#define UT_NAMESIZE      32
-#define UT_HOSTSIZE     256
-
-typedef int pid_t;
-typedef long time_t;
-&quot;&quot;&quot;
-)
+libc = ctypes.cdll.LoadLibrary(&quot;libc.so.6&quot;)
+# opendir
+libc.opendir.argtypes = [ctypes.c_char_p]
+libc.opendir.restype = ctypes.c_void_p
+# readdir
+libc.readdir.argtypes = [ctypes.c_void_p]
+libc.readdir.restype = ctypes.c_void_p
+# closedir
+libc.closedir.argtypes = [ctypes.c_void_p]
+libc.closedir.restype = ctypes.c_int
 
 
-class ExitStatus(MemCStruct):
+class DType(cstruct.CEnum):
+    __size__ = 1
     __def__ = &quot;&quot;&quot;
-        struct ExitStatus {
-            short   e_termination;      /* Process termination status.  */
-            short   e_exit;             /* Process exit status.  */
-        }
+        enum d_type {
+            DT_UNKNOWN = 0x0,
+            DT_FIFO = 0x1,
+            DT_CHR = 0x2,
+            DT_DIR = 0x4,
+            DT_BLK = 0x6,
+            DT_REG = 0x8,
+            DT_LNK = 0xa,
+            DT_SOCK = 0xc
+        };
     &quot;&quot;&quot;
-
-
-class Timeval(MemCStruct):
-    __def__ = &quot;&quot;&quot;
-        struct {
-            int32_t tv_sec;             /* Seconds.  */
-            int32_t tv_usec;            /* Microseconds.  */
-        }
-    &quot;&quot;&quot;
-
-
-def str_from_c(string):
-    return string.decode().split(&quot;\0&quot;)[0]
-
-
-class Utmp(MemCStruct):
-    __byte_order__ = NATIVE_ORDER
-    __def__ = &quot;&quot;&quot;
-        typedef struct ExitStatus ExitStatus;
-
-        struct {
-            short   ut_type;              /* Type of record */
-            pid_t   ut_pid;               /* PID of login process */
-            char    ut_line[UT_LINESIZE]; /* Device name of tty - &quot;/dev/&quot; */
-            char    ut_id[4];             /* Terminal name suffix, or inittab(5) ID */
-            char    ut_user[UT_NAMESIZE]; /* Username */
-            char    ut_host[UT_HOSTSIZE]; /* Hostname for remote login, or kernel version for run-level messages */
-            ExitStatus ut_exit;           /* Exit status of a process marked as DEAD_PROCESS; not used by Linux init (1 */
-            int32_t ut_session;           /* Session ID (getsid(2)), used for windowing */
-            struct {
-               int32_t tv_sec;            /* Seconds */
-               int32_t tv_usec;           /* Microseconds */
-            } ut_tv;                      /* Time entry was made */
-            int32_t ut_addr_v6[4];        /* Internet address of remote host; IPv4 address uses just ut_addr_v6[0] */
-            char __unused[20];            /* Reserved for future use */
-        }
-    &quot;&quot;&quot;
-
-    @property
-    def user(self):
-        return str_from_c(self.ut_user)
-
-    @property
-    def line(self):
-        return str_from_c(self.ut_line)
-
-    @property
-    def time(self):
-        return time.strftime(&quot;%Y-%m-%d %H:%M&quot;, time.gmtime(self.ut_tv.tv_sec))
-
-    @property
-    def host(self):
-        if str_from_c(self.ut_host):
-            host = str_from_c(self.ut_host)
-            return f&quot;({host})&quot;
-        elif self.ut_id:
-            ut_id = str_from_c(self.ut_id)
-            return f&quot;id={ut_id}&quot;
-        else:
-            return &quot;&quot;
 
     def __str__(self):
-        return f&quot;{self.user:&lt;10s} {self.line:&lt;12s} {self.time:&lt;15s} {self.ut_pid:&gt;15} {self.host:&lt;8s}&quot;
+        return {
+            DType.DT_UNKNOWN: &quot;&lt;unknown&gt;&quot;,
+            DType.DT_FIFO: &quot;&lt;fifo&gt;&quot;,
+            DType.DT_CHR: &quot;&lt;char&gt;&quot;,
+            DType.DT_DIR: &quot;&lt;dir&gt;&quot;,
+            DType.DT_BLK: &quot;&lt;block&gt;&quot;,
+            DType.DT_REG: &quot;&lt;regular&gt;&quot;,
+            DType.DT_LNK: &quot;&lt;link&gt;&quot;,
+            DType.DT_SOCK: &quot;&lt;socket&gt;&quot;,
+        }[self]
 
-    def print_info(self, show_all):
-        if show_all or self.ut_type in (getdef('LOGIN_PROCESS'), getdef('USER_PROCESS')):
-            print(self)
+
+class Dirent(cstruct.MemCStruct):
+    __def__ = &quot;&quot;&quot;
+        #define PATH_MAX 4096
+
+        typedef long ino_t;
+        typedef long off_t;
+
+        struct dirent {
+            ino_t          d_ino;       /* Inode number */
+            off_t          d_off;       /* Not an offset */
+            unsigned short d_reclen;    /* Length of this record */
+            unsigned char  d_type;      /* Type of file; not supported
+                                           by all filesystem types */
+            char           d_name[256]; /* Null-terminated filename */
+        };
+    &quot;&quot;&quot;
+
+    @property
+    def name(self):
+        return ctypes.c_char_p(self.d_name).value.decode(&quot;ascii&quot;)
+
+    @property
+    def type(self):
+        return DType(self.d_type)
 
 
 def main():
-    parser = argparse.ArgumentParser(description=&quot;Print information about users who are currently logged in.&quot;)
-    parser.add_argument(&quot;-a&quot;, &quot;--all&quot;, action=&quot;store_true&quot;, dest=&quot;show_all&quot;, help=&quot;show all enties&quot;)
-    parser.add_argument(&quot;file&quot;, nargs=&quot;?&quot;, help=&quot;if FILE is not specified use /var/run/utmp&quot;, default=DEFAULT_FILENAME)
-    args = parser.parse_args()
-
-    utmp = Utmp()
-    try:
-        with Path(args.file).open(&quot;rb&quot;) as f:
-            while utmp.unpack(f):
-                utmp.print_info(args.show_all)
-    except (IOError, OSError) as ex:
-        print(ex)
-        sys.exit(1)
+    if len(sys.argv) &gt; 1:
+        cwd = ctypes.create_string_buffer(sys.argv[1].encode(&quot;ascii&quot;))
+    else:
+        # Get current dir
+        cwd = ctypes.create_string_buffer(cstruct.getdef(&quot;PATH_MAX&quot;) + 1)
+        assert libc.getcwd(cwd, ctypes.sizeof(cwd)) != 0
+    # Open dir
+    dp = libc.opendir(cwd)
+    assert dp != 0
+    # Read dir entries
+    ep = libc.readdir(dp)
+    while ep:
+        contents = ctypes.cast(ep, ctypes.POINTER(ctypes.c_char * Dirent.size)).contents
+        dirent = Dirent(contents)
+        print(f&quot;{dirent.d_ino:8} {dirent.type:10} {dirent.name}&quot;)
+        ep = libc.readdir(dp)
+    # Close dir
+    libc.closedir(dp)
 
 
 if __name__ == &quot;__main__&quot;:
@@ -256,8 +218,8 @@ if __name__ == &quot;__main__&quot;:
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../flexible_array/" class="btn btn-neutral float-left" title="flexible_array.py"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../../api/module/" class="btn btn-neutral float-right" title="cstruct">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../../CODE_OF_CONDUCT/" class="btn btn-neutral float-left" title="Code of Conduct"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../fdisk/" class="btn btn-neutral float-right" title="fdisk.py">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -280,10 +242,10 @@ if __name__ == &quot;__main__&quot;:
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../flexible_array/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../../CODE_OF_CONDUCT/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../../api/module/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../fdisk/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
