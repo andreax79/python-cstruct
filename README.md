@@ -36,6 +36,7 @@ Examples
 * [Read the DOS-type (MBR) partition table](https://python-cstruct.readthedocs.io/en/latest/examples/fdisk/)
 * [Print information about logged uses](https://python-cstruct.readthedocs.io/en/latest/examples/who/)
 * [Flexible Array Member (FAM)](https://python-cstruct.readthedocs.io/en/latest/examples/flexible_array/)
+* [libc integration (using ctypes)](https://python-cstruct.readthedocs.io/en/latest/examples/dir/)
 
 
 Features

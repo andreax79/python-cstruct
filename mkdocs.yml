@@ -20,6 +20,7 @@ nav:
   - Code of Conduct: CODE_OF_CONDUCT.md
   - Source Code Repository: "https://github.com/andreax79/python-cstruct"
   - Examples:
+    - "dir.py": examples/dir.md
     - "fdisk.py": examples/fdisk.md
     - "flexible_array.py": examples/flexible_array.md
     - "who.py": examples/who.md
