@@ -238,18 +238,25 @@ class AbstractCStruct(metaclass=CStructMeta):
         """
         buffer = StringIO()
         if hasattr(self, "__mem__"):
-            mem = self.__mem__
+            mem = self.__mem__[self.__base__ :]
         else:
             mem = self.pack()
-        for i in range(start_addr or 0, end_addr or self.size, 16):
-            row = mem[i : i + 16]
+        if end_addr is None:
+            end_addr = self.size
+        for i in range(start_addr or 0, end_addr, 16):
+            row = mem[i : min(i + 16, end_addr)]
             buffer.write(f"{i:08x} ")
             for j, c in enumerate(row):
                 separator = " " if j == 7 else ""
                 buffer.write(f" {c:02x}{separator}")
+            for j in range(len(row) - 1, 15):
+                separator = " " if j == 7 else ""
+                buffer.write(f"   {separator}")
             buffer.write("  |")
             for c in row:
                 buffer.write(chr(c) if c >= 32 and c < 127 else ".")
+            for j in range(len(row) - 1, 15):
+                buffer.write(" ")
             buffer.write("|")
             buffer.write("\n")
         buffer.seek(0, 0)

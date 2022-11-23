@@ -259,6 +259,8 @@ def test_nested_struct_offset():
     assert o.pack() == b'ciao_ciao\x00\x00\xbc\x08\xe4\xb0\x0cX4\xe6\x07\x00\x003333'
     assert o.u1.pack() == b'\xe6\x07\x00\x00'
     assert o.aaa.pack() == b'3333'
+    assert o.u1.a_op.inspect() == "00000000  e6 07 00 00                                       |....            |\n"
+    assert o.u1.b_op.inspect() == "00000000  e6 07 00                                          |...             |\n"
 
 
 def test_nested_anonymous_struct_offset():
@@ -308,6 +310,9 @@ def test_nested_anonymous_struct_offset():
     assert o.pack() == b'ciao_ciao\x00\x00\xbc\x08\xe4\xb0\x0cX4\xe6\x07\x00\x003333'
     assert o.__anonymous0.pack() == b'\xe6\x07\x00\x00'
     assert o.aaa.pack() == b'3333'
+    assert o.__anonymous0.inspect() == "00000000  e6 07 00 00                                       |....            |\n"
+    assert o.__anonymous0.a_op.inspect() == "00000000  e6 07 00 00                                       |....            |\n"
+    assert o.__anonymous0.b_op.inspect() == "00000000  e6 07 00                                          |...             |\n"
 
     o = Opu()
     o.preamble = b'ciao_ciao'
@@ -325,3 +330,5 @@ def test_nested_anonymous_struct_offset():
     assert o.pack() == b'ciao_ciao\x00\x00\xbc\x08\xe4\xb0\x0cX4\xe6\x07\x00\x003333'
     assert o.a_op.pack() == b'\xe6\x07\x00\x00'
     assert o.aaa.pack() == b'3333'
+    assert o.a_op.inspect() == "00000000  e6 07 00 00                                       |....            |\n"
+    assert o.b_op.inspect() == "00000000  e6 07 00                                          |...             |\n"
