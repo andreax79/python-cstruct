@@ -426,6 +426,10 @@ def parse_struct(
             for nested_field_name, nested_field_type in field_type.ref.__fields_types__.items():
                 if nested_field_name in fields_types:
                     raise ParserError(f"Duplicate member `{nested_field_name}`")
+                # set the corret offset
+                nested_field_type = nested_field_type.copy()
+                nested_field_type.base_offset = offset + nested_field_type.base_offset
+                nested_field_type.offset = offset + nested_field_type.offset
                 fields_types[nested_field_name] = nested_field_type
             vname = f"__anonymous{anonymous}"
             anonymous += 1
