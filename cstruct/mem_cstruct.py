@@ -56,6 +56,7 @@ class MemCStruct(AbstractCStruct):
     """
 
     __mem__ = None
+    __base__ = 0
 
     def unpack_from(self, buffer: Optional[bytes], offset: int = 0, flexible_array_length: Optional[int] = None) -> bool:
         """
@@ -101,7 +102,7 @@ class MemCStruct(AbstractCStruct):
         Returns:
             bytes: The packed structure
         """
-        return self.__mem__.raw[:-1]  # the buffer is one item larger than its size and the last element is NUL
+        return self.__mem__.raw[self.__base__ : self.__base__ + self.size]
 
     def set_flexible_array_length(self, flexible_array_length: Optional[int]) -> None:
         """

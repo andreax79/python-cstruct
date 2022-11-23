@@ -210,3 +210,52 @@ def test_nested_anonymous_union_struct():
     assert o1.format1.field1 == 11
     assert o1.format1.field2 == 12
     assert o1.format1.field3 == 13
+
+
+def test_nested_struct_offset():
+    cstruct.parse(
+        """
+        struct op_a {
+          int a;
+        };
+
+        struct op_b {
+          char a;
+          char b;
+          char c;
+        };
+    """,
+        __byte_order__=cstruct.LITTLE_ENDIAN,
+    )
+
+    Op = cstruct.parse(
+        """
+        struct op {
+          char preamble[10];
+          uint64_t magic;
+          union {
+            struct op_a a_op;
+            struct op_b b_op;
+          } u1;
+          struct op_a aaa;
+        };
+    """,
+        __byte_order__=cstruct.LITTLE_ENDIAN,
+    )
+
+    o = Op()
+    o.preamble = b'ciao_ciao'
+    o.magic = 3771778641802345472
+    o.u1.a_op.a = 2022
+    o.aaa.a = 0x33333333
+    assert o.u1.b_op.a == b'\xe6'
+    assert o.u1.b_op.b == b'\x07'
+    assert o.u1.b_op.c == b'\x00'
+    assert o.__base__ == 0
+    assert o.u1.__base__ >= 10
+    assert o.u1.__base__ == o.u1.a_op.__base__
+    assert o.u1.__base__ == o.u1.b_op.__base__
+    assert o.aaa.__base__ > o.u1.__base__
+    assert o.pack() == b'ciao_ciao\x00\x00\xbc\x08\xe4\xb0\x0cX4\xe6\x07\x00\x003333'
+    assert o.u1.pack() == b'\xe6\x07\x00\x00'
+    assert o.aaa.pack() == b'3333'
