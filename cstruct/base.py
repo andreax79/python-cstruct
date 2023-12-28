@@ -22,10 +22,10 @@
 # IN THE SOFTWARE.
 #
 
-from typing import Any, Dict, Type, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Type
 
 if TYPE_CHECKING:
-    from .abstract import AbstractCStruct, AbstractCEnum
+    from .abstract import AbstractCEnum, AbstractCStruct
 
 __all__ = [
     "LITTLE_ENDIAN",

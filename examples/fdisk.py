@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-from pathlib import Path
 import argparse
-import cstruct
 import sys
+from pathlib import Path
+
+import cstruct
 
 UNITS = ['B', 'K', 'M', 'G', 'T']
 SECTOR_SIZE = 512

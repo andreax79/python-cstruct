@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-from cstruct import parse, getdef, MemCStruct, NATIVE_ORDER
-from pathlib import Path
 import argparse
 import sys
 import time
+from pathlib import Path
+
+from cstruct import NATIVE_ORDER, MemCStruct, getdef, parse
 
 DEFAULT_FILENAME = "/var/run/utmp"
 

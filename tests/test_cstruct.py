@@ -25,12 +25,14 @@
 #
 # *****************************************************************************
 
-import pytest
-import cstruct
-from cstruct import sizeof, typedef
 import io
 import os
 from pathlib import Path
+
+import pytest
+
+import cstruct
+from cstruct import sizeof, typedef
 from cstruct.exceptions import ParserError
 
 MBR_DATA = (Path(__file__).parent.parent / "mbr").read_bytes()

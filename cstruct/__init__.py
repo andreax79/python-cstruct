@@ -28,21 +28,22 @@ __version__ = "5.2"
 __date__ = "15 August 2013"
 
 from typing import Any, Dict, Optional, Type, Union
+
+from .abstract import AbstractCEnum, AbstractCStruct, CStructMeta
 from .base import (
-    LITTLE_ENDIAN,
     BIG_ENDIAN,
+    CHAR_ZERO,
+    DEFINES,
+    ENUMS,
+    LITTLE_ENDIAN,
     NATIVE_ORDER,
     STRUCTS,
-    ENUMS,
-    DEFINES,
     TYPEDEFS,
-    CHAR_ZERO,
 )
-from .abstract import CStructMeta, AbstractCStruct, AbstractCEnum
-from .cstruct import CStruct
 from .c_parser import parse_struct_def
-from .mem_cstruct import MemCStruct
 from .cenum import CEnum
+from .cstruct import CStruct
+from .mem_cstruct import MemCStruct
 from .native_types import get_native_type
 
 __all__ = [

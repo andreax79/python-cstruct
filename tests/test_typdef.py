@@ -25,7 +25,7 @@
 #
 # *****************************************************************************
 
-from cstruct import MemCStruct, NATIVE_ORDER
+from cstruct import NATIVE_ORDER, MemCStruct
 from cstruct.base import TYPEDEFS
 
 

@@ -25,9 +25,10 @@
 #
 # *****************************************************************************
 
+import struct
+
 import cstruct
 from cstruct import sizeof
-import struct
 
 
 class Position(cstruct.MemCStruct):

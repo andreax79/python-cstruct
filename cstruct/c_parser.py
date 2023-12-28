@@ -24,15 +24,16 @@
 
 import re
 from collections import OrderedDict
-from typing import Union, Optional, Any, Dict, List, Type, TYPE_CHECKING
-from .base import DEFINES, ENUMS, TYPEDEFS, STRUCTS
-from .field import calculate_padding, Kind, FieldType
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
+
+from .base import DEFINES, ENUMS, STRUCTS, TYPEDEFS
 from .c_expr import c_eval
 from .exceptions import CStructException, ParserError
+from .field import FieldType, Kind, calculate_padding
 from .native_types import get_native_type
 
 if TYPE_CHECKING:
-    from .abstract import AbstractCStruct, AbstractCEnum
+    from .abstract import AbstractCEnum, AbstractCStruct
 
 __all__ = ["parse_struct", "parse_struct_def", "parse_enum_def", "Tokens"]
 

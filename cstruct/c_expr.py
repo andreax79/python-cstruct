@@ -24,7 +24,8 @@
 
 import ast
 import operator
-from typing import Any, Callable, Dict, Union, Type, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Dict, Type, Union
+
 from .base import DEFINES, STRUCTS
 from .exceptions import EvalError
 

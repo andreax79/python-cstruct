@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import random
-from cstruct import MemCStruct
 from pathlib import Path
+
+from cstruct import MemCStruct
 
 
 class FlexArray(MemCStruct):

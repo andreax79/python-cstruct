@@ -22,9 +22,10 @@
 # IN THE SOFTWARE.
 #
 
-from typing import Any, List, Optional
 import ctypes
 import struct
+from typing import Any, List, Optional
+
 from .abstract import AbstractCStruct
 
 

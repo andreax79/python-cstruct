@@ -23,8 +23,9 @@
 #
 
 from typing import List, Optional
-from .base import CHAR_ZERO
+
 from .abstract import AbstractCStruct
+from .base import CHAR_ZERO
 
 
 class CStruct(AbstractCStruct):

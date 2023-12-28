@@ -2,6 +2,7 @@ SHELL=/bin/bash -e
 
 help:
 	@echo - make black ------ Format code
+	@echo - make isort ------ Sort imports
 	@echo - make clean ------ Clean virtual environment
 	@echo - make coverage --- Run tests coverage
 	@echo - make docs ------- Make docs
@@ -11,8 +12,13 @@ help:
 	@echo - make typecheck -- Typecheck
 	@echo - make venv ------- Create virtual environment
 
-black:
-	black -S cstruct tests examples setup.py
+.PHONY: isort
+isort:
+	@isort --profile black cstruct tests examples setup.py
+
+.PHONY: black
+black: isort
+	@black -S cstruct tests examples setup.py
 
 clean:
 	-rm -rf build dist

@@ -26,10 +26,10 @@
 # *****************************************************************************
 
 import pytest
+
 import cstruct
 from cstruct import sizeof
 from cstruct.exceptions import ParserError
-
 
 INVALID_ANONYMOUS = """
     struct NestedStruct {

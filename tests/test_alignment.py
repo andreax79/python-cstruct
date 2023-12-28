@@ -26,7 +26,8 @@
 # *****************************************************************************
 
 import sys
-from cstruct import sizeof, typedef, define, CStruct, NATIVE_ORDER
+
+from cstruct import NATIVE_ORDER, CStruct, define, sizeof, typedef
 
 IS_64BITS = sys.maxsize > 2**32
 

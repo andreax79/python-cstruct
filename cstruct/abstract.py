@@ -24,18 +24,19 @@
 # IN THE SOFTWARE.
 #
 
+import hashlib
+import struct
 from abc import ABCMeta
 from collections import OrderedDict
-from typing import Any, BinaryIO, List, Dict, Optional, Type, Tuple, Union
-import hashlib
+from enum import EnumMeta, IntEnum, _EnumDict
 from io import StringIO
-from enum import IntEnum, EnumMeta, _EnumDict
-import struct
-from .base import STRUCTS, ENUMS, DEFAULT_ENUM_SIZE, ENUM_SIZE_TO_C_TYPE
-from .c_parser import parse_struct, parse_struct_def, parse_enum_def, parse_enum, Tokens
-from .field import calculate_padding, FieldType
-from .native_types import get_native_type
+from typing import Any, BinaryIO, Dict, List, Optional, Tuple, Type, Union
+
+from .base import DEFAULT_ENUM_SIZE, ENUM_SIZE_TO_C_TYPE, ENUMS, STRUCTS
+from .c_parser import Tokens, parse_enum, parse_enum_def, parse_struct, parse_struct_def
 from .exceptions import CStructException, ParserError
+from .field import FieldType, calculate_padding
+from .native_types import get_native_type
 
 __all__ = ["CStructMeta", "AbstractCStruct", "CEnumMeta", "AbstractCEnum"]
 

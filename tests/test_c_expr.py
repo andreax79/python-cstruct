@@ -25,7 +25,7 @@
 #
 # *****************************************************************************
 
-from cstruct import parse, getdef, define
+from cstruct import define, getdef, parse
 from cstruct.c_expr import c_eval
 
 

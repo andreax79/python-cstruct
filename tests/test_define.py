@@ -26,9 +26,11 @@
 # *****************************************************************************
 
 import sys
+
 import pytest
+
 import cstruct
-from cstruct import define, undef, sizeof, typedef
+from cstruct import define, sizeof, typedef, undef
 from cstruct.exceptions import ParserError
 
 IS_64BITS = sys.maxsize > 2**32

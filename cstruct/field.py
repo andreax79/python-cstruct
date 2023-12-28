@@ -25,10 +25,11 @@
 import copy
 import struct
 from enum import Enum
-from typing import Optional, Any, List, Type, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, List, Optional, Type
+
 from .base import NATIVE_ORDER
-from .native_types import get_native_type
 from .exceptions import ParserError
+from .native_types import get_native_type
 
 if TYPE_CHECKING:
     from .abstract import AbstractCStruct

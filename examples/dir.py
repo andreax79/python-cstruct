@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-import cstruct
 import ctypes
 import sys
+
+import cstruct
 
 libc = ctypes.cdll.LoadLibrary("libc.so.6")
 # opendir

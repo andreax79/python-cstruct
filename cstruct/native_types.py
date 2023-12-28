@@ -24,7 +24,7 @@
 
 import struct
 from abc import ABCMeta
-from typing import Any, Dict, Type, Tuple
+from typing import Any, Dict, Tuple, Type
 
 __all__ = [
     "get_native_type",

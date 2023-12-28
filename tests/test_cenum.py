@@ -1,7 +1,9 @@
+from enum import Enum
+
 import pytest
+
 import cstruct
 from cstruct import CEnum
-from enum import Enum
 
 
 class Dummy(CEnum):
