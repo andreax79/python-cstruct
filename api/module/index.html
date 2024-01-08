@@ -8,7 +8,7 @@
     <title>cstruct - Python CStruct documentation</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
     
       <script>
@@ -18,12 +18,11 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="../../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -35,7 +34,7 @@
           <a href="../.." class="icon icon-home"> Python CStruct documentation
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -108,9 +107,9 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-          <li>API &raquo;</li>
-      <li>cstruct</li>
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">API</li>
+      <li class="breadcrumb-item active">cstruct</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -120,6 +119,7 @@
             <div class="section" itemprop="articleBody">
               
                 <div class="doc doc-object doc-module">
+
 
 
 <a id="cstruct"></a>
@@ -139,8 +139,9 @@
 
 
 
+
 <h2 id="cstruct.BIG_ENDIAN" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">BIG_ENDIAN</span> <span class="o">=</span> <span class="s1">&#39;&gt;&#39;</span></code>
+          <code class="highlight language-python"><span class="n">BIG_ENDIAN</span> <span class="o">=</span> <span class="s1">&#39;&gt;&#39;</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -160,8 +161,9 @@
 
 
 
+
 <h2 id="cstruct.LITTLE_ENDIAN" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">LITTLE_ENDIAN</span> <span class="o">=</span> <span class="s1">&#39;&lt;&#39;</span></code>
+          <code class="highlight language-python"><span class="n">LITTLE_ENDIAN</span> <span class="o">=</span> <span class="s1">&#39;&lt;&#39;</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -181,8 +183,9 @@
 
 
 
+
 <h2 id="cstruct.NATIVE_ORDER" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">NATIVE_ORDER</span> <span class="o">=</span> <span class="s1">&#39;@&#39;</span></code>
+          <code class="highlight language-python"><span class="n">NATIVE_ORDER</span> <span class="o">=</span> <span class="s1">&#39;@&#39;</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -203,22 +206,22 @@
 
 
 
+
 <h2 id="cstruct.CEnum" class="doc doc-heading">
-        <code>CEnum</code>
+          <code>CEnum</code>
 
 
 </h2>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCEnum" href="../abstract/#cstruct.abstract.AbstractCEnum">AbstractCEnum</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCEnum" href="../abstract/#cstruct.abstract.AbstractCEnum">AbstractCEnum</a></code></p>
 
 
-
-        <details class="quote">
-          <summary>Source code in <code>cstruct/cenum.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4</span>
+            <details class="quote">
+              <summary>Source code in <code>cstruct/cenum.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4</span>
 <span class="normal">5</span>
 <span class="normal">6</span>
 <span class="normal">7</span>
@@ -228,7 +231,7 @@
         <span class="s2">&quot;Type size (in bytes)&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__size__</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -242,12 +245,14 @@
 
 
 
+
 <div class="doc doc-object doc-function">
 
 
 
-<h3 id="cstruct.cenum.CEnum.sizeof" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">sizeof</span><span class="p">()</span></code>
+
+<h3 id="cstruct.CEnum.sizeof" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">sizeof</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -260,9 +265,9 @@
   
       <p>Type size (in bytes)</p>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/cenum.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">5</span>
+          <details class="quote">
+            <summary> <code>cstruct/cenum.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">5</span>
 <span class="normal">6</span>
 <span class="normal">7</span>
 <span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
@@ -270,7 +275,7 @@
     <span class="s2">&quot;Type size (in bytes)&quot;</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__size__</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -287,80 +292,89 @@
 
 
 
+
 <h2 id="cstruct.CStruct" class="doc doc-heading">
-        <code>CStruct</code>
+          <code>CStruct</code>
 
 
 </h2>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code></p>
 
   
       <p>Convert C struct definitions into Python classes.</p>
 
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>__struct__</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>definition of the struct (or union) in C syntax</p></td>
-        </tr>
-        <tr>
-          <td><code>__byte_order__</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER</p></td>
-        </tr>
-        <tr>
-          <td><code>__is_union__</code></td>
-          <td>
-                <code>bool</code>
-          </td>
-          <td><p>True for union definitions, False for struct definitions</p></td>
-        </tr>
-        <tr>
-          <td><code>__size__</code></td>
-          <td>
-                <code>int</code>
-          </td>
-          <td><p>size of the structure in bytes (flexible array member size is omitted)</p></td>
-        </tr>
-        <tr>
-          <td><code>__fields__</code></td>
-          <td>
-                <code>list</code>
-          </td>
-          <td><p>list of structure fields</p></td>
-        </tr>
-        <tr>
-          <td><code>__fields_types__</code></td>
-          <td>
-                <code>dict</code>
-          </td>
-          <td><p>dictionary mapping field names to types</p></td>
-        </tr>
-    </tbody>
-  </table>
 
 
-        <details class="quote">
-          <summary>Source code in <code>cstruct/cstruct.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">30</span>
-<span class="normal">31</span>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>__struct__</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>definition of the struct (or union) in C syntax</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__byte_order__</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__is_union__</code></b>
+                  (<code>bool</code>)
+              –
+              <div class="doc-md-description">
+                <p>True for union definitions, False for struct definitions</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__size__</code></b>
+                  (<code>int</code>)
+              –
+              <div class="doc-md-description">
+                <p>size of the structure in bytes (flexible array member size is omitted)</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__fields__</code></b>
+                  (<code>list</code>)
+              –
+              <div class="doc-md-description">
+                <p>list of structure fields</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__fields_types__</code></b>
+                  (<code>dict</code>)
+              –
+              <div class="doc-md-description">
+                <p>dictionary mapping field names to types</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+            <details class="quote">
+              <summary>Source code in <code>cstruct/cstruct.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
@@ -414,8 +428,9 @@
 <span class="normal">82</span>
 <span class="normal">83</span>
 <span class="normal">84</span>
-<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CStruct</span><span class="p">(</span><span class="n">AbstractCStruct</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">85</span>
+<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CStruct</span><span class="p">(</span><span class="n">AbstractCStruct</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert C struct definitions into Python classes.</span>
 
 <span class="sd">    Attributes:</span>
@@ -428,7 +443,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Unpack bytes containing packed C structure data</span>
 
 <span class="sd">        Args:</span>
@@ -444,7 +459,7 @@
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pack the structure data into bytes</span>
 
 <span class="sd">        Returns:</span>
@@ -471,7 +486,7 @@
                 <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_type</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -485,12 +500,14 @@
 
 
 
+
 <div class="doc doc-object doc-function">
 
 
 
-<h3 id="cstruct.cstruct.CStruct.pack" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pack</span><span class="p">()</span></code>
+
+<h3 id="cstruct.CStruct.pack" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">pack</span><span class="p">()</span></code>
 
 </h3>
 
@@ -499,28 +516,33 @@
   
       <p>Pack the structure data into bytes</p>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-<th>Name</th>        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-<td><code>bytes</code></td>          <td>
-                <code>bytes</code>
-          </td>
-          <td><p>The packed structure</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/cstruct.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">59</span>
-<span class="normal">60</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+    <th class="field-name">Returns:</th>
+    <td class="field-body">
+      <ul class="first simple">
+          <li>
+<b><code>bytes</code></b>(                <code>bytes</code>
+)            –
+            <div class="doc-md-description">
+              <p>The packed structure</p>
+            </div>
+          </li>
+      </ul>
+    </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/cstruct.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
 <span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span>
@@ -545,8 +567,9 @@
 <span class="normal">82</span>
 <span class="normal">83</span>
 <span class="normal">84</span>
-<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">85</span>
+<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pack the structure data into bytes</span>
 
 <span class="sd">    Returns:</span>
@@ -573,17 +596,19 @@
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_type</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
     <span class="k">return</span> <span class="nb">bytes</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
-<h3 id="cstruct.cstruct.CStruct.unpack_from" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<h3 id="cstruct.CStruct.unpack_from" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -592,54 +617,54 @@
   
       <p>Unpack bytes containing packed C structure data</p>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>buffer</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[bytes]</code>
-          </td>
-          <td><p>bytes to be unpacked</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>offset</code></td>
-          <td>
-                <code>int</code>
-          </td>
-          <td><p>optional buffer offset</p></td>
-          <td>
-                <code>0</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>flexible_array_length</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[int]</code>
-          </td>
-          <td><p>optional flexible array lenght (number of elements)</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/cstruct.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">43</span>
-<span class="normal">44</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>buffer</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[bytes]</code>)
+              –
+              <div class="doc-md-description">
+                <p>bytes to be unpacked</p>
+              </div>
+            </li>
+            <li>
+              <b><code>offset</code></b>
+                  (<code>int</code>, default:
+                      <code>0</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>optional buffer offset</p>
+              </div>
+            </li>
+            <li>
+              <b><code>flexible_array_length</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[int]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>optional flexible array lenght (number of elements)</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/cstruct.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
@@ -652,8 +677,9 @@
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
-<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">57</span>
+<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unpack bytes containing packed C structure data</span>
 
 <span class="sd">    Args:</span>
@@ -668,7 +694,7 @@
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_type</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="p">))</span>
     <span class="k">return</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -685,86 +711,96 @@
 
 
 
+
 <h2 id="cstruct.MemCStruct" class="doc doc-heading">
-        <code>MemCStruct</code>
+          <code>MemCStruct</code>
 
 
 </h2>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code></p>
 
   
       <p>Convert C struct definitions into Python classes.</p>
 
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>__struct__</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>definition of the struct (or union) in C syntax</p></td>
-        </tr>
-        <tr>
-          <td><code>__byte_order__</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER</p></td>
-        </tr>
-        <tr>
-          <td><code>__is_union__</code></td>
-          <td>
-                <code>bool</code>
-          </td>
-          <td><p>True for union definitions, False for struct definitions</p></td>
-        </tr>
-        <tr>
-          <td><code>__mem__</code></td>
-          <td>
-          </td>
-          <td><p>mutable character buffer</p></td>
-        </tr>
-        <tr>
-          <td><code>__size__</code></td>
-          <td>
-                <code>int</code>
-          </td>
-          <td><p>size of the structure in bytes (flexible array member size is omitted)</p></td>
-        </tr>
-        <tr>
-          <td><code>__fields__</code></td>
-          <td>
-                <code>list</code>
-          </td>
-          <td><p>list of structure fields</p></td>
-        </tr>
-        <tr>
-          <td><code>__fields_types__</code></td>
-          <td>
-                <code>dict</code>
-          </td>
-          <td><p>dictionary mapping field names to types</p></td>
-        </tr>
-    </tbody>
-  </table>
 
 
-        <details class="quote">
-          <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 44</span>
-<span class="normal"> 45</span>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>__struct__</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>definition of the struct (or union) in C syntax</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__byte_order__</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__is_union__</code></b>
+                  (<code>bool</code>)
+              –
+              <div class="doc-md-description">
+                <p>True for union definitions, False for struct definitions</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__mem__</code></b>
+              –
+              <div class="doc-md-description">
+                <p>mutable character buffer</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__size__</code></b>
+                  (<code>int</code>)
+              –
+              <div class="doc-md-description">
+                <p>size of the structure in bytes (flexible array member size is omitted)</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__fields__</code></b>
+                  (<code>list</code>)
+              –
+              <div class="doc-md-description">
+                <p>list of structure fields</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__fields_types__</code></b>
+                  (<code>dict</code>)
+              –
+              <div class="doc-md-description">
+                <p>dictionary mapping field names to types</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+            <details class="quote">
+              <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 45</span>
 <span class="normal"> 46</span>
 <span class="normal"> 47</span>
 <span class="normal"> 48</span>
@@ -869,8 +905,10 @@
 <span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
-<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MemCStruct</span><span class="p">(</span><span class="n">AbstractCStruct</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MemCStruct</span><span class="p">(</span><span class="n">AbstractCStruct</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert C struct definitions into Python classes.</span>
 
 <span class="sd">    Attributes:</span>
@@ -884,9 +922,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">__mem__</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">__base__</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Unpack bytes containing packed C structure data</span>
 
 <span class="sd">        Args:</span>
@@ -912,7 +951,7 @@
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">memcpy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copies the values of num bytes from source to the struct memory</span>
 
 <span class="sd">        Args:</span>
@@ -923,16 +962,16 @@
         <span class="n">ctypes</span><span class="o">.</span><span class="n">memmove</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="p">,</span> <span class="n">destination</span><span class="p">),</span> <span class="n">source</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pack the structure data into bytes</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            bytes: The packed structure</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="o">.</span><span class="n">raw</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># the buffer is one item larger than its size and the last element is NUL</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__base__</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__base__</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">set_flexible_array_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set flexible array length (i.e. number of elements)</span>
 
 <span class="sd">        Args:</span>
@@ -977,7 +1016,7 @@
         <span class="c1"># Update the memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memcpy</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">size</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -991,12 +1030,14 @@
 
 
 
+
 <div class="doc doc-object doc-function">
 
 
 
-<h3 id="cstruct.mem_cstruct.MemCStruct.memcpy" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">memcpy</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span></code>
+
+<h3 id="cstruct.MemCStruct.memcpy" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">memcpy</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span></code>
 
 </h3>
 
@@ -1005,63 +1046,60 @@
   
       <p>Copies the values of num bytes from source to the struct memory</p>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>destination</code></td>
-          <td>
-                <code>int</code>
-          </td>
-          <td><p>destination address</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>source</code></td>
-          <td>
-                <code>bytes</code>
-          </td>
-          <td><p>source data to be copied</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>num</code></td>
-          <td>
-                <code>int</code>
-          </td>
-          <td><p>number of bytes to copy</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>destination</code></b>
+                  (<code>int</code>)
+              –
+              <div class="doc-md-description">
+                <p>destination address</p>
+              </div>
+            </li>
+            <li>
+              <b><code>source</code></b>
+                  (<code>bytes</code>)
+              –
+              <div class="doc-md-description">
+                <p>source data to be copied</p>
+              </div>
+            </li>
+            <li>
+              <b><code>num</code></b>
+                  (<code>int</code>)
+              –
+              <div class="doc-md-description">
+                <p>number of bytes to copy</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/mem_cstruct.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">88</span>
 <span class="normal">89</span>
 <span class="normal">90</span>
 <span class="normal">91</span>
 <span class="normal">92</span>
 <span class="normal">93</span>
 <span class="normal">94</span>
-<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">memcpy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">memcpy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Copies the values of num bytes from source to the struct memory</span>
 
 <span class="sd">    Args:</span>
@@ -1071,17 +1109,19 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ctypes</span><span class="o">.</span><span class="n">memmove</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="p">,</span> <span class="n">destination</span><span class="p">),</span> <span class="n">source</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
-<h3 id="cstruct.mem_cstruct.MemCStruct.pack" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pack</span><span class="p">()</span></code>
+
+<h3 id="cstruct.MemCStruct.pack" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">pack</span><span class="p">()</span></code>
 
 </h3>
 
@@ -1090,53 +1130,61 @@
   
       <p>Pack the structure data into bytes</p>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-<th>Name</th>        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-<td><code>bytes</code></td>          <td>
-                <code>bytes</code>
-          </td>
-          <td><p>The packed structure</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+    <th class="field-name">Returns:</th>
+    <td class="field-body">
+      <ul class="first simple">
+          <li>
+<b><code>bytes</code></b>(                <code>bytes</code>
+)            –
+            <div class="doc-md-description">
+              <p>The packed structure</p>
+            </div>
+          </li>
+      </ul>
+    </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/mem_cstruct.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 99</span>
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
-<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pack the structure data into bytes</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        bytes: The packed structure</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="o">.</span><span class="n">raw</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># the buffer is one item larger than its size and the last element is NUL</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__base__</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__base__</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
-<h3 id="cstruct.mem_cstruct.MemCStruct.set_flexible_array_length" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">set_flexible_array_length</span><span class="p">(</span><span class="n">flexible_array_length</span><span class="p">)</span></code>
+
+<h3 id="cstruct.MemCStruct.set_flexible_array_length" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">set_flexible_array_length</span><span class="p">(</span><span class="n">flexible_array_length</span><span class="p">)</span></code>
 
 </h3>
 
@@ -1145,35 +1193,34 @@
   
       <p>Set flexible array length (i.e. number of elements)</p>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>flexible_array_length</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[int]</code>
-          </td>
-          <td><p>flexible array length</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>flexible_array_length</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[int]</code>)
+              –
+              <div class="doc-md-description">
+                <p>flexible array length</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/mem_cstruct.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
@@ -1183,8 +1230,10 @@
 <span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
-<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_flexible_array_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_flexible_array_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set flexible array length (i.e. number of elements)</span>
 
 <span class="sd">    Args:</span>
@@ -1197,17 +1246,19 @@
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">pass</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
-<h3 id="cstruct.mem_cstruct.MemCStruct.unpack_from" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<h3 id="cstruct.MemCStruct.unpack_from" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -1216,55 +1267,54 @@
   
       <p>Unpack bytes containing packed C structure data</p>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>buffer</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[bytes]</code>
-          </td>
-          <td><p>bytes to be unpacked</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>offset</code></td>
-          <td>
-                <code>int</code>
-          </td>
-          <td><p>optional buffer offset</p></td>
-          <td>
-                <code>0</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>flexible_array_length</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[int]</code>
-          </td>
-          <td><p>optional flexible array lenght (number of elements)</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>buffer</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[bytes]</code>)
+              –
+              <div class="doc-md-description">
+                <p>bytes to be unpacked</p>
+              </div>
+            </li>
+            <li>
+              <b><code>offset</code></b>
+                  (<code>int</code>, default:
+                      <code>0</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>optional buffer offset</p>
+              </div>
+            </li>
+            <li>
+              <b><code>flexible_array_length</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[int]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>optional flexible array lenght (number of elements)</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/mem_cstruct.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
@@ -1286,8 +1336,10 @@
 <span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span>
-<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unpack bytes containing packed C structure data</span>
 
 <span class="sd">    Args:</span>
@@ -1312,7 +1364,7 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_type</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="p">,</span> <span class="n">offset</span><span class="p">))</span>
     <span class="k">return</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -1324,14 +1376,16 @@
   </div>
 
 </div>
+
 
 
 <div class="doc doc-object doc-function">
 
 
 
+
 <h2 id="cstruct.define" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">define</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+          <code class="highlight language-python"><span class="n">define</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1340,48 +1394,48 @@
   
       <p>Define a constant that can be used in the C struct</p>
 
-<p><strong>Examples:</strong></p>
+
+
+<p><strong></strong></p>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;INIT_THREAD_SIZE&quot;</span><span class="p">,</span> <span class="mi">16384</span><span class="p">)</span>
 </code></pre></div>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>key</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>identifier</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>value</code></td>
-          <td>
-                <code><span title="typing.Any">Any</span></code>
-          </td>
-          <td><p>value of the constant</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
-<span class="normal">67</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>key</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>identifier</p>
+              </div>
+            </li>
+            <li>
+              <b><code>value</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>value of the constant</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
@@ -1391,8 +1445,9 @@
 <span class="normal">74</span>
 <span class="normal">75</span>
 <span class="normal">76</span>
-<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">define</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">define</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Define a constant that can be used in the C struct</span>
 
 <span class="sd">    Examples:</span>
@@ -1404,17 +1459,19 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">DEFINES</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
+
 <h2 id="cstruct.get_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_type</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span></code>
+          <code class="highlight language-python"><span class="n">get_type</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1423,77 +1480,91 @@
   
       <p>Get a data type (struct, union, enum) by name</p>
 
-<p><strong>Examples:</strong></p>
+
+
+<p><strong></strong></p>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">get_type</span><span class="p">(</span><span class="s2">&quot;struct Position&quot;</span><span class="p">)</span>
 <span class="go">&lt;class &#39;abc.Position&#39;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">get_type</span><span class="p">(</span><span class="s2">&quot;enum htmlfont&quot;</span><span class="p">)</span>
 <span class="go">&lt;enum &#39;htmlfont&#39;&gt;</span>
 </code></pre></div>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>type_</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>C type, struct or union (e.g. 'short int' or 'struct ZYZ'), enum or native type</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-<th>Name</th>        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-<td><code>class</code></td>          <td>
-                <code><span title="typing.Any">Any</span></code>
-          </td>
-          <td><p>data type class</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-  <p><strong>Raises:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>KeyError</code>
-          </td>
-          <td><p>If type is not defined</p></td>
-        </tr>
-    </tbody>
-  </table>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>type_</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>C type, struct or union (e.g. 'short int' or 'struct ZYZ'), enum or native type</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">130</span>
-<span class="normal">131</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+    <th class="field-name">Returns:</th>
+    <td class="field-body">
+      <ul class="first simple">
+          <li>
+<b><code>class</code></b>(                <code><span title="typing.Any">Any</span></code>
+)            –
+            <div class="doc-md-description">
+              <p>data type class</p>
+            </div>
+          </li>
+      </ul>
+    </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>KeyError</code>
+              –
+              <div class="doc-md-description">
+                <p>If type is not defined</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
@@ -1528,8 +1599,9 @@
 <span class="normal">163</span>
 <span class="normal">164</span>
 <span class="normal">165</span>
-<span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_type</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">166</span>
+<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_type</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a data type (struct, union, enum) by name</span>
 
 <span class="sd">    Examples:</span>
@@ -1566,17 +1638,19 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">get_native_type</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
+
 <h2 id="cstruct.getdef" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">getdef</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
+          <code class="highlight language-python"><span class="n">getdef</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1585,57 +1659,65 @@
   
       <p>Return the value for a constant</p>
 
-<p><strong>Examples:</strong></p>
+
+
+<p><strong></strong></p>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;INIT_THREAD_SIZE&quot;</span><span class="p">,</span> <span class="mi">16384</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">getdef</span><span class="p">(</span><span class="s2">&quot;INIT_THREAD_SIZE&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>key</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>identifier</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-  <p><strong>Raises:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>KeyError</code>
-          </td>
-          <td><p>If key is not defined</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 97</span>
-<span class="normal"> 98</span>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>key</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>identifier</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>KeyError</code>
+              –
+              <div class="doc-md-description">
+                <p>If key is not defined</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
 <span class="normal"> 99</span>
 <span class="normal">100</span>
 <span class="normal">101</span>
@@ -1648,8 +1730,9 @@
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
-<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">getdef</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">111</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">getdef</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the value for a constant</span>
 
 <span class="sd">    Examples:</span>
@@ -1664,17 +1747,19 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">DEFINES</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
+
 <h2 id="cstruct.parse" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">parse</span><span class="p">(</span><span class="n">__struct__</span><span class="p">,</span> <span class="n">__cls__</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></code>
+          <code class="highlight language-python"><span class="n">parse</span><span class="p">(</span><span class="n">__struct__</span><span class="p">,</span> <span class="n">__cls__</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1685,95 +1770,107 @@
 If the string does not contains any definition, return None.
 If the string contains multiple struct/union/enum definitions, returns the last definition.</p>
 
-<p><strong>Examples:</strong></p>
+
+
+<p><strong></strong></p>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cstruct</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;struct Pair { unsigned char a; unsigned char b; };&#39;</span><span class="p">)</span>
 <span class="go">&lt;class &#39;abc.Pair&#39;&gt;</span>
 </code></pre></div>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>__struct__</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>definition of the struct (or union/enum) in C syntax</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>__cls__</code></td>
-          <td>
-                <code>type</code>
-          </td>
-          <td><p>super class - CStruct(default) or MemCStruct</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>__byte_order__</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-<th>Name</th>        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-<td><code>cls</code></td>          <td>
-                <code><span title="typing.Union">Union</span>[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a>], <span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCEnum" href="../abstract/#cstruct.abstract.AbstractCEnum">AbstractCEnum</a>], None]</code>
-          </td>
-          <td><p><strong>cls</strong> subclass</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-  <p><strong>Raises:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="cstruct.cstruct" href="../cstruct/#cstruct.cstruct">cstruct</a>.<span title="cstruct.cstruct.exceptions">exceptions</span>.<span title="cstruct.exceptions.ParserError">ParserError</span></code>
-          </td>
-          <td><p>Parsing exception</p></td>
-        </tr>
-    </tbody>
-  </table>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>__struct__</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>definition of the struct (or union/enum) in C syntax</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__cls__</code></b>
+                  (<code>type</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>super class - CStruct(default) or MemCStruct</p>
+              </div>
+            </li>
+            <li>
+              <b><code>__byte_order__</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">196</span>
-<span class="normal">197</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+    <th class="field-name">Returns:</th>
+    <td class="field-body">
+      <ul class="first simple">
+          <li>
+<b><code>cls</code></b>(                <code><span title="typing.Union">Union</span>[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a>], <span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCEnum" href="../abstract/#cstruct.abstract.AbstractCEnum">AbstractCEnum</a>], None]</code>
+)            –
+            <div class="doc-md-description">
+              <p><strong>cls</strong> subclass</p>
+            </div>
+          </li>
+      </ul>
+    </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="cstruct.cstruct.exceptions.ParserError">ParserError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Parsing exception</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">197</span>
 <span class="normal">198</span>
 <span class="normal">199</span>
 <span class="normal">200</span>
@@ -1801,10 +1898,11 @@ If the string contains multiple struct/union/enum definitions, returns the last 
 <span class="normal">222</span>
 <span class="normal">223</span>
 <span class="normal">224</span>
-<span class="normal">225</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span>
+<span class="normal">225</span>
+<span class="normal">226</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span>
     <span class="n">__struct__</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">__cls__</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">AbstractCStruct</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">AbstractCStruct</span><span class="p">],</span> <span class="n">Type</span><span class="p">[</span><span class="n">AbstractCEnum</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a new class mapping a C struct/union/enum definition.</span>
 <span class="sd">    If the string does not contains any definition, return None.</span>
 <span class="sd">    If the string contains multiple struct/union/enum definitions, returns the last definition.</span>
@@ -1832,17 +1930,19 @@ If the string contains multiple struct/union/enum definitions, returns the last 
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="n">cls_def</span><span class="p">[</span><span class="s2">&quot;__cls__&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">cls_def</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
+
 <h2 id="cstruct.sizeof" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">sizeof</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span></code>
+          <code class="highlight language-python"><span class="n">sizeof</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1851,7 +1951,9 @@ If the string contains multiple struct/union/enum definitions, returns the last 
   
       <p>Return the size of the type.</p>
 
-<p><strong>Examples:</strong></p>
+
+
+<p><strong></strong></p>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">sizeof</span><span class="p">(</span><span class="s2">&quot;struct Position&quot;</span><span class="p">)</span>
 <span class="go">16</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sizeof</span><span class="p">(</span><span class="s1">&#39;enum htmlfont&#39;</span><span class="p">)</span>
@@ -1860,70 +1962,82 @@ If the string contains multiple struct/union/enum definitions, returns the last 
 <span class="go">4</span>
 </code></pre></div>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>type_</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>C type, struct or union (e.g. 'short int' or 'struct ZYZ'), enum or native type</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-<th>Name</th>        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-<td><code>size</code></td>          <td>
-                <code>int</code>
-          </td>
-          <td><p>size in bytes</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-  <p><strong>Raises:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>KeyError</code>
-          </td>
-          <td><p>If type is not defined</p></td>
-        </tr>
-    </tbody>
-  </table>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>type_</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>C type, struct or union (e.g. 'short int' or 'struct ZYZ'), enum or native type</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">169</span>
-<span class="normal">170</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+    <th class="field-name">Returns:</th>
+    <td class="field-body">
+      <ul class="first simple">
+          <li>
+<b><code>size</code></b>(                <code>int</code>
+)            –
+            <div class="doc-md-description">
+              <p>size in bytes</p>
+            </div>
+          </li>
+      </ul>
+    </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>KeyError</code>
+              –
+              <div class="doc-md-description">
+                <p>If type is not defined</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span>
 <span class="normal">173</span>
@@ -1946,8 +2060,9 @@ If the string contains multiple struct/union/enum definitions, returns the last 
 <span class="normal">190</span>
 <span class="normal">191</span>
 <span class="normal">192</span>
-<span class="normal">193</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">sizeof</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">193</span>
+<span class="normal">194</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">sizeof</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the size of the type.</span>
 
 <span class="sd">    Examples:</span>
@@ -1972,17 +2087,19 @@ If the string contains multiple struct/union/enum definitions, returns the last 
     <span class="n">data_type</span> <span class="o">=</span> <span class="n">get_type</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data_type</span><span class="o">.</span><span class="n">sizeof</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
+
 <h2 id="cstruct.typedef" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">typedef</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">alias</span><span class="p">)</span></code>
+          <code class="highlight language-python"><span class="n">typedef</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">alias</span><span class="p">)</span></code>
 
 </h2>
 
@@ -1991,50 +2108,50 @@ If the string contains multiple struct/union/enum definitions, returns the last 
   
       <p>Define an alias name for a data type</p>
 
-<p><strong>Examples:</strong></p>
+
+
+<p><strong></strong></p>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">typedef</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sizeof</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span>
 <span class="go">4</span>
 </code></pre></div>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>type_</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>data type</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>alias</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>new alias name</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">114</span>
-<span class="normal">115</span>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>type_</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>data type</p>
+              </div>
+            </li>
+            <li>
+              <b><code>alias</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>new alias name</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
@@ -2046,8 +2163,9 @@ If the string contains multiple struct/union/enum definitions, returns the last 
 <span class="normal">124</span>
 <span class="normal">125</span>
 <span class="normal">126</span>
-<span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">typedef</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">127</span>
+<span class="normal">128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">typedef</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Define an alias name for a data type</span>
 
 <span class="sd">    Examples:</span>
@@ -2061,17 +2179,19 @@ If the string contains multiple struct/union/enum definitions, returns the last 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">TYPEDEFS</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
+
 <h2 id="cstruct.undef" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">undef</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
+          <code class="highlight language-python"><span class="n">undef</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
 
 </h2>
 
@@ -2080,57 +2200,65 @@ If the string contains multiple struct/union/enum definitions, returns the last 
   
       <p>Undefine a symbol that was previously defined with define</p>
 
-<p><strong>Examples:</strong></p>
+
+
+<p><strong></strong></p>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;INIT_THREAD_SIZE&quot;</span><span class="p">,</span> <span class="mi">16384</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">undef</span><span class="p">(</span><span class="s2">&quot;INIT_THREAD_SIZE&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>key</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>identifier</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-  <p><strong>Raises:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>KeyError</code>
-          </td>
-          <td><p>If key is not defined</p></td>
-        </tr>
-    </tbody>
-  </table>
 
-      <details class="quote">
-        <summary>Source code in <code>cstruct/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">80</span>
-<span class="normal">81</span>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>key</code></b>
+                  (<code>str</code>)
+              –
+              <div class="doc-md-description">
+                <p>identifier</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>KeyError</code>
+              –
+              <div class="doc-md-description">
+                <p>If key is not defined</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+          <details class="quote">
+            <summary> <code>cstruct/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span>
 <span class="normal">84</span>
@@ -2143,8 +2271,9 @@ If the string contains multiple struct/union/enum definitions, returns the last 
 <span class="normal">91</span>
 <span class="normal">92</span>
 <span class="normal">93</span>
-<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">undef</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">94</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">undef</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Undefine a symbol that was previously defined with define</span>
 
 <span class="sd">    Examples:</span>
@@ -2159,7 +2288,7 @@ If the string contains multiple struct/union/enum definitions, returns the last 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">del</span> <span class="n">DEFINES</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -2206,14 +2335,15 @@ If the string contains multiple struct/union/enum definitions, returns the last 
     
   </span>
 </div>
-    <script>var base_url = '../..';</script>
-    <script src="../../js/theme_extra.js" defer></script>
-    <script src="../../js/theme.js" defer></script>
-      <script src="../../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>
