@@ -70,6 +70,17 @@ class NestedUnion(cstruct.MemCStruct):
     """
 
 
+class NestedStructArr(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = """
+        struct NestedStructArr {
+            struct b {
+              int c;
+            } bval[10];
+        };
+    """
+
+
 class NestedAnonymousUnion(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
@@ -332,3 +343,51 @@ def test_nested_anonymous_struct_offset():
     assert o.aaa.pack() == b'3333'
     assert o.a_op.inspect() == "00000000  e6 07 00 00                                       |....            |\n"
     assert o.b_op.inspect() == "00000000  e6 07 00                                          |...             |\n"
+
+
+def test_nested_struct_array():
+    Nested = cstruct.parse(
+        """
+        struct Nested {
+          struct b {
+           int c;
+          } bval;
+          int a;
+        };
+    """,
+        __byte_order__=cstruct.LITTLE_ENDIAN,
+    )
+    assert len(Nested) == 8
+    t = Nested()
+    assert "a" in t.__fields_types__
+    assert "bval" in t.__fields_types__
+
+    NestedArray = cstruct.parse(
+        """
+        struct NestedArray {
+          struct b {
+           int c;
+          } bval[2];
+          int a;
+        };
+    """,
+        __byte_order__=cstruct.LITTLE_ENDIAN,
+    )
+    t = NestedArray()
+    assert "a" in t.__fields_types__
+    assert "bval" in t.__fields_types__
+    assert len(NestedArray) > len(Nested)
+    t.bval[0].c = 10
+    t.bval[1].c = 11
+    assert t.bval[0].c == 10
+    assert t.bval[1].c == 11
+    assert len(t.bval) == 2
+
+    assert len(NestedStructArr) == 40
+    t = NestedStructArr()
+    assert "bval" in t.__fields_types__
+    t.bval[0].c = 10
+    t.bval[1].c = 11
+    assert t.bval[0].c == 10
+    assert t.bval[1].c == 11
+    assert len(t.bval) == 10

@@ -24,7 +24,7 @@
 
 import re
 from collections import OrderedDict
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union
 
 from .base import DEFINES, ENUMS, STRUCTS, TYPEDEFS
 from .c_expr import c_eval
@@ -101,6 +101,30 @@ class Tokens(object):
         return str(self.tokens)
 
 
+def parse_length(tokens: Tokens, next_token: str, vlen: int, flexible_array: bool) -> Tuple[str, int, bool]:
+    t = next_token.split("[")
+    if len(t) != 2:
+        raise ParserError(f"Error parsing: `{next_token}`")
+    next_token = t[0].strip()
+    vlen_part = t[1]
+    vlen_expr = []
+    while not vlen_part.endswith("]"):
+        vlen_expr.append(vlen_part.split("]")[0].strip())
+        vlen_part = tokens.pop()
+    t_vlen = vlen_part.split("]")[0].strip()
+    vlen_expr.append(vlen_part.split("]")[0].strip())
+    t_vlen = " ".join(vlen_expr)
+    if not t_vlen:
+        flexible_array = True
+        vlen = 0
+    else:
+        try:
+            vlen = c_eval(t_vlen)
+        except (ValueError, TypeError):
+            vlen = int(t_vlen)
+    return next_token, vlen, flexible_array
+
+
 def parse_type(tokens: Tokens, __cls__: Type["AbstractCStruct"], byte_order: Optional[str], offset: int) -> "FieldType":
     if len(tokens) < 2:
         raise ParserError("Parsing error")
@@ -124,26 +148,7 @@ def parse_type(tokens: Tokens, __cls__: Type["AbstractCStruct"], byte_order: Opt
             c_type = "void *"
         # parse length
         if "[" in next_token:
-            t = next_token.split("[")
-            if len(t) != 2:
-                raise ParserError(f"Error parsing: `{next_token}`")
-            next_token = t[0].strip()
-            vlen_part = t[1]
-            vlen_expr = []
-            while not vlen_part.endswith("]"):
-                vlen_expr.append(vlen_part.split("]")[0].strip())
-                vlen_part = tokens.pop()
-            t_vlen = vlen_part.split("]")[0].strip()
-            vlen_expr.append(vlen_part.split("]")[0].strip())
-            t_vlen = " ".join(vlen_expr)
-            if not t_vlen:
-                flexible_array = True
-                vlen = 0
-            else:
-                try:
-                    vlen = c_eval(t_vlen)
-                except (ValueError, TypeError):
-                    vlen = int(t_vlen)
+            next_token, vlen, flexible_array = parse_length(tokens, next_token, vlen, flexible_array)
         tokens.push(next_token)
         # resolve typedefs
         while c_type in TYPEDEFS:
@@ -421,6 +426,10 @@ def parse_struct(
             raise ParserError(f"Duplicate member `{vname}`")
         if vname in dir(__cls__):
             raise ParserError(f"Invalid reserved member name `{vname}`")
+        # parse length
+        if "[" in vname:
+            vname, field_type.vlen, field_type.flexible_array = parse_length(tokens, vname, 1, flexible_array)
+            flexible_array = flexible_array or field_type.flexible_array
         # anonymous nested union
         if vname == ";" and field_type.ref is not None and (__is_union__ or field_type.ref.__is_union__):
             # add the anonymous struct fields to the parent
