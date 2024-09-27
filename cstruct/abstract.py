@@ -80,13 +80,13 @@ class AbstractCStruct(metaclass=CStructMeta):
     __size__: int = 0
     " Size in bytes "
     __fields__: List[str] = []
-    " Struct/union fileds "
+    " Struct/union fields "
     __fields_types__: Dict[str, FieldType]
     " Dictionary mapping field names to types "
     __byte_order__: Optional[str] = None
     " Byte order "
     __alignment__: int = 0
-    " Alignament "
+    " Alignment "
     __is_union__: bool = False
     " True if the class is an union, False if it is a struct "
 
@@ -125,7 +125,7 @@ class AbstractCStruct(metaclass=CStructMeta):
             __is_union__:   True for union, False for struct
 
         Returns:
-            cls: a new class mapping the defintion
+            cls: a new class mapping the definition
         """
         cls_kargs: Dict[str, Any] = dict(kargs)
         if __byte_order__ is not None:

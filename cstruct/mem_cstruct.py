@@ -66,7 +66,7 @@ class MemCStruct(AbstractCStruct):
         Args:
             buffer: bytes to be unpacked
             offset: optional buffer offset
-            flexible_array_length: optional flexible array lenght (number of elements)
+            flexible_array_length: optional flexible array length (number of elements)
         """
         self.set_flexible_array_length(flexible_array_length)
         self.__base__ = offset  # Base offset

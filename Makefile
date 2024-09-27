@@ -13,6 +13,10 @@ help:
 	@echo - make venv ------- Create virtual environment
 
 .PHONY: isort
+codespell:
+	@codespell -w cstruct tests examples setup.py
+
+.PHONY: isort
 isort:
 	@isort --profile black cstruct tests examples setup.py
 
@@ -46,6 +50,6 @@ typecheck:
 	mypy --strict --no-warn-unused-ignores cstruct
 
 venv:
-	python3 -m virtualenv .
+	python3 -m venv . || python3 -m virtualenv .
 	. bin/activate; pip install -Ur requirements.txt
 	. bin/activate; pip install -Ur requirements-dev.txt

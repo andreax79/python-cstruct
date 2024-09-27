@@ -1,5 +1,6 @@
 black
 build
+codespell
 coverage[toml]
 flake8
 isort

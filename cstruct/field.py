@@ -192,7 +192,7 @@ class FieldType(object):
             try:
                 return get_native_type(self.c_type).native_format
             except KeyError:
-                raise ParserError(f"Unknow type `{self.c_type}`")
+                raise ParserError(f"Unknown type `{self.c_type}`")
         elif self.is_enum:
             return self.ref.__native_format__
         else:
