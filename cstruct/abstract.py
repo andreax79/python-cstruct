@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2025 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #
@@ -163,7 +161,7 @@ class AbstractCStruct(metaclass=CStructMeta):
             flexible_array: Optional[FieldType] = [x for x in self.__fields_types__.values() if x.flexible_array][0]
             if flexible_array is None:
                 raise CStructException("Flexible array not found in struct")
-            flexible_array.vlen = flexible_array_length
+            flexible_array.vlen_ex = flexible_array_length
 
     def unpack(self, buffer: Optional[Union[bytes, BinaryIO]], flexible_array_length: Optional[int] = None) -> bool:
         """
@@ -201,6 +199,17 @@ class AbstractCStruct(metaclass=CStructMeta):
             bytes: The packed structure
         """
         raise NotImplementedError
+
+    def pack_into(self, buffer: bytearray, offset: int = 0) -> None:
+        """
+        Pack the structure data into a buffer
+
+        Args:
+            buffer: target buffer (must be large enough to contain the packed structure)
+            offset: optional buffer offset
+        """
+        tmp = self.pack()
+        buffer[offset : offset + len(tmp)] = tmp
 
     def clear(self) -> None:
         self.unpack(None)
@@ -300,6 +309,9 @@ class AbstractCStruct(metaclass=CStructMeta):
 
 
 class CEnumMeta(EnumMeta):
+    __size__: int
+    __native_format__: str
+
     class WrapperDict(_EnumDict):
         def __setitem__(self, key: str, value: Any) -> None:
             env = None

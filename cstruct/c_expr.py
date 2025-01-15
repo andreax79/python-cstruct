@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2025 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #
@@ -23,11 +23,12 @@
 #
 
 import ast
+import inspect
 import operator
-from typing import TYPE_CHECKING, Any, Callable, Dict, Type, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Type, Union
 
 from .base import DEFINES, STRUCTS
-from .exceptions import EvalError
+from .exceptions import ContextNotFound, EvalError
 
 if TYPE_CHECKING:
     from .abstract import AbstractCStruct
@@ -65,7 +66,36 @@ def c_eval(expr: str) -> Union[int, float]:
         raise EvalError
 
 
+def eval_attribute_node(node: ast.Attribute) -> Union[int, float]:
+    """
+    Evaluate node attribute, e.g. 'self.x'
+    Only 'self' is allowed. The attribute must be a number.
+
+    Args:
+        node: attribute node
+
+    Returns:
+        result: the attribute value
+
+    Raises:
+        EvalError: expression result is not a number, or not self attribute
+        ContextNotFound: context is not defined
+    """
+    if not node.value or node.value.id != "self":  # type: ignore
+        raise EvalError("only self is allowed")
+    context = get_cstruct_context()
+    if context is None:
+        raise ContextNotFound("context is not defined")
+    result = getattr(context, node.attr)
+    if not isinstance(result, (int, float)):
+        raise EvalError("expression result is not a number")
+    return result
+
+
 def eval_node(node: ast.stmt) -> Union[int, float]:
+    if isinstance(node, ast.Attribute):
+        return eval_attribute_node(node)
+
     handler = OPS[type(node)]
     result = handler(node)
     if isinstance(result, bool):  # convert bool to int
@@ -114,6 +144,20 @@ def eval_call(node) -> Union[int, float]:
         args = [eval_node(x) for x in node.args]
         return sizeof(*args)
     raise KeyError(node.func.id)
+
+
+def get_cstruct_context() -> Optional["AbstractCStruct"]:
+    """
+    Get the calling CStruct instance from the stack (if any)
+    """
+    from .abstract import AbstractCStruct
+
+    stack = inspect.stack()
+    for frame in stack:
+        caller_self = frame.frame.f_locals.get("self")
+        if isinstance(caller_self, AbstractCStruct):
+            return caller_self
+    return None
 
 
 try:

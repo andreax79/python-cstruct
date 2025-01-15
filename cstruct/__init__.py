@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2025 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #
@@ -24,7 +24,7 @@
 
 __author__ = "Andrea Bonomi <andrea.bonomi@gmail.com>"
 __license__ = "MIT"
-__version__ = "5.3"
+__version__ = "6.0"
 __date__ = "15 August 2013"
 
 from typing import Any, Dict, Optional, Type, Union

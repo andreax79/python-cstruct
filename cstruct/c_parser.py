@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2025 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #
@@ -24,11 +24,21 @@
 
 import re
 from collections import OrderedDict
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
 from .base import DEFINES, ENUMS, STRUCTS, TYPEDEFS
 from .c_expr import c_eval
-from .exceptions import CStructException, ParserError
+from .exceptions import CStructException, EvalError, ParserError
 from .field import FieldType, Kind, calculate_padding
 from .native_types import get_native_type
 
@@ -41,7 +51,7 @@ SEPARATORS = [" ", "\t", "\n", ";", "{", "}", ":", ",", "="]
 SPACES = [" ", "\t", "\n"]
 
 
-class Tokens(object):
+class Tokens:
     def __init__(self, text: str) -> None:
         # remove the comments
         text = re.sub(r"//.*?$|/\*.*?\*/", "", text, flags=re.S | re.MULTILINE)
@@ -59,7 +69,7 @@ class Tokens(object):
         text = "\n".join(lines)
         self.tokens = self.tokenize(text)
 
-    def tokenize(self, text) -> List[str]:
+    def tokenize(self, text: str) -> List[str]:
         tokens: List[str] = []
         t: List[str] = []
         for c in text:
@@ -72,7 +82,7 @@ class Tokens(object):
             else:
                 t.append(c)
         if t:
-            tokens.append(t.getvalue())
+            tokens.append("".join(t))
         return tokens
 
     def pop(self) -> str:
@@ -101,7 +111,8 @@ class Tokens(object):
         return str(self.tokens)
 
 
-def parse_length(tokens: Tokens, next_token: str, vlen: int, flexible_array: bool) -> Tuple[str, int, bool]:
+def parse_length(tokens: Tokens, next_token: str, flexible_array: bool) -> Tuple[str, Union[int, Callable[[], int]], bool]:
+    # Extract t_vlen
     t = next_token.split("[")
     if len(t) != 2:
         raise ParserError(f"Error parsing: `{next_token}`")
@@ -114,14 +125,19 @@ def parse_length(tokens: Tokens, next_token: str, vlen: int, flexible_array: boo
     t_vlen = vlen_part.split("]")[0].strip()
     vlen_expr.append(vlen_part.split("]")[0].strip())
     t_vlen = " ".join(vlen_expr)
+    # Evaluate t_vlen
+    vlen: Union[int, Callable[[], int]]
     if not t_vlen:
+        # If the length expression is empty, this is a flex array
         flexible_array = True
         vlen = 0
     else:
+        # Evaluate the length expression
+        # If the length expression is not a constant, it is evaluated at runtime
         try:
-            vlen = c_eval(t_vlen)
-        except (ValueError, TypeError):
-            vlen = int(t_vlen)
+            vlen = int(c_eval(t_vlen))
+        except EvalError:
+            vlen = lambda: int(c_eval(t_vlen))
     return next_token, vlen, flexible_array
 
 
@@ -133,7 +149,7 @@ def parse_type(tokens: Tokens, __cls__: Type["AbstractCStruct"], byte_order: Opt
     if c_type in ["signed", "unsigned", "struct", "union", "enum"] and len(tokens) > 1:
         c_type = c_type + " " + tokens.pop()
 
-    vlen = 1
+    vlen: Union[int, Callable[[], int]] = 1
     flexible_array = False
 
     if not c_type.endswith("{"):
@@ -148,20 +164,21 @@ def parse_type(tokens: Tokens, __cls__: Type["AbstractCStruct"], byte_order: Opt
             c_type = "void *"
         # parse length
         if "[" in next_token:
-            next_token, vlen, flexible_array = parse_length(tokens, next_token, vlen, flexible_array)
+            next_token, vlen, flexible_array = parse_length(tokens, next_token, flexible_array)
         tokens.push(next_token)
         # resolve typedefs
         while c_type in TYPEDEFS:
             c_type = TYPEDEFS[c_type]
 
     # calculate fmt
+    ref: Union[None, Type[AbstractCEnum], Type[AbstractCStruct]]
     if c_type.startswith("struct ") or c_type.startswith("union "):  # struct/union
         c_type, tail = c_type.split(" ", 1)
         kind = Kind.STRUCT if c_type == "struct" else Kind.UNION
         if tokens.get() == "{":  # Named nested struct
             tokens.push(tail)
             tokens.push(c_type)
-            ref: Union[Type[AbstractCEnum], Type[AbstractCStruct]] = __cls__.parse(tokens, __name__=tail, __byte_order__=byte_order)
+            ref = __cls__.parse(tokens, __name__=tail, __byte_order__=byte_order)
         elif tail == "{":  # Unnamed nested struct
             tokens.push(tail)
             tokens.push(c_type)
@@ -428,7 +445,7 @@ def parse_struct(
             raise ParserError(f"Invalid reserved member name `{vname}`")
         # parse length
         if "[" in vname:
-            vname, field_type.vlen, field_type.flexible_array = parse_length(tokens, vname, 1, flexible_array)
+            vname, field_type.vlen_ex, field_type.flexible_array = parse_length(tokens, vname, flexible_array)
             flexible_array = flexible_array or field_type.flexible_array
         # anonymous nested union
         if vname == ";" and field_type.ref is not None and (__is_union__ or field_type.ref.__is_union__):

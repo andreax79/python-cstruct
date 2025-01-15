@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2025 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #

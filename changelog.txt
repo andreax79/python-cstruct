@@ -182,3 +182,13 @@
 ### Improved
 
 - Python 3.12 support
+
+## [6.0] - 2025-01-16
+
+### Added
+
+- access to Python class attributes in struct definition
+
+### Improved
+
+- Python 3.13 support

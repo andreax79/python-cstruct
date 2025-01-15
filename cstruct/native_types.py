@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2025 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #
@@ -54,10 +54,10 @@ __all__ = [
 ]
 
 
-NATIVE_TYPES: Dict[str, "AbstractNativeType"] = {}
+NATIVE_TYPES: Dict[str, Type["AbstractNativeType"]] = {}
 
 
-def get_native_type(type_: str) -> "AbstractNativeType":
+def get_native_type(type_: str) -> Type["AbstractNativeType"]:
     """
     Get a base data type by name
 
@@ -79,10 +79,6 @@ def get_native_type(type_: str) -> "AbstractNativeType":
 class NativeTypeMeta(ABCMeta):
     __size__: int = 0
     " Size in bytes "
-    type_name: str = ""
-    " Type name "
-    native_format: str = ""
-    " Type format "
 
     def __new__(metacls: Type[type], name: str, bases: Tuple[str], namespace: Dict[str, Any]) -> Type[Any]:
         if namespace.get("native_format"):
@@ -92,7 +88,7 @@ class NativeTypeMeta(ABCMeta):
             native_format = None
             namespace["native_format"] = None
             namespace["__size__"] = None
-        new_class: Type[Any] = super().__new__(metacls, name, bases, namespace)
+        new_class: Type[AbstractNativeType] = super().__new__(metacls, name, bases, namespace)  # type: ignore
         if namespace.get("type_name"):
             NATIVE_TYPES[namespace["type_name"]] = new_class
         return new_class
@@ -108,6 +104,11 @@ class NativeTypeMeta(ABCMeta):
 
 
 class AbstractNativeType(metaclass=NativeTypeMeta):
+    type_name: str = ""
+    " Type name "
+    native_format: str = ""
+    " Type format "
+
     def __str__(self) -> str:
         return self.type_name
 

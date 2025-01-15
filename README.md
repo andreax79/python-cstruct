@@ -197,6 +197,33 @@ pkg.length = 4
 pkg.data = [10, 20, 30, 40]
 ```
 
+### Python object attributes
+
+In struct definition, you can access Python object attributes using `self`.
+The value of expression accessing class attributes is evaluated at runtime.
+
+```python
+class RT11DirectoryEntry(cstruct.CStruct):
+
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = """
+        struct RT11DirectoryEntry {
+            uint8_t type;
+            uint8_t clazz;
+            uint16_t raw_filename1;
+            uint16_t raw_filename2;
+            uint16_t raw_extension;
+            uint16_t length;
+            uint8_t job;
+            uint8_t channel;
+            uint16_t raw_creation_date;
+            uint16_t extra_bytes[self.extra_bytes_len];  /* The size of the array is determined at runtime */
+        };
+    """
+
+    extra_bytes_len: int = 0
+```
+
 ### Pack and Unpack
 
 A code example illustrating how to use

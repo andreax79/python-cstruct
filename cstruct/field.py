@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2025 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #
@@ -23,12 +23,13 @@
 #
 
 import copy
+import inspect
 import struct
 from enum import Enum
-from typing import TYPE_CHECKING, Any, List, Optional, Type
+from typing import TYPE_CHECKING, Any, Callable, List, Optional, Type, Union
 
 from .base import NATIVE_ORDER
-from .exceptions import ParserError
+from .exceptions import ContextNotFound, ParserError
 from .native_types import get_native_type
 
 if TYPE_CHECKING:
@@ -49,6 +50,20 @@ def calculate_padding(byte_order: Optional[str], alignment: int, pos: int) -> in
     return 0
 
 
+def get_cstruct_context() -> Optional["AbstractCStruct"]:
+    """
+    Get the current CStruct context (instance) from the stack
+    """
+    from .abstract import AbstractCStruct
+
+    stack = inspect.stack()
+    for frame in stack:
+        caller_self = frame.frame.f_locals.get("self")
+        if isinstance(caller_self, AbstractCStruct):
+            return caller_self
+    return None
+
+
 class Kind(Enum):
     """
     Field type
@@ -64,7 +79,7 @@ class Kind(Enum):
     "Enum type"
 
 
-class FieldType(object):
+class FieldType:
     """
     Struct/Union field
 
@@ -72,18 +87,27 @@ class FieldType(object):
         kind (Kind): struct/union/native
         c_type (str): field type
         ref (AbstractCStruct): struct/union class ref
-        vlen (int): number of elements
+        vlen_ex (int|callable int): number of elements
         flexible_array (bool): True for flexible arrays
         offset (int): relative memory position of the field (relative to the struct)
         padding (int): padding
     """
+
+    kind: Kind
+    c_type: str
+    ref: Optional[Type["AbstractCStruct"]]
+    vlen_ex: Union[int, Callable[[], int]]
+    flexible_array: bool
+    byte_order: Optional[str]
+    offset: int
+    padding: int
 
     def __init__(
         self,
         kind: Kind,
         c_type: str,
         ref: Optional[Type["AbstractCStruct"]],
-        vlen: int,
+        vlen_ex: Union[int, Callable[[], int]],
         flexible_array: bool,
         byte_order: Optional[str],
         offset: int,
@@ -95,26 +119,27 @@ class FieldType(object):
             kind: struct/union/native
             c_type: field type
             ref: struct/union class ref
-            vlen: number of elements
+            vlen_ex: number of elements
             flexible_array: True for flexible arrays
             offset: relative memory position of the field (relative to the struct)
         """
         self.kind = kind
         self.c_type = c_type
         self.ref = ref
-        self.vlen = vlen
+        self.vlen_ex = vlen_ex
         self.flexible_array = flexible_array
         self.byte_order = byte_order
         self.offset = self.base_offset = offset
         self.padding = 0
 
-    def unpack_from(self, buffer: bytes, offset: int = 0) -> Any:
+    def unpack_from(self, buffer: bytes, offset: int = 0, context: Optional["AbstractCStruct"] = None) -> Any:
         """
         Unpack bytes containing packed C structure data
 
         Args:
             buffer: bytes to be unpacked
             offset: optional buffer offset
+            context: context (cstruct instance)
 
         Returns:
             data: The unpacked data
@@ -153,12 +178,23 @@ class FieldType(object):
             bytes: The packed structure
         """
         if self.flexible_array:
-            self.vlen = len(data)  # set flexible array size
+            self.vlen_ex = len(data)  # set flexible array size
             return struct.pack(self.fmt, *data)
         elif self.is_array:
-            return struct.pack(self.fmt, *data)
+            if self.vlen == 0:  # empty array
+                return bytes()
+            else:
+                return struct.pack(self.fmt, *data)
         else:
             return struct.pack(self.fmt, data)
+
+    @property
+    def vlen(self) -> int:
+        "Number of elements"
+        try:
+            return self.vlen_ex() if callable(self.vlen_ex) else self.vlen_ex
+        except ContextNotFound:
+            return 0
 
     @property
     def is_array(self) -> bool:
@@ -202,7 +238,10 @@ class FieldType(object):
     def fmt(self) -> str:
         "Field format prefixed by byte order (struct library format)"
         if self.is_native or self.is_enum:
-            fmt = (str(self.vlen) if self.vlen > 1 or self.flexible_array else "") + self.native_format
+            if self.vlen == 0:
+                fmt = ""
+            else:
+                fmt = (str(self.vlen) if self.vlen > 1 or self.flexible_array else "") + self.native_format
         else:  # Struct/Union
             fmt = str(self.vlen * self.ref.sizeof()) + self.native_format
         if self.byte_order:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2013-2019 Andrea Bonomi <andrea.bonomi@gmail.com>
+# Copyright (c) 2013-2025 Andrea Bonomi <andrea.bonomi@gmail.com>
 #
 # Published under the terms of the MIT license.
 #
@@ -35,7 +35,7 @@ class CStructList(List[Any]):
         self.name = name
         self.parent = parent
 
-    def __setitem__(self, key: int, value: List[Any]) -> None:  # noqa: F811
+    def __setitem__(self, key: int, value: List[Any]) -> None:  # type: ignore
         super().__setitem__(key, value)
         # Notify the parent when a value is changed
         if self.parent is not None:
@@ -136,7 +136,7 @@ class MemCStruct(AbstractCStruct):
         else:  # native
             if field_type.flexible_array and len(value) != field_type.vlen:
                 # flexible array size changed, resize the buffer
-                field_type.vlen = len(value)
+                field_type.vlen_ex = len(value)
                 ctypes.resize(self.__mem__, self.size + 1)
             addr = field_type.offset + self.__base__
             self.memcpy(addr, field_type.pack(value), field_type.vsize)
