@@ -87,7 +87,7 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../field/">cstruct.field</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="./">cstruct.mem_cstruct</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">cstruct.mem_cstruct</a>
     <ul class="current">
     </ul>
                   </li>
@@ -123,9 +123,9 @@
 
 
 <a id="cstruct.mem_cstruct"></a>
-  <div class="doc doc-contents first">
+    <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -140,21 +140,19 @@
 
 
 
-
 <h2 id="cstruct.mem_cstruct.MemCStruct" class="doc doc-heading">
-          <code>MemCStruct</code>
+            <code>MemCStruct</code>
 
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-          <p class="doc doc-class-bases">
-            Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code></p>
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code></p>
 
-  
-      <p>Convert C struct definitions into Python classes.</p>
 
+        <p>Convert C struct definitions into Python classes.</p>
 
 
 <table class="field-list">
@@ -227,9 +225,9 @@
     </tr>
   </tbody>
 </table>
-            <details class="quote">
-              <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 45</span>
+              <details class="quote">
+                <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 45</span>
 <span class="normal"> 46</span>
 <span class="normal"> 47</span>
 <span class="normal"> 48</span>
@@ -360,7 +358,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            buffer: bytes to be unpacked</span>
 <span class="sd">            offset: optional buffer offset</span>
-<span class="sd">            flexible_array_length: optional flexible array lenght (number of elements)</span>
+<span class="sd">            flexible_array_length: optional flexible array length (number of elements)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_flexible_array_length</span><span class="p">(</span><span class="n">flexible_array_length</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__base__</span> <span class="o">=</span> <span class="n">offset</span>  <span class="c1"># Base offset</span>
@@ -430,7 +428,7 @@
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># native</span>
             <span class="k">if</span> <span class="n">field_type</span><span class="o">.</span><span class="n">flexible_array</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="n">field_type</span><span class="o">.</span><span class="n">vlen</span><span class="p">:</span>
                 <span class="c1"># flexible array size changed, resize the buffer</span>
-                <span class="n">field_type</span><span class="o">.</span><span class="n">vlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">field_type</span><span class="o">.</span><span class="n">vlen_ex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="n">ctypes</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">addr</span> <span class="o">=</span> <span class="n">field_type</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__base__</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memcpy</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">field_type</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">field_type</span><span class="o">.</span><span class="n">vsize</span><span class="p">)</span>
@@ -445,12 +443,11 @@
         <span class="c1"># Update the memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memcpy</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">size</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -463,18 +460,15 @@
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="cstruct.mem_cstruct.MemCStruct.memcpy" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">memcpy</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">memcpy</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Copies the values of num bytes from source to the struct memory</p>
+    <div class="doc doc-contents ">
 
+        <p>Copies the values of num bytes from source to the struct memory</p>
 
 
 <table class="field-list">
@@ -516,9 +510,9 @@
     </tr>
   </tbody>
 </table>
-          <details class="quote">
-            <summary> <code>cstruct/mem_cstruct.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">88</span>
+            <details class="quote">
+              <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">88</span>
 <span class="normal">89</span>
 <span class="normal">90</span>
 <span class="normal">91</span>
@@ -538,27 +532,23 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ctypes</span><span class="o">.</span><span class="n">memmove</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="p">,</span> <span class="n">destination</span><span class="p">),</span> <span class="n">source</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="cstruct.mem_cstruct.MemCStruct.pack" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">pack</span><span class="p">()</span></code>
+            <code class="highlight language-python"><span class="n">pack</span><span class="p">()</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Pack the structure data into bytes</p>
+    <div class="doc doc-contents ">
 
+        <p>Pack the structure data into bytes</p>
 
 
 <table class="field-list">
@@ -568,24 +558,24 @@
   </colgroup>
   <tbody valign="top">
     <tr class="field">
-    <th class="field-name">Returns:</th>
-    <td class="field-body">
-      <ul class="first simple">
-          <li>
-<b><code>bytes</code></b>(                <code>bytes</code>
-)            –
-            <div class="doc-md-description">
-              <p>The packed structure</p>
-            </div>
-          </li>
-      </ul>
-    </td>
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>bytes</code></b>(                  <code>bytes</code>
+)              –
+              <div class="doc-md-description">
+                <p>The packed structure</p>
+              </div>
+            </li>
+        </ul>
+      </td>
     </tr>
   </tbody>
 </table>
-          <details class="quote">
-            <summary> <code>cstruct/mem_cstruct.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 99</span>
+            <details class="quote">
+              <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 99</span>
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
@@ -601,27 +591,23 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__base__</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__base__</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="cstruct.mem_cstruct.MemCStruct.set_flexible_array_length" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">set_flexible_array_length</span><span class="p">(</span><span class="n">flexible_array_length</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">set_flexible_array_length</span><span class="p">(</span><span class="n">flexible_array_length</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Set flexible array length (i.e. number of elements)</p>
+    <div class="doc doc-contents ">
 
+        <p>Set flexible array length (i.e. number of elements)</p>
 
 
 <table class="field-list">
@@ -647,9 +633,9 @@
     </tr>
   </tbody>
 </table>
-          <details class="quote">
-            <summary> <code>cstruct/mem_cstruct.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
+            <details class="quote">
+              <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
@@ -675,27 +661,23 @@
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">pass</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="cstruct.mem_cstruct.MemCStruct.unpack_from" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Unpack bytes containing packed C structure data</p>
+    <div class="doc doc-contents ">
 
+        <p>Unpack bytes containing packed C structure data</p>
 
 
 <table class="field-list">
@@ -733,7 +715,7 @@
 )
               –
               <div class="doc-md-description">
-                <p>optional flexible array lenght (number of elements)</p>
+                <p>optional flexible array length (number of elements)</p>
               </div>
             </li>
         </ul>
@@ -741,9 +723,9 @@
     </tr>
   </tbody>
 </table>
-          <details class="quote">
-            <summary> <code>cstruct/mem_cstruct.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
+            <details class="quote">
+              <summary>Source code in <code>cstruct/mem_cstruct.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
@@ -774,7 +756,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        buffer: bytes to be unpacked</span>
 <span class="sd">        offset: optional buffer offset</span>
-<span class="sd">        flexible_array_length: optional flexible array lenght (number of elements)</span>
+<span class="sd">        flexible_array_length: optional flexible array length (number of elements)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_flexible_array_length</span><span class="p">(</span><span class="n">flexible_array_length</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__base__</span> <span class="o">=</span> <span class="n">offset</span>  <span class="c1"># Base offset</span>
@@ -793,8 +775,8 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_type</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__mem__</span><span class="p">,</span> <span class="n">offset</span><span class="p">))</span>
     <span class="k">return</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -802,7 +784,7 @@
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 
@@ -811,7 +793,7 @@
 
   </div>
 
-  </div>
+    </div>
 
 </div>
               

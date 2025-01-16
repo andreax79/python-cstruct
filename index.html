@@ -41,7 +41,7 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href=".">Introduction</a>
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Introduction</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#install">Install</a>
     </li>
@@ -60,6 +60,8 @@
     <li class="toctree-l3"><a class="reference internal" href="#byte-order-size-and-padding">Byte Order, Size, and Padding</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#flexible-array-member">Flexible Array Member</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#python-object-attributes">Python object attributes</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#pack-and-unpack">Pack and Unpack</a>
     </li>
@@ -301,6 +303,29 @@ pkg = Pkg()
 pkg.length = 4
 pkg.data = [10, 20, 30, 40]
 </code></pre>
+<h3 id="python-object-attributes">Python object attributes</h3>
+<p>In struct definition, you can access Python object attributes using <code>self</code>.
+The value of expression accessing class attributes is evaluated at runtime.</p>
+<pre><code class="language-python">class RT11DirectoryEntry(cstruct.CStruct):
+
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = &quot;&quot;&quot;
+        struct RT11DirectoryEntry {
+            uint8_t type;
+            uint8_t clazz;
+            uint16_t raw_filename1;
+            uint16_t raw_filename2;
+            uint16_t raw_extension;
+            uint16_t length;
+            uint8_t job;
+            uint8_t channel;
+            uint16_t raw_creation_date;
+            uint16_t extra_bytes[self.extra_bytes_len];  /* The size of the array is determined at runtime */
+        };
+    &quot;&quot;&quot;
+
+    extra_bytes_len: int = 0
+</code></pre>
 <h3 id="pack-and-unpack">Pack and Unpack</h3>
 <p>A code example illustrating how to use
 <a href="https://python-cstruct.readthedocs.io/en/latest/api/abstract/#cstruct.abstract.AbstractCStruct.pack"><code>pack</code></a> to pack a structure into binary form.</p>
@@ -464,6 +489,6 @@ cstruct.c_eval(&quot;((A10 &lt; 6) || (A10&gt;10))&quot;)
 </html>
 
 <!--
-MkDocs version : 1.5.3
-Build Date UTC : 2024-01-08 14:40:35.673027+00:00
+MkDocs version : 1.6.1
+Build Date UTC : 2025-01-16 19:35:50.915244+00:00
 -->

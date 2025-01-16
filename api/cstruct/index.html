@@ -83,7 +83,7 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../c_parser/">cstruct.c_parser</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="./">cstruct.cstruct</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">cstruct.cstruct</a>
     <ul class="current">
     </ul>
                   </li>
@@ -123,9 +123,9 @@
 
 
 <a id="cstruct.cstruct"></a>
-  <div class="doc doc-contents first">
+    <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -140,21 +140,19 @@
 
 
 
-
 <h2 id="cstruct.cstruct.CStruct" class="doc doc-heading">
-          <code>CStruct</code>
+            <code>CStruct</code>
 
 
 </h2>
 
 
-  <div class="doc doc-contents ">
-          <p class="doc doc-class-bases">
-            Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code></p>
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code></p>
 
-  
-      <p>Convert C struct definitions into Python classes.</p>
 
+        <p>Convert C struct definitions into Python classes.</p>
 
 
 <table class="field-list">
@@ -220,9 +218,9 @@
     </tr>
   </tbody>
 </table>
-            <details class="quote">
-              <summary>Source code in <code>cstruct/cstruct.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
+              <details class="quote">
+                <summary>Source code in <code>cstruct/cstruct.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
@@ -297,7 +295,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            buffer: bytes to be unpacked</span>
 <span class="sd">            offset: optional buffer offset</span>
-<span class="sd">            flexible_array_length: optional flexible array lenght (number of elements)</span>
+<span class="sd">            flexible_array_length: optional flexible array length (number of elements)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_flexible_array_length</span><span class="p">(</span><span class="n">flexible_array_length</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">buffer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -334,12 +332,11 @@
                 <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_type</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -352,18 +349,15 @@
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="cstruct.cstruct.CStruct.pack" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">pack</span><span class="p">()</span></code>
+            <code class="highlight language-python"><span class="n">pack</span><span class="p">()</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Pack the structure data into bytes</p>
+    <div class="doc doc-contents ">
 
+        <p>Pack the structure data into bytes</p>
 
 
 <table class="field-list">
@@ -373,24 +367,24 @@
   </colgroup>
   <tbody valign="top">
     <tr class="field">
-    <th class="field-name">Returns:</th>
-    <td class="field-body">
-      <ul class="first simple">
-          <li>
-<b><code>bytes</code></b>(                <code>bytes</code>
-)            –
-            <div class="doc-md-description">
-              <p>The packed structure</p>
-            </div>
-          </li>
-      </ul>
-    </td>
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>bytes</code></b>(                  <code>bytes</code>
+)              –
+              <div class="doc-md-description">
+                <p>The packed structure</p>
+              </div>
+            </li>
+        </ul>
+      </td>
     </tr>
   </tbody>
 </table>
-          <details class="quote">
-            <summary> <code>cstruct/cstruct.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
+            <details class="quote">
+              <summary>Source code in <code>cstruct/cstruct.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
 <span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span>
@@ -444,27 +438,23 @@
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_type</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
     <span class="k">return</span> <span class="nb">bytes</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="cstruct.cstruct.CStruct.unpack_from" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
-      <p>Unpack bytes containing packed C structure data</p>
+    <div class="doc doc-contents ">
 
+        <p>Unpack bytes containing packed C structure data</p>
 
 
 <table class="field-list">
@@ -502,7 +492,7 @@
 )
               –
               <div class="doc-md-description">
-                <p>optional flexible array lenght (number of elements)</p>
+                <p>optional flexible array length (number of elements)</p>
               </div>
             </li>
         </ul>
@@ -510,9 +500,9 @@
     </tr>
   </tbody>
 </table>
-          <details class="quote">
-            <summary> <code>cstruct/cstruct.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
+            <details class="quote">
+              <summary>Source code in <code>cstruct/cstruct.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
@@ -533,7 +523,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        buffer: bytes to be unpacked</span>
 <span class="sd">        offset: optional buffer offset</span>
-<span class="sd">        flexible_array_length: optional flexible array lenght (number of elements)</span>
+<span class="sd">        flexible_array_length: optional flexible array length (number of elements)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_flexible_array_length</span><span class="p">(</span><span class="n">flexible_array_length</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">buffer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -542,8 +532,8 @@
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_type</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="p">))</span>
     <span class="k">return</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -551,7 +541,7 @@
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 
@@ -560,7 +550,7 @@
 
   </div>
 
-  </div>
+    </div>
 
 </div>
               
