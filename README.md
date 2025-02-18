@@ -161,11 +161,16 @@ class Packet(cstruct.MemCStruct):
 
 ### Byte Order, Size, and Padding
 
-Suported byte orders:
+Python-CStruct supports big-endian, little-endian, and native byte orders, which you can specify using:
 
-* `cstruct.LITTLE_ENDIAN` - Little endian byte order, standard size, no padding
-* `cstruct.BIG_ENDIAN` - Big endian byte order, standard size, no padding
-* `cstruct.NATIVE_ORDER` - Native byte order, native size, padding
+* `cstruct.LITTLE_ENDIAN` - Little endian byte order, standard size, no padding.
+* `cstruct.BIG_ENDIAN` - Big endian byte order, standard size, no padding.
+* `cstruct.NATIVE_ORDER` - Native byte order, native size, padding. Native byte order is big-endian or little-endian, depending on the host system.
+
+Standard size depends only on the format character while native size depends on the host system.
+For native order, padding is automatically added to align the structure members.
+
+For more information, see the [struct - Byte Order, Size, and Padding](https://docs.python.org/3/library/struct.html#byte-order-size-and-alignment) section.
 
 ```python
 class Native(cstruct.MemCStruct):
@@ -320,6 +325,24 @@ class MBR(cstruct.MemCStruct):
         }
     """
 ```
+
+### Accessing Field Definitions
+
+Python-CStruct provides the `__fields_types__` attribute at the class level, which allows you to inspect the metadata of each field.
+The dictionary contains each field's name as a key and its metadata as a value.
+Each field has the following attributes:
+
+| Attribute        | Description |
+|------------------|------------|
+| `kind`           | Indicates whether the field is a primitive type or a nested struct. |
+| `c_type`         | The corresponding C type. |
+| `ref`            | If the field is a nested struct, this contains a reference to the class representing that struct. |
+| `vlen_ex`        | The number of elements in the field. |
+| `flexible_array` | Indicates whether the field is a flexible array. |
+| `byte_order`     | The byte order of the field. |
+| `offset`         | The relative position of the field within the struct. |
+| `padding`        | The number of bytes added before this field for alignment. |
+
 
 ### Ispect memory
 
