@@ -66,6 +66,10 @@ class CStruct(AbstractCStruct):
         """
         result: List[bytes] = []
         for field, field_type in self.__fields_types__.items():
+            # Add padding if needed
+            if field_type.padding:
+                result.append(CHAR_ZERO * field_type.padding)
+
             if field_type.is_struct or field_type.is_union:
                 if field_type.vlen == 1:  # single struct
                     v = getattr(self, field, field_type.ref())

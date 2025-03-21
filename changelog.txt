@@ -192,3 +192,9 @@
 ### Improved
 
 - Python 3.13 support
+
+## [6.1] - 2025-03-21
+
+### Fix
+
+- fix CStruct.pack() padding

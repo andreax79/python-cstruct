@@ -27,7 +27,7 @@ black: isort
 clean:
 	-rm -rf build dist
 	-rm -rf *.egg-info
-	-rm -rf bin lib share pyvenv.cfg
+	-rm -rf bin lib lib64 share include pyvenv.cfg
 
 coverage:
 	@pytest --cov --cov-report=term-missing

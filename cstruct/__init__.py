@@ -24,7 +24,7 @@
 
 __author__ = "Andrea Bonomi <andrea.bonomi@gmail.com>"
 __license__ = "MIT"
-__version__ = "6.0"
+__version__ = "6.1"
 __date__ = "15 August 2013"
 
 from typing import Any, Dict, Optional, Type, Union
