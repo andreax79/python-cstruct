@@ -25,6 +25,7 @@
 import ast
 import inspect
 import operator
+import sys
 from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Type, Union
 
 from .base import DEFINES, STRUCTS
@@ -160,18 +161,11 @@ def get_cstruct_context() -> Optional["AbstractCStruct"]:
     return None
 
 
-try:
-    Constant = ast.Constant
-except AttributeError:  # python < 3.8
-    Constant = ast.NameConstant
-
 OPS: Dict[Type[ast.AST], Callable[[Any], Any]] = {
     ast.Expr: lambda node: eval_node(node.value),
-    ast.Num: lambda node: node.n,
     ast.Name: eval_get,
     ast.Call: eval_call,
-    Constant: lambda node: node.value,
-    ast.Str: lambda node: node.s,  # python < 3.8
+    ast.Constant: lambda node: node.value,
     # and/or
     ast.BoolOp: lambda node: OPS[type(node.op)](node),  # and/or operator
     ast.And: lambda node: all(eval_node(x) for x in node.values),  # && operator
@@ -203,3 +197,7 @@ OPS: Dict[Type[ast.AST], Callable[[Any], Any]] = {
     ast.GtE: operator.ge,
     ast.LtE: operator.le,
 }
+
+if sys.version_info.major == 3 and sys.version_info.minor < 8:
+    OPS[ast.Num] = lambda node: node.n
+    OPS[ast.Str] = lambda node: node.s
