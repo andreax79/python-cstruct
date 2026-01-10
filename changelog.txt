@@ -198,3 +198,15 @@
 ### Fix
 
 - fix CStruct.pack() padding
+
+## [6.2] - 2026-01-10
+
+### Added
+
+- llms.txt added
+
+### Improved
+
+- Python 3.14 support
+- use ruff instead of flake8/isort/black
+- use pyproject.toml instead of setup.cfg
