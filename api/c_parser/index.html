@@ -127,7 +127,15 @@
 
 
 
-  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
 
 
 
@@ -163,7 +171,7 @@
         <ul class="first simple">
             <li>
               <b><code>__enum__</code></b>
-                  (<code><span title="typing.Union">Union</span>[str, <span title="cstruct.c_parser.Tokens">Tokens</span>]</code>)
+                  (<code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="cstruct.c_parser.Tokens">Tokens</span>]</code>)
               –
               <div class="doc-md-description">
                 <p>definition of the enum in C syntax</p>
@@ -171,7 +179,7 @@
             </li>
             <li>
               <b><code>__name__</code></b>
-                  (<code><span title="typing.Optional">Optional</span>[str]</code>, default:
+                  (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
                       <code>None</code>
 )
               –
@@ -181,7 +189,7 @@
             </li>
             <li>
               <b><code>native_format</code></b>
-                  (<code><span title="typing.Optional">Optional</span>[str]</code>, default:
+                  (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
                       <code>None</code>
 )
               –
@@ -206,7 +214,7 @@
       <td class="field-body">
         <ul class="first simple">
             <li>
-<b><code>dict</code></b>(                  <code><span title="typing.Optional">Optional</span>[<span title="typing.Dict">Dict</span>[str, <span title="typing.Any">Any</span>]]</code>
+<b><code>dict</code></b>(                  <code><span title="typing.Optional">Optional</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>
 )              –
               <div class="doc-md-description">
                 <p>the parsed definition</p>
@@ -217,7 +225,8 @@
     </tr>
   </tbody>
 </table>
-            <details class="quote">
+
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>cstruct/c_parser.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">318</span>
 <span class="normal">319</span>
@@ -294,7 +303,7 @@
 <span class="normal">390</span>
 <span class="normal">391</span>
 <span class="normal">392</span>
-<span class="normal">393</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_enum</span><span class="p">(</span>
+<span class="normal">393</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_enum</span><span class="p">(</span>
     <span class="n">__enum__</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tokens</span><span class="p">],</span>
     <span class="vm">__name__</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">native_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -311,7 +320,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: the parsed definition</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">.cenum</span> <span class="kn">import</span> <span class="n">CEnum</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.cenum</span><span class="w"> </span><span class="kn">import</span> <span class="n">CEnum</span>
 
     <span class="n">constants</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
@@ -402,7 +411,7 @@
         <ul class="first simple">
             <li>
               <b><code>__struct__</code></b>
-                  (<code><span title="typing.Union">Union</span>[str, <span title="cstruct.c_parser.Tokens">Tokens</span>]</code>)
+                  (<code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="cstruct.c_parser.Tokens">Tokens</span>]</code>)
               –
               <div class="doc-md-description">
                 <p>definition of the struct/union in C syntax</p>
@@ -410,7 +419,7 @@
             </li>
             <li>
               <b><code>__cls__</code></b>
-                  (<code><span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a>]</code>)
+                  (<code><span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="AbstractCStruct (cstruct.abstract.AbstractCStruct)" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a>]</code>)
               –
               <div class="doc-md-description">
                 <p>base class (MemCStruct or CStruct)</p>
@@ -418,7 +427,7 @@
             </li>
             <li>
               <b><code>__is_union__</code></b>
-                  (<code>bool</code>, default:
+                  (<code><span title="bool">bool</span></code>, default:
                       <code>False</code>
 )
               –
@@ -428,7 +437,7 @@
             </li>
             <li>
               <b><code>__byte_order__</code></b>
-                  (<code><span title="typing.Optional">Optional</span>[str]</code>, default:
+                  (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
                       <code>None</code>
 )
               –
@@ -438,7 +447,7 @@
             </li>
             <li>
               <b><code>__name__</code></b>
-                  (<code><span title="typing.Optional">Optional</span>[str]</code>, default:
+                  (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
                       <code>None</code>
 )
               –
@@ -463,7 +472,7 @@
       <td class="field-body">
         <ul class="first simple">
             <li>
-<b><code>dict</code></b>(                  <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Any">Any</span>]</code>
+<b><code>dict</code></b>(                  <code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
 )              –
               <div class="doc-md-description">
                 <p>the parsed definition</p>
@@ -474,7 +483,8 @@
     </tr>
   </tbody>
 </table>
-            <details class="quote">
+
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>cstruct/c_parser.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">396</span>
 <span class="normal">397</span>
@@ -575,7 +585,7 @@
 <span class="normal">492</span>
 <span class="normal">493</span>
 <span class="normal">494</span>
-<span class="normal">495</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_struct</span><span class="p">(</span>
+<span class="normal">495</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_struct</span><span class="p">(</span>
     <span class="n">__struct__</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tokens</span><span class="p">],</span>
     <span class="n">__cls__</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;AbstractCStruct&quot;</span><span class="p">],</span>
     <span class="n">__is_union__</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -597,8 +607,8 @@
 <span class="sd">        dict: the parsed definition</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># naive C struct parsing</span>
-    <span class="kn">from</span> <span class="nn">.abstract</span> <span class="kn">import</span> <span class="n">AbstractCStruct</span>
-    <span class="kn">from</span> <span class="nn">.mem_cstruct</span> <span class="kn">import</span> <span class="n">MemCStruct</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractCStruct</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mem_cstruct</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemCStruct</span>
 
     <span class="k">if</span> <span class="n">__cls__</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">__cls__</span> <span class="o">==</span> <span class="n">AbstractCStruct</span><span class="p">:</span>
         <span class="n">__cls__</span> <span class="o">=</span> <span class="n">MemCStruct</span>

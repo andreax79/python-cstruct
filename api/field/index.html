@@ -127,7 +127,15 @@
 
 
 
-  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
 
 
 
@@ -150,6 +158,7 @@
     <div class="doc doc-contents ">
 
 
+
         <p>Struct/Union field</p>
 
 
@@ -165,7 +174,7 @@
         <ul class="first simple">
             <li>
               <b><code>kind</code></b>
-                  (<code><a class="autorefs autorefs-internal" title="cstruct.field.Kind" href="#cstruct.field.Kind">Kind</a></code>)
+                  (<code><a class="autorefs autorefs-internal" title="Kind (cstruct.field.Kind)" href="#cstruct.field.Kind">Kind</a></code>)
               –
               <div class="doc-md-description">
                 <p>struct/union/native</p>
@@ -173,7 +182,7 @@
             </li>
             <li>
               <b><code>c_type</code></b>
-                  (<code>str</code>)
+                  (<code><span title="str">str</span></code>)
               –
               <div class="doc-md-description">
                 <p>field type</p>
@@ -181,7 +190,7 @@
             </li>
             <li>
               <b><code>ref</code></b>
-                  (<code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code>)
+                  (<code><a class="autorefs autorefs-internal" title="AbstractCStruct (cstruct.abstract.AbstractCStruct)" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code>)
               –
               <div class="doc-md-description">
                 <p>struct/union class ref</p>
@@ -197,7 +206,7 @@
             </li>
             <li>
               <b><code>flexible_array</code></b>
-                  (<code>bool</code>)
+                  (<code><span title="bool">bool</span></code>)
               –
               <div class="doc-md-description">
                 <p>True for flexible arrays</p>
@@ -205,7 +214,7 @@
             </li>
             <li>
               <b><code>offset</code></b>
-                  (<code>int</code>)
+                  (<code><span title="int">int</span></code>)
               –
               <div class="doc-md-description">
                 <p>relative memory position of the field (relative to the struct)</p>
@@ -213,7 +222,7 @@
             </li>
             <li>
               <b><code>padding</code></b>
-                  (<code>int</code>)
+                  (<code><span title="int">int</span></code>)
               –
               <div class="doc-md-description">
                 <p>padding</p>
@@ -224,6 +233,12 @@
     </tr>
   </tbody>
 </table>
+
+
+
+
+
+
               <details class="quote">
                 <summary>Source code in <code>cstruct/field.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 82</span>
@@ -423,7 +438,7 @@
 <span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
-<span class="normal">279</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FieldType</span><span class="p">:</span>
+<span class="normal">279</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FieldType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Struct/Union field</span>
 
@@ -446,7 +461,7 @@
     <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">padding</span><span class="p">:</span> <span class="nb">int</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kind</span><span class="p">:</span> <span class="n">Kind</span><span class="p">,</span>
         <span class="n">c_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -476,7 +491,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_offset</span> <span class="o">=</span> <span class="n">offset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">padding</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;AbstractCStruct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;AbstractCStruct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Unpack bytes containing packed C structure data</span>
 
@@ -511,7 +526,7 @@
                     <span class="n">instances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">instances</span>
 
-    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pack the field into bytes</span>
 
@@ -533,7 +548,7 @@
             <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmt</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">vlen</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vlen</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="s2">&quot;Number of elements&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">vlen_ex</span><span class="p">()</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vlen_ex</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">vlen_ex</span>
@@ -541,32 +556,32 @@
             <span class="k">return</span> <span class="mi">0</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="s2">&quot;True if field is an array/flexible array&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">flexible_array</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vlen</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_type</span> <span class="o">==</span> <span class="s2">&quot;char&quot;</span><span class="p">))</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_native</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_native</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="s2">&quot;True if the field is a native type (e.g. int, char)&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Kind</span><span class="o">.</span><span class="n">NATIVE</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_enum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_enum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="s2">&quot;True if the field is an enum&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Kind</span><span class="o">.</span><span class="n">ENUM</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_struct</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_struct</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="s2">&quot;True if the field is a struct&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Kind</span><span class="o">.</span><span class="n">STRUCT</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_union</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_union</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="s2">&quot;True if the field is an union&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Kind</span><span class="o">.</span><span class="n">UNION</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">native_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">native_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="s2">&quot;Field format (struct library format)&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_native</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -579,7 +594,7 @@
             <span class="k">return</span> <span class="s2">&quot;c&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">fmt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fmt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="s2">&quot;Field format prefixed by byte order (struct library format)&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_native</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_enum</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vlen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -594,12 +609,12 @@
             <span class="k">return</span> <span class="n">fmt</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">vsize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vsize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="s2">&quot;Field size in bytes&quot;</span>
         <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">calcsize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmt</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="s2">&quot;Alignment&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_native</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_enum</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">byte_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -609,24 +624,24 @@
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># struct/union</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="o">.</span><span class="n">__alignment__</span>
 
-    <span class="k">def</span> <span class="nf">align_filed_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">align_filed_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="s2">&quot;If the byte order is native, align the field&quot;</span>
         <span class="k">if</span> <span class="n">align</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">byte_order</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_type</span> <span class="o">!=</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">padding</span> <span class="o">=</span> <span class="n">calculate_padding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">byte_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alignment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_offset</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_offset</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding</span>
 
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FieldType&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FieldType&quot;</span><span class="p">:</span>
         <span class="s2">&quot;Return a shallow copy of this FieldType&quot;</span>
         <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
 
 
 
@@ -639,7 +654,7 @@
 
 
 <h3 id="cstruct.field.FieldType.alignment" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">alignment</span><span class="p">:</span> <span class="nb">int</span></code>
+            <code class="highlight language-python"><span class="n">alignment</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -651,6 +666,7 @@
     <div class="doc doc-contents ">
 
         <p>Alignment</p>
+
     </div>
 
 </div>
@@ -660,7 +676,7 @@
 
 
 <h3 id="cstruct.field.FieldType.fmt" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span></code>
+            <code class="highlight language-python"><span class="n">fmt</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -672,6 +688,7 @@
     <div class="doc doc-contents ">
 
         <p>Field format prefixed by byte order (struct library format)</p>
+
     </div>
 
 </div>
@@ -681,7 +698,7 @@
 
 
 <h3 id="cstruct.field.FieldType.is_array" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">is_array</span><span class="p">:</span> <span class="nb">bool</span></code>
+            <code class="highlight language-python"><span class="n">is_array</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -693,6 +710,7 @@
     <div class="doc doc-contents ">
 
         <p>True if field is an array/flexible array</p>
+
     </div>
 
 </div>
@@ -702,7 +720,7 @@
 
 
 <h3 id="cstruct.field.FieldType.is_enum" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">is_enum</span><span class="p">:</span> <span class="nb">bool</span></code>
+            <code class="highlight language-python"><span class="n">is_enum</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -714,6 +732,7 @@
     <div class="doc doc-contents ">
 
         <p>True if the field is an enum</p>
+
     </div>
 
 </div>
@@ -723,7 +742,7 @@
 
 
 <h3 id="cstruct.field.FieldType.is_native" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">is_native</span><span class="p">:</span> <span class="nb">bool</span></code>
+            <code class="highlight language-python"><span class="n">is_native</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -735,6 +754,7 @@
     <div class="doc doc-contents ">
 
         <p>True if the field is a native type (e.g. int, char)</p>
+
     </div>
 
 </div>
@@ -744,7 +764,7 @@
 
 
 <h3 id="cstruct.field.FieldType.is_struct" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">is_struct</span><span class="p">:</span> <span class="nb">bool</span></code>
+            <code class="highlight language-python"><span class="n">is_struct</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -756,6 +776,7 @@
     <div class="doc doc-contents ">
 
         <p>True if the field is a struct</p>
+
     </div>
 
 </div>
@@ -765,7 +786,7 @@
 
 
 <h3 id="cstruct.field.FieldType.is_union" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">is_union</span><span class="p">:</span> <span class="nb">bool</span></code>
+            <code class="highlight language-python"><span class="n">is_union</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -777,6 +798,7 @@
     <div class="doc doc-contents ">
 
         <p>True if the field is an union</p>
+
     </div>
 
 </div>
@@ -786,7 +808,7 @@
 
 
 <h3 id="cstruct.field.FieldType.native_format" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">native_format</span><span class="p">:</span> <span class="nb">str</span></code>
+            <code class="highlight language-python"><span class="n">native_format</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -798,6 +820,7 @@
     <div class="doc doc-contents ">
 
         <p>Field format (struct library format)</p>
+
     </div>
 
 </div>
@@ -807,7 +830,7 @@
 
 
 <h3 id="cstruct.field.FieldType.vlen" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">vlen</span><span class="p">:</span> <span class="nb">int</span></code>
+            <code class="highlight language-python"><span class="n">vlen</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -819,6 +842,7 @@
     <div class="doc doc-contents ">
 
         <p>Number of elements</p>
+
     </div>
 
 </div>
@@ -828,7 +852,7 @@
 
 
 <h3 id="cstruct.field.FieldType.vsize" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">vsize</span><span class="p">:</span> <span class="nb">int</span></code>
+            <code class="highlight language-python"><span class="n">vsize</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -840,9 +864,11 @@
     <div class="doc doc-contents ">
 
         <p>Field size in bytes</p>
+
     </div>
 
 </div>
+
 
 
 
@@ -872,7 +898,7 @@
         <ul class="first simple">
             <li>
               <b><code>kind</code></b>
-                  (<code><a class="autorefs autorefs-internal" title="cstruct.field.Kind" href="#cstruct.field.Kind">Kind</a></code>)
+                  (<code><a class="autorefs autorefs-internal" title="Kind (cstruct.field.Kind)" href="#cstruct.field.Kind">Kind</a></code>)
               –
               <div class="doc-md-description">
                 <p>struct/union/native</p>
@@ -880,7 +906,7 @@
             </li>
             <li>
               <b><code>c_type</code></b>
-                  (<code>str</code>)
+                  (<code><span title="str">str</span></code>)
               –
               <div class="doc-md-description">
                 <p>field type</p>
@@ -888,7 +914,7 @@
             </li>
             <li>
               <b><code>ref</code></b>
-                  (<code><span title="typing.Optional">Optional</span>[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a>]]</code>)
+                  (<code><span title="typing.Optional">Optional</span>[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="AbstractCStruct (cstruct.abstract.AbstractCStruct)" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a>]]</code>)
               –
               <div class="doc-md-description">
                 <p>struct/union class ref</p>
@@ -896,7 +922,7 @@
             </li>
             <li>
               <b><code>vlen_ex</code></b>
-                  (<code><span title="typing.Union">Union</span>[int, <span title="typing.Callable">Callable</span>[[], int]]</code>)
+                  (<code><span title="typing.Union">Union</span>[<span title="int">int</span>, <span title="typing.Callable">Callable</span>[[], <span title="int">int</span>]]</code>)
               –
               <div class="doc-md-description">
                 <p>number of elements</p>
@@ -904,7 +930,7 @@
             </li>
             <li>
               <b><code>flexible_array</code></b>
-                  (<code>bool</code>)
+                  (<code><span title="bool">bool</span></code>)
               –
               <div class="doc-md-description">
                 <p>True for flexible arrays</p>
@@ -912,7 +938,7 @@
             </li>
             <li>
               <b><code>offset</code></b>
-                  (<code>int</code>)
+                  (<code><span title="int">int</span></code>)
               –
               <div class="doc-md-description">
                 <p>relative memory position of the field (relative to the struct)</p>
@@ -923,7 +949,8 @@
     </tr>
   </tbody>
 </table>
-            <details class="quote">
+
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>cstruct/field.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
 <span class="normal">106</span>
@@ -953,7 +980,7 @@
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
-<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">kind</span><span class="p">:</span> <span class="n">Kind</span><span class="p">,</span>
     <span class="n">c_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1001,13 +1028,14 @@
 
         <p>If the byte order is native, align the field</p>
 
-            <details class="quote">
+
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>cstruct/field.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">268</span>
 <span class="normal">269</span>
 <span class="normal">270</span>
 <span class="normal">271</span>
-<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">align_filed_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">align_filed_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="s2">&quot;If the byte order is native, align the field&quot;</span>
     <span class="k">if</span> <span class="n">align</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">byte_order</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_type</span> <span class="o">!=</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">padding</span> <span class="o">=</span> <span class="n">calculate_padding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">byte_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alignment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_offset</span><span class="p">)</span>
@@ -1031,11 +1059,12 @@
 
         <p>Return a shallow copy of this FieldType</p>
 
-            <details class="quote">
+
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>cstruct/field.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">274</span>
 <span class="normal">275</span>
-<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FieldType&quot;</span><span class="p">:</span>
+<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FieldType&quot;</span><span class="p">:</span>
     <span class="s2">&quot;Return a shallow copy of this FieldType&quot;</span>
     <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -1093,7 +1122,7 @@
       <td class="field-body">
         <ul class="first simple">
             <li>
-<b><code>bytes</code></b>(                  <code>bytes</code>
+<b><code>bytes</code></b>(                  <code><span title="bytes">bytes</span></code>
 )              –
               <div class="doc-md-description">
                 <p>The packed structure</p>
@@ -1104,7 +1133,8 @@
     </tr>
   </tbody>
 </table>
-            <details class="quote">
+
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>cstruct/field.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">170</span>
 <span class="normal">171</span>
@@ -1125,7 +1155,7 @@
 <span class="normal">186</span>
 <span class="normal">187</span>
 <span class="normal">188</span>
-<span class="normal">189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="normal">189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pack the field into bytes</span>
 
@@ -1177,7 +1207,7 @@
         <ul class="first simple">
             <li>
               <b><code>buffer</code></b>
-                  (<code>bytes</code>)
+                  (<code><span title="bytes">bytes</span></code>)
               –
               <div class="doc-md-description">
                 <p>bytes to be unpacked</p>
@@ -1185,7 +1215,7 @@
             </li>
             <li>
               <b><code>offset</code></b>
-                  (<code>int</code>, default:
+                  (<code><span title="int">int</span></code>, default:
                       <code>0</code>
 )
               –
@@ -1195,7 +1225,7 @@
             </li>
             <li>
               <b><code>context</code></b>
-                  (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a>]</code>, default:
+                  (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" title="AbstractCStruct (cstruct.abstract.AbstractCStruct)" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a>]</code>, default:
                       <code>None</code>
 )
               –
@@ -1231,7 +1261,8 @@
     </tr>
   </tbody>
 </table>
-            <details class="quote">
+
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>cstruct/field.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">135</span>
 <span class="normal">136</span>
@@ -1266,7 +1297,7 @@
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
-<span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;AbstractCStruct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;AbstractCStruct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unpack bytes containing packed C structure data</span>
 
@@ -1312,6 +1343,7 @@
 
     </div>
 
+
 </div>
 
 <div class="doc doc-object doc-class">
@@ -1330,7 +1362,14 @@
               Bases: <code><span title="enum.Enum">Enum</span></code></p>
 
 
+
         <p>Field type</p>
+
+
+
+
+
+
 
               <details class="quote">
                 <summary>Source code in <code>cstruct/field.py</code></summary>
@@ -1346,7 +1385,7 @@
 <span class="normal">76</span>
 <span class="normal">77</span>
 <span class="normal">78</span>
-<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Kind</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Kind</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Field type</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1364,7 +1403,7 @@
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
 
 
 
@@ -1390,6 +1429,7 @@
     <div class="doc doc-contents ">
 
         <p>Enum type</p>
+
     </div>
 
 </div>
@@ -1412,6 +1452,7 @@
     <div class="doc doc-contents ">
 
         <p>Native type (e.g. int, char)</p>
+
     </div>
 
 </div>
@@ -1434,6 +1475,7 @@
     <div class="doc doc-contents ">
 
         <p>Struct type</p>
+
     </div>
 
 </div>
@@ -1456,6 +1498,7 @@
     <div class="doc doc-contents ">
 
         <p>Union type</p>
+
     </div>
 
 </div>
@@ -1464,9 +1507,11 @@
 
 
 
+
   </div>
 
     </div>
+
 
 </div>
 
@@ -1484,7 +1529,8 @@
 
         <p>Get the current CStruct context (instance) from the stack</p>
 
-            <details class="quote">
+
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>cstruct/field.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">53</span>
 <span class="normal">54</span>
@@ -1497,11 +1543,11 @@
 <span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span>
-<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_cstruct_context</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;AbstractCStruct&quot;</span><span class="p">]:</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_cstruct_context</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;AbstractCStruct&quot;</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the current CStruct context (instance) from the stack</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">.abstract</span> <span class="kn">import</span> <span class="n">AbstractCStruct</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractCStruct</span>
 
     <span class="n">stack</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">:</span>

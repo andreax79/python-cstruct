@@ -127,7 +127,15 @@
 
 
 
-  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
 
 
 
@@ -149,7 +157,8 @@
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="cstruct.abstract.AbstractCStruct" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="AbstractCStruct (cstruct.abstract.AbstractCStruct)" href="../abstract/#cstruct.abstract.AbstractCStruct">AbstractCStruct</a></code></p>
+
 
 
         <p>Convert C struct definitions into Python classes.</p>
@@ -167,7 +176,7 @@
         <ul class="first simple">
             <li>
               <b><code>__struct__</code></b>
-                  (<code>str</code>)
+                  (<code><span title="str">str</span></code>)
               –
               <div class="doc-md-description">
                 <p>definition of the struct (or union) in C syntax</p>
@@ -175,7 +184,7 @@
             </li>
             <li>
               <b><code>__byte_order__</code></b>
-                  (<code>str</code>)
+                  (<code><span title="str">str</span></code>)
               –
               <div class="doc-md-description">
                 <p>byte order, valid values are LITTLE_ENDIAN, BIG_ENDIAN, NATIVE_ORDER</p>
@@ -183,7 +192,7 @@
             </li>
             <li>
               <b><code>__is_union__</code></b>
-                  (<code>bool</code>)
+                  (<code><span title="bool">bool</span></code>)
               –
               <div class="doc-md-description">
                 <p>True for union definitions, False for struct definitions</p>
@@ -191,7 +200,7 @@
             </li>
             <li>
               <b><code>__size__</code></b>
-                  (<code>int</code>)
+                  (<code><span title="int">int</span></code>)
               –
               <div class="doc-md-description">
                 <p>size of the structure in bytes (flexible array member size is omitted)</p>
@@ -199,7 +208,7 @@
             </li>
             <li>
               <b><code>__fields__</code></b>
-                  (<code>list</code>)
+                  (<code><span title="list">list</span></code>)
               –
               <div class="doc-md-description">
                 <p>list of structure fields</p>
@@ -207,7 +216,7 @@
             </li>
             <li>
               <b><code>__fields_types__</code></b>
-                  (<code>dict</code>)
+                  (<code><span title="dict">dict</span></code>)
               –
               <div class="doc-md-description">
                 <p>dictionary mapping field names to types</p>
@@ -218,6 +227,12 @@
     </tr>
   </tbody>
 </table>
+
+
+
+
+
+
               <details class="quote">
                 <summary>Source code in <code>cstruct/cstruct.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
@@ -275,7 +290,11 @@
 <span class="normal">83</span>
 <span class="normal">84</span>
 <span class="normal">85</span>
-<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CStruct</span><span class="p">(</span><span class="n">AbstractCStruct</span><span class="p">):</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CStruct</span><span class="p">(</span><span class="n">AbstractCStruct</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert C struct definitions into Python classes.</span>
 
@@ -288,7 +307,7 @@
 <span class="sd">        __fields_types__ (dict): dictionary mapping field names to types</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Unpack bytes containing packed C structure data</span>
 
@@ -304,7 +323,7 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_type</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="p">))</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pack the structure data into bytes</span>
 
@@ -313,6 +332,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields_types__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Add padding if needed</span>
+            <span class="k">if</span> <span class="n">field_type</span><span class="o">.</span><span class="n">padding</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CHAR_ZERO</span> <span class="o">*</span> <span class="n">field_type</span><span class="o">.</span><span class="n">padding</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="n">field_type</span><span class="o">.</span><span class="n">is_struct</span> <span class="ow">or</span> <span class="n">field_type</span><span class="o">.</span><span class="n">is_union</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">field_type</span><span class="o">.</span><span class="n">vlen</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># single struct</span>
                     <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_type</span><span class="o">.</span><span class="n">ref</span><span class="p">())</span>
@@ -336,7 +359,8 @@
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -371,7 +395,7 @@
       <td class="field-body">
         <ul class="first simple">
             <li>
-<b><code>bytes</code></b>(                  <code>bytes</code>
+<b><code>bytes</code></b>(                  <code><span title="bytes">bytes</span></code>
 )              –
               <div class="doc-md-description">
                 <p>The packed structure</p>
@@ -382,7 +406,8 @@
     </tr>
   </tbody>
 </table>
-            <details class="quote">
+
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>cstruct/cstruct.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
 <span class="normal">61</span>
@@ -410,7 +435,11 @@
 <span class="normal">83</span>
 <span class="normal">84</span>
 <span class="normal">85</span>
-<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pack the structure data into bytes</span>
 
@@ -419,6 +448,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields_types__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Add padding if needed</span>
+        <span class="k">if</span> <span class="n">field_type</span><span class="o">.</span><span class="n">padding</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CHAR_ZERO</span> <span class="o">*</span> <span class="n">field_type</span><span class="o">.</span><span class="n">padding</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">field_type</span><span class="o">.</span><span class="n">is_struct</span> <span class="ow">or</span> <span class="n">field_type</span><span class="o">.</span><span class="n">is_union</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">field_type</span><span class="o">.</span><span class="n">vlen</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># single struct</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_type</span><span class="o">.</span><span class="n">ref</span><span class="p">())</span>
@@ -469,7 +502,7 @@
         <ul class="first simple">
             <li>
               <b><code>buffer</code></b>
-                  (<code><span title="typing.Optional">Optional</span>[bytes]</code>)
+                  (<code><span title="typing.Optional">Optional</span>[<span title="bytes">bytes</span>]</code>)
               –
               <div class="doc-md-description">
                 <p>bytes to be unpacked</p>
@@ -477,7 +510,7 @@
             </li>
             <li>
               <b><code>offset</code></b>
-                  (<code>int</code>, default:
+                  (<code><span title="int">int</span></code>, default:
                       <code>0</code>
 )
               –
@@ -487,7 +520,7 @@
             </li>
             <li>
               <b><code>flexible_array_length</code></b>
-                  (<code><span title="typing.Optional">Optional</span>[int]</code>, default:
+                  (<code><span title="typing.Optional">Optional</span>[<span title="int">int</span>]</code>, default:
                       <code>None</code>
 )
               –
@@ -500,7 +533,8 @@
     </tr>
   </tbody>
 </table>
-            <details class="quote">
+
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>cstruct/cstruct.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
 <span class="normal">45</span>
@@ -516,7 +550,7 @@
 <span class="normal">55</span>
 <span class="normal">56</span>
 <span class="normal">57</span>
-<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unpack_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flexible_array_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unpack bytes containing packed C structure data</span>
 
@@ -542,6 +576,7 @@
   </div>
 
     </div>
+
 
 </div>
 
