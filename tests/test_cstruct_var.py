@@ -80,7 +80,7 @@ class Struct3(cstruct.MemCStruct):
 
 
 def test_v():
-    assert c_eval('10') == 10
+    assert c_eval("10") == 10
 
     s0 = Struct0()
     assert len(s0) == 10

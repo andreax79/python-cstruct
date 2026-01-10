@@ -110,7 +110,7 @@ class Utmp(MemCStruct):
         return f"{self.user:<10s} {self.line:<12s} {self.time:<15s} {self.ut_pid:>15} {self.host:<8s}"
 
     def print_info(self, show_all):
-        if show_all or self.ut_type in (getdef('LOGIN_PROCESS'), getdef('USER_PROCESS')):
+        if show_all or self.ut_type in (getdef("LOGIN_PROCESS"), getdef("USER_PROCESS")):
             print(self)
 
 

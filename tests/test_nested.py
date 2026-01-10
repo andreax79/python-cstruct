@@ -255,21 +255,21 @@ def test_nested_struct_offset():
     )
 
     o = Op()
-    o.preamble = b'ciao_ciao'
+    o.preamble = b"ciao_ciao"
     o.magic = 3771778641802345472
     o.u1.a_op.a = 2022
     o.aaa.a = 0x33333333
-    assert o.u1.b_op.a == b'\xe6'
-    assert o.u1.b_op.b == b'\x07'
-    assert o.u1.b_op.c == b'\x00'
+    assert o.u1.b_op.a == b"\xe6"
+    assert o.u1.b_op.b == b"\x07"
+    assert o.u1.b_op.c == b"\x00"
     assert o.__base__ == 0
     assert o.u1.__base__ >= 10
     assert o.u1.__base__ == o.u1.a_op.__base__
     assert o.u1.__base__ == o.u1.b_op.__base__
     assert o.aaa.__base__ > o.u1.__base__
-    assert o.pack() == b'ciao_ciao\x00\x00\xbc\x08\xe4\xb0\x0cX4\xe6\x07\x00\x003333'
-    assert o.u1.pack() == b'\xe6\x07\x00\x00'
-    assert o.aaa.pack() == b'3333'
+    assert o.pack() == b"ciao_ciao\x00\x00\xbc\x08\xe4\xb0\x0cX4\xe6\x07\x00\x003333"
+    assert o.u1.pack() == b"\xe6\x07\x00\x00"
+    assert o.aaa.pack() == b"3333"
     assert o.u1.a_op.inspect() == "00000000  e6 07 00 00                                       |....            |\n"
     assert o.u1.b_op.inspect() == "00000000  e6 07 00                                          |...             |\n"
 
@@ -306,41 +306,41 @@ def test_nested_anonymous_struct_offset():
     )
 
     o = Opu()
-    o.preamble = b'ciao_ciao'
+    o.preamble = b"ciao_ciao"
     o.magic = 3771778641802345472
     o.__anonymous0.a_op.a = 2022
     o.aaa.a = 0x33333333
-    assert o.__anonymous0.b_op.a == b'\xe6'
-    assert o.__anonymous0.b_op.b == b'\x07'
-    assert o.__anonymous0.b_op.c == b'\x00'
+    assert o.__anonymous0.b_op.a == b"\xe6"
+    assert o.__anonymous0.b_op.b == b"\x07"
+    assert o.__anonymous0.b_op.c == b"\x00"
     assert o.__base__ == 0
     assert o.__anonymous0.__base__ >= 10
     assert o.__anonymous0.__base__ == o.__anonymous0.a_op.__base__
     assert o.__anonymous0.__base__ == o.__anonymous0.b_op.__base__
     assert o.aaa.__base__ > o.__anonymous0.__base__
-    assert o.pack() == b'ciao_ciao\x00\x00\xbc\x08\xe4\xb0\x0cX4\xe6\x07\x00\x003333'
-    assert o.__anonymous0.pack() == b'\xe6\x07\x00\x00'
-    assert o.aaa.pack() == b'3333'
+    assert o.pack() == b"ciao_ciao\x00\x00\xbc\x08\xe4\xb0\x0cX4\xe6\x07\x00\x003333"
+    assert o.__anonymous0.pack() == b"\xe6\x07\x00\x00"
+    assert o.aaa.pack() == b"3333"
     assert o.__anonymous0.inspect() == "00000000  e6 07 00 00                                       |....            |\n"
     assert o.__anonymous0.a_op.inspect() == "00000000  e6 07 00 00                                       |....            |\n"
     assert o.__anonymous0.b_op.inspect() == "00000000  e6 07 00                                          |...             |\n"
 
     o = Opu()
-    o.preamble = b'ciao_ciao'
+    o.preamble = b"ciao_ciao"
     o.magic = 3771778641802345472
     o.a_op.a = 2022
     o.aaa.a = 0x33333333
-    assert o.b_op.a == b'\xe6'
-    assert o.b_op.b == b'\x07'
-    assert o.b_op.c == b'\x00'
+    assert o.b_op.a == b"\xe6"
+    assert o.b_op.b == b"\x07"
+    assert o.b_op.c == b"\x00"
     assert o.__base__ == 0
     assert o.__anonymous0.__base__ >= 10
     assert o.__anonymous0.__base__ == o.a_op.__base__
     assert o.__anonymous0.__base__ == o.b_op.__base__
     assert o.aaa.__base__ > o.__base__
-    assert o.pack() == b'ciao_ciao\x00\x00\xbc\x08\xe4\xb0\x0cX4\xe6\x07\x00\x003333'
-    assert o.a_op.pack() == b'\xe6\x07\x00\x00'
-    assert o.aaa.pack() == b'3333'
+    assert o.pack() == b"ciao_ciao\x00\x00\xbc\x08\xe4\xb0\x0cX4\xe6\x07\x00\x003333"
+    assert o.a_op.pack() == b"\xe6\x07\x00\x00"
+    assert o.aaa.pack() == b"3333"
     assert o.a_op.inspect() == "00000000  e6 07 00 00                                       |....            |\n"
     assert o.b_op.inspect() == "00000000  e6 07 00                                          |...             |\n"
 

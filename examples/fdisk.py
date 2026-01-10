@@ -6,7 +6,7 @@ from pathlib import Path
 
 import cstruct
 
-UNITS = ['B', 'K', 'M', 'G', 'T']
+UNITS = ["B", "K", "M", "G", "T"]
 SECTOR_SIZE = 512
 TYPES = {
     0x00: "Empty",
@@ -129,7 +129,7 @@ class MBR(cstruct.MemCStruct):
 
     def print_info(self):
         print(f"Sector size: {cstruct.getdef('MBR_SIZE')}")
-        if self.signature != cstruct.getdef('MBR_BOOT_SIGNATURE'):
+        if self.signature != cstruct.getdef("MBR_BOOT_SIGNATURE"):
             print("Invalid MBR signature")
 
         print(f"Disk identifier: 0x{self.disk_signature_str}")
