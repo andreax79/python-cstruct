@@ -1,0 +1,63 @@
+# llms.txt - Guidance for Large Language Models
+# Project: Python-CStruct
+
+python-cstruct is a Python module for defining, parsing, and serializing
+C-style binary structures using C syntax (`struct`, `union`, `enum`).
+It allows users to describe structured binary layouts and convert
+between raw bytes and Python objects.
+
+python-cstruct is a Python library for defining and parsing binary data using
+C-style syntax (`struct`, `union`, `enum`). It converts C definitions into
+Python classes that can pack and unpack raw bytes deterministically.
+
+## What This Project Is
+- A binary parsing and serialization library
+- Based on C syntax embedded as strings
+- Produces Python objects with `.pack()` / `.unpack()`
+- Suitable for files, protocols, and low-level data formats
+
+## What This Project Is NOT
+- NOT a general Python–C FFI or ABI binding
+- NOT a replacement for `ctypes.Structure`
+- NOT an automatic structure inference tool
+
+## Core APIs & Concepts
+- `MemCStruct`: base class for C `struct` / `union` definitions
+- `CEnum`: base class for C `enum` definitions
+- `cstruct.parse()`: parse C definitions at runtime
+- Fields are accessed as Python attributes
+- Layout is deterministic and explicit
+
+## Endianness
+- Explicitly controlled via:
+  - `LITTLE_ENDIAN`
+  - `BIG_ENDIAN`
+  - `NATIVE_ORDER`
+- Do NOT assume platform defaults
+
+## Typical Usage
+1. Define a C struct/union/enum as a string
+2. Bind it to a Python class or parse it dynamically
+3. Pack Python objects into bytes or unpack bytes into objects
+4. Access fields as attributes
+
+## Examples (Authoritative)
+- MBR partition parsing:
+  https://python-cstruct.readthedocs.io/en/latest/examples/fdisk/
+- Logged users (`who`) example:
+  https://python-cstruct.readthedocs.io/en/latest/examples/who/
+- Flexible Array Member (FAM):
+  https://python-cstruct.readthedocs.io/en/latest/examples/flexible_array/
+- libc integration (ctypes):
+  https://python-cstruct.readthedocs.io/en/latest/examples/dir/
+
+## API Reference (Source of Truth)
+https://python-cstruct.readthedocs.io/en/latest/api/module/
+
+## Guidance for Code Generation
+- Use real API names (`MemCStruct`, `CEnum`, `cstruct.parse`)
+- Always specify byte order when relevant
+- Follow the official documentation if uncertain
+
+If there is any conflict between assumptions and the documentation or source
+code, the documentation and source code take precedence.
