@@ -1,8 +1,8 @@
 SHELL=/bin/bash -e
+VERSION := $(shell grep '__version__ = ' cstruct/__init__.py | sed 's/__version__ = "\(.*\)"/\1/')
 
 help:
-	@echo - make black ------ Format code
-	@echo - make isort ------ Sort imports
+	@echo - make ruff ------- Format code and sort imports
 	@echo - make clean ------ Clean virtual environment
 	@echo - make coverage --- Run tests coverage
 	@echo - make docs ------- Make docs
@@ -12,44 +12,49 @@ help:
 	@echo - make typecheck -- Typecheck
 	@echo - make venv ------- Create virtual environment
 
-.PHONY: isort
+.PHONY: codespell
 codespell:
-	@codespell -w cstruct tests examples setup.py
+	uv run codespell -w cstruct tests examples
 
-.PHONY: isort
-isort:
-	@isort --profile black cstruct tests examples setup.py
+.PHONY: ruff
+ruff:
+	uv run ruff format cstruct tests examples
 
-.PHONY: black
-black: isort
-	@black -S cstruct tests examples setup.py
-
+.PHONY: clean
 clean:
-	-rm -rf build dist
-	-rm -rf *.egg-info
-	-rm -rf bin lib lib64 share include pyvenv.cfg
+	-rm -rf build dist pyvenv.cfg *.egg-info .venv
 
+.PHONY: coverage
 coverage:
-	@pytest --cov --cov-report=term-missing
+	uv run pytest --cov --cov-report=term-missing
 
 .PHONY: docs
 docs:
-	@mkdocs build
-	@mkdocs gh-deploy
+	uv run mkdocs build
+	uv run mkdocs gh-deploy
 
+.PHONY: lint
 lint:
-	flake8 cstruct tests
+	uv run ruff check cstruct tests
 
+.PHONY: test
 test:
-	pytest
+	uv run pytest
 
+.PHONY: test-32bit
 test-32bit:
-	@make -C docker/i386 test
+	make -C docker/i386 test
 
+.PHONY: typecheck
 typecheck:
-	mypy --strict --no-warn-unused-ignores cstruct
+	uv run mypy --strict --no-warn-unused-ignores cstruct
 
+.PHONY: tag
+tag:
+	git tag v${VERSION}
+
+.PHONY: venv
 venv:
-	python3 -m venv . || python3 -m virtualenv .
-	. bin/activate; pip install -Ur requirements.txt
-	. bin/activate; pip install -Ur requirements-dev.txt
+	uv venv
+	uv pip install -e .
+	uv pip install -e ".[dev]"

@@ -1,9 +1,72 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.black]
+[project]
+name = "cstruct"
+dynamic = ["version"]
+description = "C-style structs for Python"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Andrea Bonomi", email = "andrea.bonomi@gmail.com" }
+]
+keywords = ["struct", "cstruct", "enum", "binary", "pack", "unpack"]
+requires-python = ">=3.7"
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+Homepage = "http://github.com/andreax79/python-cstruct"
+Source = "http://github.com/andreax79/python-cstruct"
+Issues = "http://github.com/andreax79/python-cstruct/issues"
+Documentation = "https://python-cstruct.readthedocs.io/en/latest/"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "codespell",
+    "coverage[toml]",
+    "ruff",
+    "markdown_include",
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings",
+    "mkdocstrings-python",
+    "mypy"
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "coverage[toml]"
+]
+
+[tool.setuptools]
+zip-safe = true
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = { attr = "cstruct.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["cstruct*"]
+exclude = ["ez_setup", "examples", "tests"]
+
+[tool.ruff]
 line-length = 132
+
+[tool.ruff.lint]
+ignore = [ "E731", "E711" ]
 
 [tool.coverage.run]
 source = ["cstruct"]
@@ -13,3 +76,6 @@ exclude_lines = [ "# pragma: no cover", "if TYPE_CHECKING:" ]
 
 [tool.isort]
 profile = "black"
+
+[tool.black]
+line-length = 132
